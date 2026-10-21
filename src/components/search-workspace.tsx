@@ -49,6 +49,7 @@ export function SearchWorkspace({
   const [version, setVersion] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("PR");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const refresh = useCallback(async () => {
     const res = await fetch("/api/searches", { cache: "no-store" });
     if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
@@ -81,6 +82,15 @@ export function SearchWorkspace({
     setVersion(criteria?.version ?? "");
     setCity(criteria?.city ?? "");
     setState(criteria?.state ?? "PR");
+    setAdvancedOpen(
+      Boolean(
+        criteria?.yearMin ||
+          criteria?.yearMax ||
+          criteria?.mileageMax ||
+          criteria?.priceMax ||
+          criteria?.privateOnly,
+      ),
+    );
   }, [criteria]);
   /* eslint-enable react-hooks/set-state-in-effect */
   const suggestions = useMemo(() => {
@@ -351,8 +361,14 @@ export function SearchWorkspace({
                 </select>
               </label>
             </div>
-            <div className="form-grid two">
-              <label>
+            <details
+              className="advanced-filters"
+              open={advancedOpen}
+              onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+            >
+              <summary>Mais filtros</summary>
+              <div className="form-grid two">
+                <label>
                 Ano-modelo de
                 <input
                   name="yearMin"
@@ -361,8 +377,8 @@ export function SearchWorkspace({
                   max="2100"
                   defaultValue={criteria?.yearMin ?? ""}
                 />
-              </label>
-              <label>
+                </label>
+                <label>
                 Ano-modelo até
                 <input
                   name="yearMax"
@@ -371,42 +387,43 @@ export function SearchWorkspace({
                   max="2100"
                   defaultValue={criteria?.yearMax ?? ""}
                 />
+                </label>
+              </div>
+              <label>
+                Quilometragem máxima
+                <input
+                  name="mileageMax"
+                  type="number"
+                  min="0"
+                  max="10000000"
+                  placeholder="Sem limite"
+                  defaultValue={criteria?.mileageMax ?? ""}
+                />
               </label>
-            </div>
-            <label>
-              Quilometragem máxima
-              <input
-                name="mileageMax"
-                type="number"
-                min="0"
-                max="10000000"
-                placeholder="Sem limite"
-                defaultValue={criteria?.mileageMax ?? ""}
-              />
-            </label>
-            <label>
-              Orçamento máximo (R$)
-              <input
-                name="priceMax"
-                type="number"
-                min="1"
-                max="10000000"
-                placeholder="Opcional"
-                defaultValue={criteria?.priceMax ?? ""}
-              />
-            </label>
-            <p className="discovery-help muted">
-              O orçamento filtra os resultados. Os semelhantes mais caros
-              continuam na referência.
-            </p>
-            <label className="discovery-check">
-              <input
-                type="checkbox"
-                name="privateOnly"
-                defaultChecked={criteria?.privateOnly}
-              />{" "}
-              Somente particulares confirmados
-            </label>
+              <label>
+                Orçamento máximo (R$)
+                <input
+                  name="priceMax"
+                  type="number"
+                  min="1"
+                  max="10000000"
+                  placeholder="Opcional"
+                  defaultValue={criteria?.priceMax ?? ""}
+                />
+              </label>
+              <p className="discovery-help muted">
+                O orçamento filtra os resultados. Os semelhantes mais caros
+                continuam na referência.
+              </p>
+              <label className="discovery-check">
+                <input
+                  type="checkbox"
+                  name="privateOnly"
+                  defaultChecked={criteria?.privateOnly}
+                />{" "}
+                Somente particulares confirmados
+              </label>
+            </details>
             <fieldset>
               <legend>Consultar em</legend>
               {(["olx", "webmotors"] as Source[]).map((source) => (

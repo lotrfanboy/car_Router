@@ -169,6 +169,19 @@ input[type="checkbox"] {
   border-top: 1px solid var(--line);
   padding-top: 14px;
 }
+.advanced-filters {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.advanced-filters[open] {
+  display: grid;
+  gap: 14px;
+}
+.advanced-filters summary {
+  color: #333943;
+  font-weight: 650;
+}
 summary {
   cursor: pointer;
 }
