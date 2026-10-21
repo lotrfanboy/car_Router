@@ -129,10 +129,33 @@ export function SearchWorkspace() {
   const activeHasUsableSource = Boolean(
     active?.criteria.sources.some((source) => configuredSources.has(source)),
   );
+  async function runSearch(id: string) {
+    const response = await fetch(`/api/searches/${id}/run`, { method: "POST" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error);
+    const completed = result as Run;
+    await refresh();
+    setShowNear(false);
+    const succeeded = completed.sources.filter(
+      (source) => source.status === "ok",
+    );
+    setNotice(
+      succeeded.length === completed.sources.length
+        ? succeeded.some((source) => source.partial)
+          ? "Busca concluída com cobertura parcial. Confira os anúncios e limites de cada fonte."
+          : "Busca concluída em todas as fontes selecionadas."
+        : succeeded.length
+          ? "Resultado parcial: uma fonte retornou anúncios e outra não concluiu."
+          : "Nenhuma fonte conseguiu concluir a busca. Confira o estado das integrações.",
+    );
+  }
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setNotice("");
+    const intent = (event.nativeEvent as SubmitEvent)
+      .submitter as HTMLButtonElement | null;
+    const runAfterSave = intent?.value === "search";
     const form = new FormData(event.currentTarget);
     const nullable = (key: string) =>
       form.get(key) === "" ? null : Number(form.get(key));
@@ -163,11 +186,12 @@ export function SearchWorkspace() {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      await refresh();
       setSelected(result.id);
-      setNotice(
-        "Busca salva. A consulta só começa ao clicar em Consultar agora.",
-      );
+      if (runAfterSave) await runSearch(result.id);
+      else {
+        await refresh();
+        setNotice("Busca salva sem consultar as plataformas.");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Falha ao salvar.");
     } finally {
@@ -181,26 +205,7 @@ export function SearchWorkspace() {
     setNotice("");
     setFailedAttemptAt(null);
     try {
-      const response = await fetch(`/api/searches/${active.id}/run`, {
-        method: "POST",
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error);
-      const completed = result as Run;
-      await refresh();
-      setShowNear(false);
-      const succeeded = completed.sources.filter(
-        (source) => source.status === "ok",
-      );
-      setNotice(
-        succeeded.length === completed.sources.length
-          ? succeeded.some((source) => source.partial)
-            ? "Consulta concluída com cobertura parcial. Confira os limites de cada fonte."
-            : "Consulta concluída com todas as fontes selecionadas."
-          : succeeded.length
-            ? "Resultado parcial: ao menos uma fonte respondeu e outra não concluiu."
-            : "A tentativa terminou sem uma consulta válida. Confira o estado das fontes.",
-      );
+      await runSearch(active.id);
     } catch (e) {
       setFailedAttemptAt(new Date().toISOString());
       setError(e instanceof Error ? e.message : "Falha ao consultar.");
@@ -213,9 +218,9 @@ export function SearchWorkspace() {
       <div className="page-heading">
         <div>
           <div className="eyebrow">SEU RADAR DE OPORTUNIDADES</div>
-          <h1>Buscar nos portais</h1>
+          <h1>Buscar carros</h1>
           <p className="muted">
-            Salve seus critérios, consulte anúncios reais e acompanhe os preços.
+            Informe o carro e consulte anúncios reais na OLX e Webmotors.
           </p>
         </div>
       </div>
@@ -359,9 +364,26 @@ export function SearchWorkspace() {
               informados. Uma cidade nova pode consumir 1 crédito Reef adicional
               para localizar a região; depois essa informação é reaproveitada.
             </p>
-            <button disabled={busy} className="button primary" type="submit">
-              <BookmarkPlus size={17} /> Salvar busca
-            </button>
+            <div className="form-actions discovery-form-actions">
+              <button
+                disabled={busy}
+                className="button primary"
+                type="submit"
+                name="intent"
+                value="search"
+              >
+                <Search size={17} /> {busy ? "Buscando…" : "Buscar agora"}
+              </button>
+              <button
+                disabled={busy}
+                className="button"
+                type="submit"
+                name="intent"
+                value="save"
+              >
+                <BookmarkPlus size={17} /> Só salvar critérios
+              </button>
+            </div>
           </form>
         </section>
         <section className="discovery-results">
