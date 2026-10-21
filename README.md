@@ -151,3 +151,9 @@ A migração `20261021040000_catalog_searches` adiciona apenas a tabela de filtr
 As classificações usam critérios determinísticos e configuráveis em `OPPORTUNITY_RULES`, sem pontuação arbitrária. Exigem ao menos cinco comparáveis recentes e equivalentes. Reduções, suficiência amostral e limitações aparecem nos detalhes; condições do veículo e lucro de revenda nunca são garantidos. Os indicadores de redução usam a última mudança registrada, e não inventam séries temporais agregadas.
 
 Não há novas dependências de runtime, cobrança ou publicação. O arquivo SQLite de uso pessoal e as chaves de conectores não são versionados. As imagens de validação com veículos usam exclusivamente registros temporários de teste; a aplicação inicia vazia em um banco novo.
+
+## Preview hospedado para avaliação
+
+O `render.yaml` executa este mesmo projeto Next.js, aplica as migrações Prisma e inicia um banco SQLite isolado em `/tmp`. O ambiente começa vazio, não recebe credenciais dos conectores e não consulta fornecedores automaticamente. No plano gratuito, os registros do preview podem ser apagados quando o serviço for recriado ou reiniciado; ele serve para avaliação, não como banco de produção.
+
+[Criar preview no Render](https://render.com/deploy?repo=https://github.com/lotrfanboy/car_Router)

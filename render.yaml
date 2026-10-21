@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: radar-automotivo-preview
+    runtime: node
+    plan: free
+    buildCommand: npm ci --no-audit --no-fund && npm run db:generate && npm run build
+    startCommand: npm run db:migrate && node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    autoDeploy: false
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: DATABASE_URL
+        value: file:/tmp/radar-automotivo-preview.db
+      - key: REEF_FREE_TRIAL
+        value: "false"
