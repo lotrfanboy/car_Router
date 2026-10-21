@@ -14,7 +14,6 @@ import {
   CarFront,
   Heart,
   Columns3,
-  Plus,
   Menu,
   X,
   CheckCircle2,
@@ -149,14 +148,33 @@ export function Workspace({ children }: { children: React.ReactNode }) {
     }
   };
   const nav = [
-    { href: "/", label: "Visão geral", icon: LayoutDashboard },
-    { href: "/veiculos", label: "Radar de veículos", icon: CarFront },
-    { href: "/mercado", label: "Explorar mercado", icon: ChartNoAxesCombined },
-    { href: "/buscar", label: "Buscar nos portais", icon: Search },
-    { href: "/favoritos", label: "Favoritos", icon: Heart },
+    { href: "/buscar", label: "Buscar carros", icon: Search },
+    { href: "/radares", label: "Meus radares", icon: Radar },
+    { href: "/salvos", label: "Salvos", icon: Heart },
+  ];
+  const secondaryNav = [
+    { href: "/veiculos", label: "Catálogo", icon: CarFront },
+    { href: "/favoritos", label: "Favoritos do catálogo", icon: Heart },
     { href: "/comparar", label: "Comparador", icon: Columns3 },
+    {
+      href: "/mercado",
+      label: "Análises do catálogo",
+      icon: ChartNoAxesCombined,
+    },
+    {
+      href: "/visao-geral",
+      label: "Visão geral do catálogo",
+      icon: LayoutDashboard,
+    },
     { href: "/configuracoes", label: "Configurações", icon: Settings2 },
   ];
+  const catalogPage = [
+    "/veiculos",
+    "/favoritos",
+    "/comparar",
+    "/mercado",
+    "/visao-geral",
+  ].some((path) => pathname.startsWith(path));
   return (
     <Context.Provider
       value={{
@@ -221,6 +239,22 @@ export function Workspace({ children }: { children: React.ReactNode }) {
                 )}
               </Link>
             ))}
+            <details className="secondary-nav">
+              <summary>Mais ferramentas</summary>
+              {secondaryNav.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className={
+                    pathname.startsWith(href) ? "nav-link active" : "nav-link"
+                  }
+                >
+                  <Icon size={16} />
+                  {label}
+                </Link>
+              ))}
+            </details>
           </nav>
           <div className="sidebar-bottom">
             <span className="status-dot" /> Seu espaço pessoal
@@ -248,7 +282,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
               <span className="breadcrumb">
                 Meu espaço <span>/</span>{" "}
                 <strong>
-                  {nav.find((item) =>
+                  {[...nav, ...secondaryNav].find((item) =>
                     item.href === "/"
                       ? pathname === "/"
                       : pathname.startsWith(item.href),
@@ -266,24 +300,21 @@ export function Workspace({ children }: { children: React.ReactNode }) {
             >
               <Search size={15} />
               <input
-                aria-label="Busca global de veículos"
-                placeholder="Encontre seu próximo veículo…"
+                aria-label="Busca no catálogo salvo"
+                placeholder="Pesquisar no catálogo salvo…"
                 value={globalQuery}
                 onChange={(e) => setGlobalQuery(e.target.value)}
               />
-              <button type="submit" aria-label="Buscar no radar">
+              <button type="submit" aria-label="Buscar no catálogo salvo">
                 <ArrowUpRight size={15} />
               </button>
             </form>
-            <Link
-              className="button primary small header-add"
-              href="/veiculos/novo"
-            >
-              <Plus size={16} /> Novo anúncio
+            <Link className="button primary small header-add" href="/buscar">
+              <Search size={16} /> Buscar carros
             </Link>
           </header>
           <main id="conteudo" tabIndex={-1}>
-            {error ? (
+            {catalogPage && error ? (
               <div className="error-box" role="alert">
                 <AlertCircle />
                 {error}
@@ -291,7 +322,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
                   Tentar novamente
                 </button>
               </div>
-            ) : loading ? (
+            ) : catalogPage && loading ? (
               <div
                 className="loading-skeleton"
                 role="status"
@@ -313,7 +344,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
           <footer className="app-footer">
             <span>RADAR AUTOMOTIVO</span>
             <span>
-              Preços anunciados · Amostra do seu catálogo ·{" "}
+              Preços anunciados · Referências verificáveis ·{" "}
               <Link href="/configuracoes">Metodologia</Link>
             </span>
           </footer>

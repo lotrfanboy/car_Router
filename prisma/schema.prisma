@@ -51,7 +51,9 @@ model SavedSearch {
   name      String
   criteria  String
   createdAt DateTime @default(now())
+  queryKey  String?  @unique
   runs      SearchRun[]
+  radars    Radar[]
 }
 
 model SearchRun {
@@ -71,9 +73,56 @@ model DiscoveredListing {
   payload    String
   firstSeen  DateTime @default(now())
   lastSeen   DateTime @default(now())
+  savedAt    DateTime?
   prices     ListingPrice[]
 
   @@unique([source, externalId])
+}
+
+model SearchCache {
+  id        String @id
+  result    String
+  updatedAt DateTime @default(now())
+}
+
+model Radar {
+  id           String @id @default(cuid())
+  searchId     String
+  name         String
+  minPercent   Float
+  intervalHours Int @default(24)
+  enabled      Boolean @default(false)
+  lastRunAt    DateTime?
+  nextRunAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  search       SavedSearch @relation(fields: [searchId], references: [id], onDelete: Restrict)
+  runs         RadarRun[]
+  notices      RadarNotice[]
+}
+
+model RadarRun {
+  id         String @id @default(cuid())
+  radarId    String
+  startedAt  DateTime @default(now())
+  finishedAt DateTime?
+  status     String
+  message    String
+  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  @@index([radarId, startedAt])
+}
+
+model RadarNotice {
+  id         String @id @default(cuid())
+  radarId    String
+  listingKey String
+  priceCents Int
+  eventKey   String @unique
+  status     String
+  createdAt  DateTime @default(now())
+  sentAt     DateTime?
+  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  @@index([radarId, listingKey])
 }
 
 model ListingPrice {

@@ -34,6 +34,7 @@ export const searchSchema = z
     name: z.string().trim().min(1).max(100),
     brand: z.string().trim().min(1).max(80),
     model: z.string().trim().min(1).max(100),
+    version: z.string().trim().max(120).optional(),
     city: z.string().trim().min(1).max(120),
     state: z.enum(states as [string, ...string[]]),
     yearMin: z.number().int().min(1900).max(2100).nullable(),
@@ -85,6 +86,12 @@ export type Listing = {
   title: string;
   brand: string | null;
   model: string | null;
+  version?: string | null;
+  versionOrigin?: "explicit" | "inferred" | "unknown";
+  fuel?: string | null;
+  transmission?: string | null;
+  engine?: string | null;
+  imageUrl?: string | null;
   modelYear: number | null;
   priceCents: number | null;
   mileage: number | null;
@@ -95,6 +102,8 @@ export type Listing = {
   reasons: string[];
   isNew?: boolean;
   previousPriceCents?: number | null;
+  saved?: boolean;
+  comparison?: import("./listing-comparison").ListingComparison;
 };
 export type SourceResult = {
   source: Source;
@@ -117,6 +126,11 @@ export function eligibility(row: Listing, s: SearchCriteria) {
   if (!row.model || normalized(row.model) !== normalized(s.model))
     reasons.push("Modelo diferente ou não confirmado");
   if (
+    s.version &&
+    (!row.version || normalized(row.version) !== normalized(s.version))
+  )
+    reasons.push("Versão diferente ou desconhecida");
+  if (
     !row.city ||
     normalized(row.city) !== normalized(s.city) ||
     row.state !== s.state
@@ -131,6 +145,7 @@ export function eligibility(row: Listing, s: SearchCriteria) {
     reasons.push("Ano fora do intervalo ou desconhecido");
   if (
     row.priceCents === null ||
+    row.priceCents <= 0 ||
     (s.priceMax !== null && row.priceCents > s.priceMax * 100)
   )
     reasons.push("Preço fora do limite ou desconhecido");

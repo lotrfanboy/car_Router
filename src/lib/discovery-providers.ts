@@ -20,6 +20,17 @@ const obj = (v: unknown): Row =>
   v && typeof v === "object" && !Array.isArray(v) ? (v as Row) : {};
 const str = (v: unknown) =>
   typeof v === "string" && v.trim() ? v.trim() : null;
+const photoUrl = (v: unknown) => {
+  const value = str(v);
+  try {
+    const url = new URL(value!);
+    return url.protocol === "https:" && !url.username && !url.password
+      ? value
+      : null;
+  } catch {
+    return null;
+  }
+};
 const num = (v: unknown) =>
   (typeof v === "number" || typeof v === "string") &&
   v !== "" &&
@@ -61,6 +72,11 @@ export function providerConfig(source: Source) {
     configured: Boolean(key) && enabled,
     cost: gecko ? 1 : 2,
     provider: gecko ? "gecko" : "reef",
+    configurationMessage: !key
+      ? `Chave ${gecko ? "Gecko" : "Reef"} não configurada no servidor.`
+      : !enabled
+        ? "Chave Reef presente; falta confirmar créditos promocionais e habilitar REEF_FREE_TRIAL."
+        : "Credencial presente; a conexão será verificada ao consultar.",
   };
 }
 export async function providerJson(
@@ -151,6 +167,20 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
         title: str(r.title) ?? "Anúncio OLX",
         brand: str(attrs.vehicle_brand),
         model,
+        version:
+          str(attrs.vehicle_version) ??
+          (model && fullModel.length > model.length
+            ? fullModel.slice(model.length).trim()
+            : null),
+        versionOrigin: attrs.vehicle_version
+          ? "explicit"
+          : fullModel.length > (model?.length ?? 0)
+            ? "inferred"
+            : "unknown",
+        fuel: str(attrs.fuel),
+        transmission: str(attrs.gearbox),
+        engine: str(attrs.motorpower),
+        imageUrl: photoUrl(r.image_url),
         modelYear: integer(attrs.regdate),
         priceCents: price(r.price),
         mileage: integer(attrs.mileage),
@@ -186,6 +216,12 @@ export function normalizeReef(value: unknown, observedAt: string): Listing[] {
         title: str(r.title) ?? "Anúncio Webmotors",
         brand: str(r.make),
         model: str(r.model),
+        version: str(r.version),
+        versionOrigin: str(r.version) ? "explicit" : "unknown",
+        fuel: str(r.fuel),
+        transmission: str(r.transmission),
+        engine: str(r.engine),
+        imageUrl: photoUrl(r.image_url),
         modelYear: integer(r.year_model),
         priceCents: price(r.price),
         mileage: integer(r.mileage_km),
@@ -226,10 +262,7 @@ export async function fetchSource(
     return {
       ...result,
       status: "unconfigured",
-      message:
-        source === "olx"
-          ? "Conecte sua conta gratuita Gecko para consultar a OLX."
-          : "Conecte uma conta gratuita Reef para consultar a Webmotors.",
+      message: config.configurationMessage,
     };
   try {
     const { db } = await import("./db");

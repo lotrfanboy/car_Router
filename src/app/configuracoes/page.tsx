@@ -50,6 +50,25 @@ export default function Settings() {
         title="Configurações"
         description="Suas fontes, a qualidade da base e os critérios por trás de cada análise."
       />
+      <section className="panel">
+        <h2>Média dos anúncios semelhantes</h2>
+        <p>
+          A busca usa a média aritmética de pelo menos cinco anúncios recentes,
+          sem o próprio candidato e sem cortar comparáveis pelo orçamento. O
+          detalhe de cada resultado mostra os preços, links, datas, critérios e
+          limitações. A versão pode ser inferida do campo de modelo e é
+          identificada como tal.
+        </p>
+        <p>
+          Mesma marca, modelo, versão e UF; ano-modelo até um ano de diferença;
+          km até 20 mil ou 25% de diferença. Observações dos últimos 7 dias.
+          Valores extremos são tratados por 1,5 × IQR; amostras dispersas não
+          sustentam comparação.
+        </p>
+        <Link href="/buscar" className="text-link">
+          Buscar carros
+        </Link>
+      </section>
       <div className="settings-layout">
         <section className="panel">
           <div className="section-heading">
@@ -59,8 +78,8 @@ export default function Settings() {
             </Link>
           </div>
           <p className="settings-copy">
-            Consultas externas ocorrem somente ao usar “Consultar agora”. Abrir
-            esta tela não consome créditos dos fornecedores.
+            Consultas externas ocorrem ao buscar ou quando um Radar configurado
+            executa. Abrir esta tela não consome créditos dos fornecedores.
           </p>
           {error ? (
             <div className="error-box" role="alert">
@@ -81,7 +100,7 @@ export default function Settings() {
                   <small>
                     {i.source === "olx"
                       ? "Gecko · localização complementar via Reef"
-                      : "Reef · consulta manual"}
+                      : "Reef · anúncios Webmotors"}
                   </small>
                 </div>
                 <span
@@ -148,12 +167,13 @@ export default function Settings() {
         </section>
       </div>
       <section className="panel methodology-panel" id="metodologia">
-        <div className="eyebrow">METODOLOGIA · VERSÃO 1</div>
-        <h2>Uma classificação explicável, sem promessas.</h2>
+        <div className="eyebrow">METODOLOGIA LEGADA · CATÁLOGO PESSOAL</div>
+        <h2>Análises secundárias do catálogo pessoal.</h2>
         <p className="settings-copy">
-          A análise usa preços anunciados cadastrados. Não avalia a condição do
-          carro, o vendedor, a segurança da compra ou a probabilidade de
-          revenda.
+          Estas análises secundárias usam preços anunciados cadastrados e
+          mediana, separadas da média dos resultados de busca. Não avalia a
+          condição do carro, o vendedor, a segurança da compra ou a
+          probabilidade de revenda.
         </p>
         <div className="method-grid">
           <div>

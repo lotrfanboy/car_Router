@@ -20,7 +20,10 @@ export function apiError(error: unknown) {
       { error: "Anúncio não encontrado." },
       { status: 404 },
     );
-  console.error("Vehicle operation failed", error);
+  console.error(
+    "Vehicle operation failed",
+    error instanceof Error ? error.name : "UnknownError",
+  );
   return NextResponse.json(
     { error: "Não foi possível concluir a operação. Tente novamente." },
     { status: 500 },

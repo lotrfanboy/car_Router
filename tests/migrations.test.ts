@@ -82,6 +82,7 @@ it("adds a current-price baseline to an existing database without changing vehic
     // adding independent local catalog filters.
     const search = await client.savedSearch.create({
       data: { name: "Busca anterior", criteria: '{"brand":"Toyota"}' },
+      select: { id: true, name: true, criteria: true, createdAt: true },
     });
     const run = await client.searchRun.create({
       data: { searchId: search.id, result: '{"listings":[]}' },
@@ -91,6 +92,14 @@ it("adds a current-price baseline to an existing database without changing vehic
         source: "fixture",
         externalId: "before-migration",
         payload: "{}",
+      },
+      select: {
+        id: true,
+        source: true,
+        externalId: true,
+        payload: true,
+        firstSeen: true,
+        lastSeen: true,
       },
     });
     const discoveredPrice = await client.listingPrice.create({
@@ -112,9 +121,24 @@ it("adds a current-price baseline to an existing database without changing vehic
       }),
     ).toEqual(before);
     expect(await client.vehiclePrice.findMany()).toEqual(history);
-    expect(await client.savedSearch.findMany()).toEqual([search]);
+    expect(
+      await client.savedSearch.findMany({
+        select: { id: true, name: true, criteria: true, createdAt: true },
+      }),
+    ).toEqual([search]);
     expect(await client.searchRun.findMany()).toEqual([run]);
-    expect(await client.discoveredListing.findMany()).toEqual([discovered]);
+    expect(
+      await client.discoveredListing.findMany({
+        select: {
+          id: true,
+          source: true,
+          externalId: true,
+          payload: true,
+          firstSeen: true,
+          lastSeen: true,
+        },
+      }),
+    ).toEqual([discovered]);
     expect(await client.listingPrice.findMany()).toEqual([discoveredPrice]);
     expect(await client.olxLocation.findMany()).toEqual([location]);
     expect(await client.providerSpend.findMany()).toEqual([spend]);
@@ -127,6 +151,22 @@ it("adds a current-price baseline to an existing database without changing vehic
     });
     expect(migratedVehicle.source).toBe("Manual");
     expect(migratedVehicle.sellerType).toBeNull();
+    await apply("prisma/migrations/20261021060000_search_focus/migration.sql");
+    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
+      migratedVehicle,
+    );
+    expect(await client.vehiclePrice.findMany()).toEqual(history);
+    expect(await client.savedSearch.findMany()).toEqual([
+      { ...search, queryKey: null },
+    ]);
+    expect(await client.searchRun.findMany()).toEqual([run]);
+    expect(await client.discoveredListing.findMany()).toEqual([
+      { ...discovered, savedAt: null },
+    ]);
+    expect(await client.listingPrice.findMany()).toEqual([discoveredPrice]);
+    expect(await client.olxLocation.findMany()).toEqual([location]);
+    expect(await client.providerSpend.findMany()).toEqual([spend]);
+    expect(await client.radar.count()).toBe(0);
   } finally {
     await client.$disconnect();
   }

@@ -1,6 +1,8 @@
 # Radar Automotivo
 
-Aplicação local de usuário único para cadastrar, organizar e comparar anúncios de veículos. A área de buscas consulta OLX/Gecko e Webmotors/Reef mediante configuração opcional no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
+O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento exige agendador no servidor, armazenamento persistente e canal de e-mail configurados; sem essas dependências a interface indica configuração pendente. Esta entrega é local, sem publicação automática.
+
+Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
 ## Executar no Windows
 

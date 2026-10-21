@@ -81,6 +81,7 @@ beforeAll(async () => {
   runRoute = await import("../src/app/api/searches/[id]/run/route");
 }, 30000);
 beforeEach(async () => {
+  await db.db.searchCache.deleteMany();
   await db.db.searchRun.deleteMany();
   await db.db.savedSearch.deleteMany();
   await db.db.discoveredListing.deleteMany();
@@ -213,6 +214,7 @@ it("resolves a new city on demand, verifies its listings, and caches without ano
     await db.db.olxLocation.findUnique({ where: { id: "SC:joinville" } }),
   ).toMatchObject({ region: "norte-de-santa-catarina" });
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  await db.db.searchCache.deleteMany();
   expect((await store.executeSearch(search.id)).sources[0]).toMatchObject({
     status: "ok",
   });
@@ -235,6 +237,7 @@ it("does not invent a region or pass off national results as a city search", asy
   expect(calls.some((url) => url.endsWith("/extract"))).toBe(false);
   regions = ["norte-de-santa-catarina"];
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  await db.db.searchCache.deleteMany();
   const second = await store.executeSearch(search.id);
   expect(second.sources[0]).toMatchObject({ status: "error", listings: [] });
   expect(await db.db.olxLocation.count()).toBe(0);
@@ -303,9 +306,11 @@ it("persists observations and only changed prices, survives reconnect, and enfor
     status: 429,
   });
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  await db.db.searchCache.deleteMany();
   await store.executeSearch(search.id);
   expect(await db.db.listingPrice.count()).toBe(2);
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  await db.db.searchCache.deleteMany();
   currentPrice = 103000;
   const third = await store.executeSearch(search.id);
   expect(third.sources[0].listings[0]).toMatchObject({
@@ -342,6 +347,7 @@ it("refuses paid Gecko plans, and blocks extraction when local budget is exhaust
   expect(calls.some((x) => x.endsWith("/extract"))).toBe(false);
   calls.length = 0;
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  await db.db.searchCache.deleteMany();
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string) => {

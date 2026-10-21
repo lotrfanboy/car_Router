@@ -1,182 +1,117 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Search, ExternalLink, RefreshCw, BookmarkPlus } from "lucide-react";
+import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
   searchSchema,
   sourceNames,
   type SearchCriteria,
   type SearchResult,
   type Source,
-  type Listing,
 } from "@/lib/discovery";
-import { money, number, states } from "@/lib/vehicle";
+import { sortListings } from "@/lib/listing-comparison";
+import { states } from "@/lib/vehicle";
+import { ListingCard, observedWhen } from "./listing-card";
+import { useWorkspace } from "./workspace";
 type Run = SearchResult & {
   id: string;
   createdAt: string;
   interrupted?: boolean;
+  cached?: boolean;
 };
 type Saved = { id: string; criteria: SearchCriteria; latest: Run | null };
 type Integration = {
   source: Source;
   configured: boolean;
+  configurationMessage?: string;
   cost: number;
   reservedToday: number;
   dailyLimit: number;
-  lastAttemptAt: string | null;
-  lastAttemptStatus: "ok" | "error" | "unconfigured" | null;
   lastSuccessfulAt: string | null;
 };
-const when = (date: string) => new Date(date).toLocaleString("pt-BR");
-
-function PriceHistory({ listing }: { listing: Listing }) {
-  const [rows, setRows] = useState<
-    { id: number; observedAt: string; priceCents: number }[] | null
-  >(null);
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
-  async function load() {
-    if (rows) {
-      setRows(null);
-      return;
-    }
-    setBusy(true);
-    setError("");
-    try {
-      const response = await fetch(
-        `/api/discoveries/${listing.source}/${encodeURIComponent(listing.externalId)}/prices`,
-        { cache: "no-store" },
-      );
-      if (!response.ok) throw new Error();
-      setRows(await response.json());
-    } catch {
-      setError("Não foi possível abrir o histórico.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  return (
-    <div className="discovery-history">
-      <button
-        className="text-button"
-        disabled={busy}
-        onClick={() => void load()}
-      >
-        {busy ? "Carregando…" : rows ? "Fechar histórico" : "Preços observados"}
-      </button>
-      {error && <p role="alert">{error}</p>}
-      {rows && (
-        <ul>
-          {rows.map((r) => (
-            <li key={r.id}>
-              {when(r.observedAt)} · <strong>{money(r.priceCents)}</strong>
-            </li>
-          ))}
-          {rows.length === 1 && (
-            <li>Primeira observação; ainda não há mudança para comparar.</li>
-          )}
-        </ul>
-      )}
-    </div>
-  );
-}
-export function SearchWorkspace() {
-  const [saved, setSaved] = useState<Saved[]>([]);
-  const [integrations, setIntegrations] = useState<Integration[]>([]);
-  const [selected, setSelected] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [notice, setNotice] = useState("");
-  const [failedAttemptAt, setFailedAttemptAt] = useState<string | null>(null);
-  const [showNear, setShowNear] = useState(false);
-  async function refresh() {
-    const response = await fetch("/api/searches", { cache: "no-store" });
-    if (!response.ok) throw new Error("Não foi possível carregar as buscas.");
-    const data = await response.json();
+export function SearchWorkspace({
+  initialSearchId = "",
+}: {
+  initialSearchId?: string;
+}) {
+  const [saved, setSaved] = useState<Saved[]>([]),
+    [integrations, setIntegrations] = useState<Integration[]>([]),
+    [selected, setSelected] = useState(initialSearchId),
+    [busy, setBusy] = useState(false),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState(""),
+    [notice, setNotice] = useState(""),
+    [sort, setSort] = useState<"discount" | "price" | "recent">("discount");
+  const pending = useRef(false);
+  const { vehicles } = useWorkspace();
+  const refresh = useCallback(async () => {
+    const res = await fetch("/api/searches", { cache: "no-store" });
+    if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
+    const data = await res.json();
     setSaved(data.searches);
     setIntegrations(data.integrations);
-    setSelected((id) =>
-      data.searches.some((s: Saved) => s.id === id)
-        ? id
-        : (data.searches[0]?.id ?? ""),
-    );
-  }
+  }, []);
   useEffect(() => {
     let cancelled = false;
-    const load = async () => {
-      try {
-        await refresh();
-      } catch {
-        if (!cancelled)
-          setError("Não foi possível carregar as buscas. Recarregue a página.");
-      } finally {
+    Promise.resolve()
+      .then(() => refresh())
+      .catch((e) => {
+        if (!cancelled) setError(e.message);
+      })
+      .finally(() => {
         if (!cancelled) setLoading(false);
-      }
-    };
-    void load();
+      });
     return () => {
       cancelled = true;
     };
-  }, []);
-  const active = saved.find((s) => s.id === selected);
-  const run = active?.latest;
-  const listings = run?.sources.flatMap((s) => s.listings) ?? [];
-  const eligible = listings.filter((r) => !r.reasons.length);
-  const configuredSources = new Set(
-    integrations.filter((item) => item.configured).map((item) => item.source),
+  }, [refresh]);
+  const active = saved.find((s) => s.id === selected),
+    criteria = active?.criteria,
+    run = active?.latest;
+  const candidates = sortListings(
+    run?.sources
+      .filter((s) => s.status === "ok")
+      .flatMap((s) => s.listings)
+      .filter((row) => !row.reasons.length) ?? [],
+    sort,
   );
-  const activeHasUsableSource = Boolean(
-    active?.criteria.sources.some((source) => configuredSources.has(source)),
-  );
-  async function runSearch(id: string) {
-    const response = await fetch(`/api/searches/${id}/run`, { method: "POST" });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error);
-    const completed = result as Run;
-    await refresh();
-    setShowNear(false);
-    const succeeded = completed.sources.filter(
-      (source) => source.status === "ok",
-    );
-    setNotice(
-      succeeded.length === completed.sources.length
-        ? succeeded.some((source) => source.partial)
-          ? "Busca concluída com cobertura parcial. Confira os anúncios e limites de cada fonte."
-          : "Busca concluída em todas as fontes selecionadas."
-        : succeeded.length
-          ? "Resultado parcial: uma fonte retornou anúncios e outra não concluiu."
-          : "Nenhuma fonte conseguiu concluir a busca. Confira o estado das integrações.",
-    );
-  }
-  async function save(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending.current) return;
     setError("");
     setNotice("");
-    const intent = (event.nativeEvent as SubmitEvent)
-      .submitter as HTMLButtonElement | null;
-    const runAfterSave = intent?.value === "search";
-    const form = new FormData(event.currentTarget);
-    const nullable = (key: string) =>
-      form.get(key) === "" ? null : Number(form.get(key));
+    const form = new FormData(event.currentTarget),
+      optional = (key: string) =>
+        form.get(key) === "" ? null : Number(form.get(key));
     const parsed = searchSchema.safeParse({
-      name: form.get("name"),
+      name: `${form.get("brand")} ${form.get("model")} · ${form.get("city")}`.slice(
+        0,
+        100,
+      ),
       brand: form.get("brand"),
       model: form.get("model"),
+      version: form.get("version"),
       city: form.get("city"),
       state: form.get("state"),
-      yearMin: nullable("yearMin"),
-      yearMax: nullable("yearMax"),
-      priceMax: nullable("priceMax"),
-      mileageMax: nullable("mileageMax"),
+      yearMin: optional("yearMin"),
+      yearMax: optional("yearMax"),
+      mileageMax: optional("mileageMax"),
+      priceMax: optional("priceMax"),
       privateOnly: form.get("privateOnly") === "on",
-      olxUrl: "",
       sources: form.getAll("sources"),
+      olxUrl: criteria?.olxUrl ?? "",
     });
     if (!parsed.success) {
-      setError(parsed.error.issues.map((i) => i.message).join(" "));
+      setError(
+        "Revise os critérios: " +
+          parsed.error.issues.map((i) => i.message).join(" "),
+      );
       return;
     }
+    const saveOnly =
+      (event.nativeEvent as SubmitEvent).submitter?.getAttribute("value") ===
+      "save";
+    pending.current = true;
     setBusy(true);
     try {
       const response = await fetch("/api/searches", {
@@ -187,69 +122,63 @@ export function SearchWorkspace() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
       setSelected(result.id);
-      if (runAfterSave) await runSearch(result.id);
+      if (saveOnly) setNotice("Critérios salvos. Nenhuma consulta realizada.");
       else {
-        await refresh();
-        setNotice("Busca salva sem consultar as plataformas.");
+        const response = await fetch(`/api/searches/${result.id}/run`, {
+          method: "POST",
+        });
+        const resultRun = await response.json();
+        if (!response.ok) throw new Error(resultRun.error);
+        setNotice(
+          resultRun.cached
+            ? "Consulta recente reutilizada, sem novo consumo de créditos."
+            : "Consulta encerrada. Confira o estado de cada fonte abaixo.",
+        );
       }
+      await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao salvar.");
+      setError(
+        e instanceof Error ? e.message : "Não foi possível concluir a busca.",
+      );
+      await refresh().catch(() => {});
     } finally {
-      setBusy(false);
-    }
-  }
-  async function execute() {
-    if (!active || busy) return;
-    setBusy(true);
-    setError("");
-    setNotice("");
-    setFailedAttemptAt(null);
-    try {
-      await runSearch(active.id);
-    } catch (e) {
-      setFailedAttemptAt(new Date().toISOString());
-      setError(e instanceof Error ? e.message : "Falha ao consultar.");
-    } finally {
+      pending.current = false;
       setBusy(false);
     }
   }
   return (
-    <>
+    <div className="focus-workspace">
       <div className="page-heading">
         <div>
-          <div className="eyebrow">SEU RADAR DE OPORTUNIDADES</div>
+          <div className="eyebrow">CARRO CERTO. PREÇO EM PERSPECTIVA.</div>
           <h1>Buscar carros</h1>
           <p className="muted">
-            Informe o carro e consulte anúncios reais na OLX e Webmotors.
+            Encontre anúncios reais e veja quais custam menos que os
+            semelhantes.
           </p>
         </div>
+        <Link className="button" href="/radares">
+          <Radio size={16} /> Meus radares
+        </Link>
       </div>
-      <div className="discovery-status-grid">
+      <div className="source-strip" aria-label="Estado das fontes">
         {integrations.map((i) => (
-          <section className="panel" key={i.source}>
-            <h2>{sourceNames[i.source]}</h2>
-            <p className={i.lastSuccessfulAt ? "discovery-info" : "muted"}>
-              {!i.configured
-                ? "Configuração necessária"
-                : i.lastSuccessfulAt
-                  ? `Verificada em consulta em ${when(i.lastSuccessfulAt)}`
-                  : "Configurada · conexão ainda não verificada"}
-            </p>
-            <p className="muted">
-              Até {i.cost} crédito(s) por consulta · controle local:{" "}
-              {i.reservedToday}/{i.dailyLimit} hoje
-            </p>
-            {i.lastAttemptAt && i.lastAttemptStatus !== "ok" && (
-              <p className="discovery-warning">
-                Última tentativa em {when(i.lastAttemptAt)} não foi concluída.
-              </p>
-            )}
-          </section>
+          <span key={i.source}>
+            <strong>{sourceNames[i.source]}</strong> ·{" "}
+            {!i.configured
+              ? (i.configurationMessage ?? "Configuração pendente")
+              : i.lastSuccessfulAt
+                ? "Última consulta: " + observedWhen(i.lastSuccessfulAt)
+                : "Configurada; consulta ainda não verificada"}
+          </span>
         ))}
+        <Link href="/configuracoes">Fontes e limites</Link>
       </div>
       {error && (
         <div className="error-box" role="alert">
           {error}
+          {run &&
+            " Os resultados anteriores permanecem identificados pela data da consulta."}
         </div>
       )}
       {notice && (
@@ -260,41 +189,59 @@ export function SearchWorkspace() {
       <div className="discovery-layout">
         <section className="panel">
           <h2>
-            <BookmarkPlus size={18} /> Nova busca
+            <SlidersHorizontal size={17} /> O que você procura?
           </h2>
-          <p className="muted discovery-help">
-            Salvar não consome créditos. Não há consulta automática.
-          </p>
-          <form onSubmit={save} className="discovery-form">
-            <label>
-              Nome da busca
-              <input
-                name="name"
-                required
-                maxLength={100}
-                placeholder="Meu próximo Corolla"
-              />
-            </label>
+          <form
+            key={`${selected}:${active ? "loaded" : "new"}`}
+            onSubmit={submit}
+            className="discovery-form"
+          >
             <div className="form-grid two">
               <label>
                 Marca
                 <input
                   name="brand"
+                  list="known-brands"
                   required
                   maxLength={80}
                   placeholder="Toyota"
+                  defaultValue={criteria?.brand}
                 />
               </label>
               <label>
                 Modelo
                 <input
                   name="model"
+                  list="known-models"
                   required
                   maxLength={100}
                   placeholder="Corolla"
+                  defaultValue={criteria?.model}
                 />
               </label>
             </div>
+            <datalist id="known-brands">
+              {[...new Set(vehicles.map((v) => v.brand))].map((x) => (
+                <option key={x} value={x} />
+              ))}
+            </datalist>
+            <datalist id="known-models">
+              {[...new Set(vehicles.map((v) => v.model))].map((x) => (
+                <option key={x} value={x} />
+              ))}
+            </datalist>
+            <label>
+              Versão{" "}
+              <small>
+                Opcional · correspondência com a identificação da fonte
+              </small>
+              <input
+                name="version"
+                maxLength={120}
+                placeholder="Ex.: XEi 2.0"
+                defaultValue={criteria?.version}
+              />
+            </label>
             <div className="form-grid two">
               <label>
                 Cidade
@@ -303,371 +250,268 @@ export function SearchWorkspace() {
                   required
                   maxLength={120}
                   placeholder="Curitiba"
+                  defaultValue={criteria?.city}
                 />
               </label>
               <label>
                 UF
-                <select name="state" defaultValue="PR">
-                  {states.map((s) => (
-                    <option key={s}>{s}</option>
+                <select name="state" defaultValue={criteria?.state ?? "PR"}>
+                  {states.map((x) => (
+                    <option key={x}>{x}</option>
                   ))}
                 </select>
               </label>
             </div>
             <div className="form-grid two">
               <label>
-                Ano-modelo mínimo
-                <input name="yearMin" type="number" min="1900" max="2100" />
+                Ano-modelo de
+                <input
+                  name="yearMin"
+                  type="number"
+                  min="1900"
+                  max="2100"
+                  defaultValue={criteria?.yearMin ?? ""}
+                />
               </label>
               <label>
-                Ano-modelo máximo
-                <input name="yearMax" type="number" min="1900" max="2100" />
+                Ano-modelo até
+                <input
+                  name="yearMax"
+                  type="number"
+                  min="1900"
+                  max="2100"
+                  defaultValue={criteria?.yearMax ?? ""}
+                />
               </label>
             </div>
-            <div className="form-grid two">
-              <label>
-                Preço máximo (R$)
-                <input name="priceMax" type="number" min="1" max="10000000" />
-              </label>
-              <label>
-                Quilometragem máxima
-                <input name="mileageMax" type="number" min="0" max="10000000" />
-              </label>
-            </div>
+            <label>
+              Quilometragem máxima
+              <input
+                name="mileageMax"
+                type="number"
+                min="0"
+                max="10000000"
+                placeholder="Sem limite"
+                defaultValue={criteria?.mileageMax ?? ""}
+              />
+            </label>
+            <label>
+              Orçamento máximo (R$)
+              <input
+                name="priceMax"
+                type="number"
+                min="1"
+                max="10000000"
+                placeholder="Opcional"
+                defaultValue={criteria?.priceMax ?? ""}
+              />
+            </label>
+            <p className="discovery-help muted">
+              O orçamento filtra os resultados. Os semelhantes mais caros
+              continuam na referência.
+            </p>
             <label className="discovery-check">
-              <input type="checkbox" name="privateOnly" /> Somente particulares
-              confirmados
+              <input
+                type="checkbox"
+                name="privateOnly"
+                defaultChecked={criteria?.privateOnly}
+              />{" "}
+              Somente particulares confirmados
             </label>
             <fieldset>
-              <legend>Fontes</legend>
-              <label className="discovery-check">
-                <input
-                  type="checkbox"
-                  name="sources"
-                  value="olx"
-                  defaultChecked
-                />{" "}
-                OLX
-              </label>
-              <label className="discovery-check">
-                <input
-                  type="checkbox"
-                  name="sources"
-                  value="webmotors"
-                  defaultChecked
-                />{" "}
-                Webmotors
-              </label>
+              <legend>Consultar em</legend>
+              {(["olx", "webmotors"] as Source[]).map((source) => (
+                <label className="discovery-check" key={source}>
+                  <input
+                    name="sources"
+                    value={source}
+                    type="checkbox"
+                    defaultChecked={
+                      criteria ? criteria.sources.includes(source) : true
+                    }
+                  />
+                  {sourceNames[source]}
+                </label>
+              ))}
             </fieldset>
-            <p className="muted discovery-help">
-              A busca na OLX é montada automaticamente com o carro e a cidade
-              informados. Uma cidade nova pode consumir 1 crédito Reef adicional
-              para localizar a região; depois essa informação é reaproveitada.
-            </p>
-            <div className="form-actions discovery-form-actions">
-              <button
-                disabled={busy}
-                className="button primary"
-                type="submit"
-                name="intent"
-                value="search"
-              >
-                <Search size={17} /> {busy ? "Buscando…" : "Buscar agora"}
-              </button>
-              <button
-                disabled={busy}
-                className="button"
-                type="submit"
-                name="intent"
-                value="save"
-              >
-                <BookmarkPlus size={17} /> Só salvar critérios
-              </button>
-            </div>
+            <button
+              className="button primary"
+              type="submit"
+              disabled={busy || loading}
+            >
+              <Search size={17} />
+              {busy ? "Consultando fontes…" : "Buscar agora"}
+            </button>
+            <button
+              className="text-button"
+              type="submit"
+              value="save"
+              disabled={busy || loading}
+            >
+              Salvar critérios sem consultar
+            </button>
+            <details className="search-costs">
+              <summary>Consumo desta busca</summary>
+              <p>
+                Uma página por fonte. OLX: 1 crédito Gecko; Webmotors: 2
+                créditos Reef. Uma cidade nova na OLX pode exigir 1 crédito Reef
+                adicional. Limites e saldo gratuito são verificados antes da
+                coleta.
+              </p>
+              {integrations.map((i) => (
+                <p key={i.source}>
+                  {sourceNames[i.source]}: {i.reservedToday}/{i.dailyLimit}{" "}
+                  créditos reservados hoje.
+                </p>
+              ))}
+            </details>
           </form>
         </section>
-        <section className="discovery-results">
-          <div className="panel">
+        <section
+          className="discovery-results"
+          aria-busy={busy}
+          aria-label="Resultados da busca"
+        >
+          <div className="results-controls">
             <label>
-              Buscas salvas
+              Retomar uma busca
               <select
-                disabled={busy || !saved.length}
+                disabled={busy}
                 value={selected}
                 onChange={(e) => {
                   setSelected(e.target.value);
-                  setShowNear(false);
+                  setError("");
                   setNotice("");
-                  setFailedAttemptAt(null);
                 }}
               >
-                {!saved.length && <option value="">Nenhuma busca salva</option>}
+                <option value="">Nova busca</option>
                 {saved.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.criteria.name} · {s.criteria.brand} {s.criteria.model} ·{" "}
-                    {s.criteria.city}/{s.criteria.state}
+                    {s.criteria.name}
                   </option>
                 ))}
               </select>
             </label>
             {active && (
-              <>
-                <p className="discovery-help">
-                  {active.criteria.brand} {active.criteria.model} ·{" "}
-                  {active.criteria.city}/{active.criteria.state} ·{" "}
-                  {active.criteria.sources
-                    .map((s) => sourceNames[s])
-                    .join(" + ")}
-                </p>
-                <button
-                  className="button primary"
-                  disabled={busy || !activeHasUsableSource}
-                  onClick={() => void execute()}
-                >
-                  {busy ? (
-                    <RefreshCw size={17} className="spin" />
-                  ) : (
-                    <Search size={17} />
-                  )}
-                  {busy ? "Consultando…" : "Consultar agora"}
-                </button>
-                {!activeHasUsableSource && (
-                  <div className="discovery-blocked" role="status">
-                    <strong>Nenhuma fonte utilizável nesta busca.</strong>
-                    <span>
-                      Configure ao menos uma integração selecionada antes de
-                      consultar. Salvar os critérios continua disponível e não
-                      consome créditos.
-                    </span>
-                    <Link className="button" href="/configuracoes">
-                      Abrir configurações
-                    </Link>
-                  </div>
-                )}
-                <p className="discovery-help muted">
-                  Ano-modelo: {active.criteria.yearMin ?? "sem mínimo"} a{" "}
-                  {active.criteria.yearMax ?? "sem máximo"} · Preço:{" "}
-                  {active.criteria.priceMax === null
-                    ? "sem teto"
-                    : `até ${money(active.criteria.priceMax * 100)}`}{" "}
-                  · Km:{" "}
-                  {active.criteria.mileageMax === null
-                    ? "sem teto"
-                    : `até ${number(active.criteria.mileageMax)}`}{" "}
-                  ·{" "}
-                  {active.criteria.privateOnly
-                    ? "Somente particulares"
-                    : "Particulares e profissionais"}
-                </p>
-                <p className="muted discovery-help">
-                  Uma página por fonte. Novos e usados, salvo os demais
-                  critérios. Sem FIPE ou alertas automáticos nesta etapa.
-                </p>
-              </>
+              <Link
+                className="button"
+                href={`/radares?busca=${encodeURIComponent(active.id)}`}
+              >
+                <Radio size={16} /> Criar alerta desta busca
+              </Link>
             )}
           </div>
-          {loading ? (
-            <p role="status">Carregando buscas…</p>
-          ) : !active ? (
-            <div className="empty-state">
-              <Search size={30} />
-              <h2>Comece pelo carro que procura</h2>
+          {busy ? (
+            <div className="empty-state" role="status">
+              <Search size={26} />
+              <h2>Consultando os anúncios</h2>
               <p>
-                Salve uma busca ao lado. Seus cadastros no catálogo continuam
-                disponíveis.
+                A consulta pode levar alguns instantes. Os cliques repetidos são
+                bloqueados.
               </p>
             </div>
+          ) : loading ? (
+            <p role="status">Carregando buscas…</p>
           ) : !run ? (
             <div className="empty-state">
-              <Search size={30} />
-              <h2>Sua busca está pronta</h2>
+              <Search size={28} />
+              <h2>
+                {active
+                  ? "Critérios prontos para consultar"
+                  : "Comece pelo carro que procura"}
+              </h2>
               <p>
-                Clique em Consultar agora para buscar nos portais selecionados.
+                Preencha os filtros e clique em Buscar agora. A comparação
+                aparece aqui, sem cadastrar cada anúncio.
               </p>
             </div>
           ) : (
             <>
-              {failedAttemptAt && (
-                <div className="discovery-stale-note" role="status">
-                  A tentativa de {when(failedAttemptAt)} falhou antes de gerar
-                  novos resultados. Os dados abaixo pertencem à consulta
-                  anterior.
-                </div>
-              )}
               <p className="muted">
-                Consulta armazenada em {when(run.createdAt)}. Os resultados
-                abaixo pertencem somente a essa execução.
+                Consulta de {observedWhen(run.createdAt)}. A referência é
+                recalculada com as observações disponíveis dos últimos 7 dias.
               </p>
               {run.interrupted && (
-                <div className="error-box">
-                  Esta consulta não foi concluída. Aguarde alguns minutos antes
-                  de tentar novamente.
-                </div>
+                <p className="error-box" role="alert">
+                  Consulta interrompida. Nenhum resultado completo foi
+                  confirmado.
+                </p>
               )}
-              {run.sources.map((s) => (
-                <div
-                  key={s.source}
-                  className={`panel discovery-source ${s.status === "ok" ? "" : "discovery-source-error"}`}
-                >
-                  <h2>
-                    {sourceNames[s.source]} ·{" "}
-                    {s.status === "ok"
-                      ? "Consultada"
-                      : s.status === "unconfigured"
-                        ? "Não conectada"
-                        : "Falhou"}
-                  </h2>
-                  {s.status === "ok" && s.partial && (
-                    <p className="discovery-warning">
-                      Resultado parcial: a cobertura foi limitada a uma página.
-                    </p>
-                  )}
-                  <p>{s.message}</p>
-                  {!!s.locationCredits && (
-                    <p className="muted">
-                      Localização automática: {s.locationCredits} crédito(s)
-                      Reef reservado(s).
-                    </p>
-                  )}
-                  {s.status === "ok" && (
-                    <p className="muted">
-                      {s.listings.length} recebidos ·{" "}
-                      {s.total === null
-                        ? "total desconhecido"
-                        : `${number(s.total)} declarados pela fonte`}{" "}
-                      · {(s.elapsedMs / 1000).toFixed(1)} s ·{" "}
-                      {s.creditsReserved} crédito(s) reservado(s)
-                    </p>
-                  )}
-                </div>
-              ))}
-              <div className="discovery-result-bar">
-                <strong>
-                  {eligible.length}{" "}
-                  {eligible.length === 1 ? "atende" : "atendem"} aos critérios
-                </strong>
-                <label className="discovery-check">
-                  <input
-                    type="checkbox"
-                    checked={showNear}
-                    onChange={(e) => setShowNear(e.target.checked)}
-                  />{" "}
-                  Mostrar também {listings.length - eligible.length} fora dos
-                  critérios
+              <div className="source-results">
+                {run.sources.map((s) => (
+                  <details key={s.source} open={s.status !== "ok"}>
+                    <summary>
+                      {sourceNames[s.source]} ·{" "}
+                      {s.status === "ok"
+                        ? s.partial
+                          ? "Cobertura parcial"
+                          : "Consultada"
+                        : s.status === "unconfigured"
+                          ? "Não conectada"
+                          : "Falhou"}
+                      {s.status === "ok"
+                        ? ` · ${s.listings.filter((r) => !r.reasons.length).length} candidatos`
+                        : ""}
+                    </summary>
+                    <p>{s.message}</p>
+                    <small>
+                      {observedWhen(s.observedAt)} · {s.listings.length}{" "}
+                      anúncios recebidos para candidatos e referência.
+                    </small>
+                  </details>
+                ))}
+              </div>
+              <div className="results-controls">
+                <h2>
+                  {candidates.length}{" "}
+                  {candidates.length === 1 ? "candidato" : "candidatos"}
+                </h2>
+                <label>
+                  Ordenar por
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value as typeof sort)}
+                  >
+                    <option value="discount">
+                      Maior percentual abaixo da média
+                    </option>
+                    <option value="price">Menor preço</option>
+                    <option value="recent">Observados mais recentemente</option>
+                  </select>
                 </label>
               </div>
-              {!listings.length &&
-                run.sources.some((s) => s.status === "ok") && (
-                  <div className="empty-state">
-                    <h2>Nenhuma correspondência na consulta válida</h2>
-                    <p>
-                      Ao menos uma fonte respondeu sem anúncios para este
-                      recorte. Confira fontes que falharam e os limites de
-                      cobertura acima.
-                    </p>
-                  </div>
-                )}
-              {!run.interrupted &&
-                !run.sources.some((source) => source.status === "ok") && (
-                  <div className="error-box">
-                    Nenhuma fonte concluiu esta tentativa. Isso não significa
-                    que não existam anúncios para os critérios informados.
-                  </div>
-                )}
-              {!!listings.length && !eligible.length && !showNear && (
+              {!candidates.length && (
                 <div className="empty-state">
-                  <h2>Nenhum atende a todos os critérios</h2>
+                  <h2>
+                    {run.sources.some((s) => s.status === "ok")
+                      ? "Nenhum candidato neste recorte"
+                      : "Busca indisponível"}
+                  </h2>
                   <p>
-                    Você pode examinar os demais anúncios e os motivos de
-                    exclusão.
+                    {run.sources.some((s) => s.status === "ok")
+                      ? "As fontes que responderam não trouxeram candidatos que atendam a todos os filtros. A cobertura de uma página pode limitar os resultados."
+                      : "Nenhuma fonte concluiu a consulta. Confira a configuração e as falhas acima."}
                   </p>
                 </div>
               )}
-              {listings
-                .filter((r) => showNear || !r.reasons.length)
-                .map((r) => (
-                  <article
-                    key={`${run.id}-${r.source}-${r.externalId}`}
-                    className="panel discovery-card"
-                  >
-                    <div className="discovery-card-top">
-                      <span className="eyebrow">
-                        {sourceNames[r.source]} ·{" "}
-                        {r.sellerType === "private"
-                          ? "Particular"
-                          : r.sellerType === "professional"
-                            ? "Profissional"
-                            : "Anunciante não confirmado"}
-                      </span>
-                      <span
-                        className={
-                          r.reasons.length
-                            ? "discovery-warning"
-                            : "discovery-good"
-                        }
-                      >
-                        {r.reasons.length
-                          ? "Fora dos critérios"
-                          : "Atende aos critérios"}
-                      </span>
-                    </div>
-                    <h2>{r.title}</h2>
-                    <div className="discovery-price">{money(r.priceCents)}</div>
-                    <p>
-                      {r.modelYear ?? "Ano não informado"} ·{" "}
-                      {r.mileage === null
-                        ? "Km não informado"
-                        : `${number(r.mileage)} km`}{" "}
-                      ·{" "}
-                      {[r.city, r.state].filter(Boolean).join(" / ") ||
-                        "Local desconhecido"}
-                    </p>
-                    {r.isNew && (
-                      <p className="muted">
-                        Primeira observação no seu radar; não indica data de
-                        publicação.
-                      </p>
-                    )}
-                    {r.previousPriceCents !== null &&
-                      r.previousPriceCents !== undefined &&
-                      r.priceCents !== null &&
-                      r.priceCents !== r.previousPriceCents && (
-                        <p
-                          className={
-                            r.priceCents < r.previousPriceCents
-                              ? "discovery-good"
-                              : "discovery-warning"
-                          }
-                        >
-                          Antes: {money(r.previousPriceCents)} ·{" "}
-                          {r.priceCents < r.previousPriceCents
-                            ? "Queda de"
-                            : "Aumento de"}{" "}
-                          {money(Math.abs(r.priceCents - r.previousPriceCents))}
-                        </p>
-                      )}
-                    {!!r.reasons.length && (
-                      <ul className="discovery-reasons">
-                        {r.reasons.map((reason) => (
-                          <li key={reason}>{reason}</li>
-                        ))}
-                      </ul>
-                    )}
-                    <p className="muted">Observado em {when(r.observedAt)}</p>
-                    <a
-                      className="button"
-                      href={r.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      Abrir anúncio original <ExternalLink size={15} />
-                    </a>
-                    <PriceHistory listing={r} />
-                  </article>
-                ))}
+              {candidates.map((row) => (
+                <ListingCard
+                  key={`${row.source}:${row.externalId}`}
+                  listing={row}
+                  searchId={active?.id}
+                />
+              ))}
+              {candidates.length > 0 && (
+                <p className="muted">
+                  Abaixo da média descreve preços anunciados da amostra
+                  observada. Confira condição e disponibilidade no anúncio
+                  original.
+                </p>
+              )}
             </>
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }
