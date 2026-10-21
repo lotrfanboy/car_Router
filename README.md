@@ -1,17 +1,17 @@
 # Radar Automotivo
 
-Aplicação local de usuário único para cadastrar, organizar e comparar anúncios de veículos usados. Banco SQLite persistente, sem serviços pagos, credenciais, importadores, scraping, integrações ou dados de demonstração na inicialização.
+Aplicação local de usuário único para cadastrar, organizar e comparar anúncios de veículos. A área de buscas consulta OLX/Gecko e Webmotors/Reef mediante configuração opcional no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
 ## Executar no Windows
 
-Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O MVP está disponível na branch `main`.
+Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O incremento de buscas integradas está na branch `research/integracoes-2026-10-21`, em revisão no PR #2.
 
 No PowerShell:
 
 ```powershell
 git clone https://github.com/lotrfanboy/car_Router.git
 cd car_Router
-git switch main
+git switch research/integracoes-2026-10-21
 Copy-Item .env.example .env
 npm ci
 npm run setup
@@ -56,7 +56,7 @@ Valores monetários são armazenados em **centavos inteiros**. A diferença é `
 - `src/components`: componentes, formulário e estado da interface.
 - `prisma/schema.prisma` e `prisma/migrations`: modelo e migração versionada.
 
-Uma única entidade Vehicle reúne os dados do anúncio neste MVP; não há entidades artificiais sem uso. IDs, campos obrigatórios e índices estão no banco; limites, URLs HTTP/HTTPS, enumerações e coerência de anos são validados no servidor. Futuras integrações poderão chamar a camada de persistência/validação sem depender da interface.
+Vehicle reúne os dados do anúncio neste MVP; VehiclePrice mantém as observações locais de preço. IDs, campos obrigatórios e índices estão no banco; limites, URLs HTTP/HTTPS, enumerações e coerência de anos são validados no servidor. Futuras integrações poderão chamar a camada de persistência/validação sem depender da interface.
 
 A instalação usa o motor JavaScript do Prisma. O **adaptador de migrações no Prisma 6 é experimental** e está fixado na versão 6.19. O motor nativo não pôde ser baixado na nuvem por restrição de rede; a alternativa JavaScript foi efetivamente validada com migrações e testes. Webpack é usado explicitamente para evitar a dependência de sockets internos do Turbopack neste ambiente.
 
@@ -105,6 +105,28 @@ Veja [resultados de validação](docs/VALIDACAO.md) e [screenshots](docs/screens
 - O catálogo é carregado integralmente e filtrado no navegador. Paginação e consulta filtrada no servidor ficam para volumes maiores.
 - Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no SQLite.
 - Imagens são URLs externas carregadas pelo navegador, sem upload, cache ou garantia de disponibilidade; não há busca de imagens pelo servidor.
-- Não há histórico de preços, sincronização, múltiplos usuários, notificações ou coleta automática.
+- Não há sincronização, múltiplos usuários, notificações ou coleta automática. O histórico local de preços foi acrescentado na etapa de pesquisa descrita abaixo.
 - Instalação inicial requer acesso ao npm; depois de instalado, o núcleo funciona sem serviços externos.
 - A execução foi validada em Linux na nuvem; as instruções Windows são fornecidas, mas não houve máquina Windows disponível para verificação.
+
+## Pesquisa e base de monitoramento (21/10/2026)
+
+A branch de pesquisa acrescenta histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
+
+Depois de atualizar o código, use `npm run setup` para gerar o cliente e aplicar a migração aditiva. Faça backup antes de atualizar seu banco de uso. O histórico pode ser consultado em `GET /api/vehicles/:id/prices`; não há tela nova ou coleta automática.
+
+Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
+
+Documentos desta investigação:
+
+- [Pesquisa e matriz de decisão](docs/pesquisa-integracoes.md)
+- [Custos e cenários](docs/comparativo-custos.md)
+- [Arquitetura alinhada ao código](docs/arquitetura-integracoes.md)
+- [Plano e aprovações pendentes](docs/plano-implementacao.md)
+- [Evidências desta etapa](docs/evidencias-integracoes.md)
+
+Os documentos iniciais registram etapas históricas. As provas posteriores de fonte e a implementação pessoal autorizada estão no [guia do MVP](docs/mvp-buscas-integradas.md). Uso comercial e operação contínua ainda dependem de qualificação.
+
+## Buscas nos portais — MVP pessoal
+
+A área `/buscar` permite salvar critérios e consultar manualmente OLX via Gecko e Webmotors via Reef, com estado por fonte, conferência local de filtros e histórico dos preços observados. Configuração, limites gratuitos e restrições: [guia do MVP](docs/mvp-buscas-integradas.md). Não há consultas automáticas ao abrir a página.

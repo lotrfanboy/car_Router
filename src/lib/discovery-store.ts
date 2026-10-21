@@ -1,0 +1,191 @@
+import { db } from "./db";
+import { searchSchema, type SearchResult, type Source } from "./discovery";
+import { fetchSource, providerConfig } from "./discovery-providers";
+
+export class SearchError extends Error {
+  constructor(
+    message: string,
+    public status = 400,
+  ) {
+    super(message);
+  }
+}
+const dailyLimit = 10;
+const trialLimit = { gecko: 20, reef: 40 };
+export async function reserveCredits(provider: string, credits: number) {
+  if (!(provider in trialLimit) || credits < 1)
+    throw new SearchError("Orçamento inválido.");
+  await db.$transaction(async (tx) => {
+    const day = new Date();
+    day.setUTCHours(0, 0, 0, 0);
+    const [today, all] = await Promise.all([
+      tx.providerSpend.aggregate({
+        where: { provider, createdAt: { gte: day } },
+        _sum: { credits: true },
+      }),
+      tx.providerSpend.aggregate({
+        where: { provider },
+        _sum: { credits: true },
+      }),
+    ]);
+    if (
+      (today._sum.credits ?? 0) + credits > dailyLimit ||
+      (all._sum.credits ?? 0) + credits >
+        trialLimit[provider as keyof typeof trialLimit]
+    )
+      throw new SearchError(
+        "Orçamento gratuito local atingido. Nenhuma recarga será feita.",
+        429,
+      );
+    // Count even ambiguous failures conservatively: a timeout may still have been billed upstream.
+    await tx.providerSpend.create({ data: { provider, credits } });
+  });
+}
+export async function integrationStatus() {
+  return Promise.all(
+    (["olx", "webmotors"] as Source[]).map(async (source) => {
+      const { configured, cost, provider } = providerConfig(source);
+      const day = new Date();
+      day.setUTCHours(0, 0, 0, 0);
+      const spent = await db.providerSpend.aggregate({
+        where: { provider, createdAt: { gte: day } },
+        _sum: { credits: true },
+      });
+      return {
+        source,
+        configured,
+        cost,
+        reservedToday: spent._sum.credits ?? 0,
+        dailyLimit,
+      };
+    }),
+  );
+}
+export async function listSearches() {
+  const rows = await db.savedSearch.findMany({
+    orderBy: { createdAt: "desc" },
+    include: { runs: { orderBy: { createdAt: "desc" }, take: 1 } },
+  });
+  return rows.map((row) => ({
+    id: row.id,
+    criteria: JSON.parse(row.criteria),
+    latest: row.runs[0]
+      ? {
+          id: row.runs[0].id,
+          createdAt: row.runs[0].createdAt,
+          ...JSON.parse(row.runs[0].result),
+        }
+      : null,
+  }));
+}
+export async function saveSearch(input: unknown) {
+  const data = searchSchema.parse(input);
+  if ((await db.savedSearch.count()) >= 30)
+    throw new SearchError("Limite de 30 buscas salvas neste MVP.");
+  return db.savedSearch.create({
+    data: { name: data.name, criteria: JSON.stringify(data) },
+  });
+}
+export async function executeSearch(id: string) {
+  const search = await db.savedSearch.findUnique({ where: { id } });
+  if (!search) throw new SearchError("Busca não encontrada.", 404);
+  const criteria = searchSchema.parse(JSON.parse(search.criteria));
+  const last = await db.searchRun.findFirst({
+    where: { searchId: id },
+    orderBy: { createdAt: "desc" },
+  });
+  if (last && Date.now() - last.createdAt.getTime() < 60000)
+    throw new SearchError(
+      "Aguarde um minuto entre consultas da mesma busca.",
+      429,
+    );
+  try {
+    await db.$transaction(async (tx) => {
+      await tx.searchLock.deleteMany({
+        where: { expiresAt: { lt: new Date() } },
+      });
+      await tx.searchLock.create({
+        data: { id: "manual-search", expiresAt: new Date(Date.now() + 300000) },
+      });
+    });
+  } catch {
+    throw new SearchError("Aguarde: outra consulta está em andamento.", 409);
+  }
+  try {
+    // Recheck after acquiring the shared lock, including requests that waited on SQLite.
+    const recent = await db.searchRun.findFirst({
+      where: { searchId: id },
+      orderBy: { createdAt: "desc" },
+    });
+    if (recent && Date.now() - recent.createdAt.getTime() < 60000)
+      throw new SearchError(
+        "Aguarde um minuto entre consultas da mesma busca.",
+        429,
+      );
+    const run = await db.searchRun.create({
+      data: {
+        searchId: id,
+        result: JSON.stringify({ sources: [], interrupted: true }),
+      },
+    });
+    const result: SearchResult = { sources: [] };
+    // Sequential calls keep the spend and each partial failure understandable.
+    for (const source of criteria.sources)
+      result.sources.push(await fetchSource(source, criteria, reserveCredits));
+    await db.$transaction(
+      async (tx) => {
+        for (const source of result.sources)
+          for (const row of source.listings) {
+            const previous = await tx.discoveredListing.findUnique({
+              where: {
+                source_externalId: {
+                  source: row.source,
+                  externalId: row.externalId,
+                },
+              },
+              include: { prices: { orderBy: { id: "desc" }, take: 1 } },
+            });
+            row.isNew = !previous;
+            row.previousPriceCents = previous?.prices[0]?.priceCents ?? null;
+            const saved = await tx.discoveredListing.upsert({
+              where: {
+                source_externalId: {
+                  source: row.source,
+                  externalId: row.externalId,
+                },
+              },
+              create: {
+                source: row.source,
+                externalId: row.externalId,
+                payload: JSON.stringify(row),
+                lastSeen: new Date(row.observedAt),
+              },
+              update: {
+                payload: JSON.stringify(row),
+                lastSeen: new Date(row.observedAt),
+              },
+            });
+            if (
+              row.priceCents !== null &&
+              row.priceCents !== row.previousPriceCents
+            )
+              await tx.listingPrice.create({
+                data: {
+                  listingId: saved.id,
+                  priceCents: row.priceCents,
+                  observedAt: new Date(row.observedAt),
+                },
+              });
+          }
+        await tx.searchRun.update({
+          where: { id: run.id },
+          data: { result: JSON.stringify(result) },
+        });
+      },
+      { timeout: 20000 },
+    );
+    return { id: run.id, createdAt: run.createdAt, ...result };
+  } finally {
+    await db.searchLock.deleteMany({ where: { id: "manual-search" } });
+  }
+}

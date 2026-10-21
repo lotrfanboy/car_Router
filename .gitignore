@@ -1,6 +1,9 @@
 node_modules/
 .next/
 .env
+.env.gecko.local
+.env.reef.local
+validation-private/
 *.db
 *.db-journal
 *.db-wal
