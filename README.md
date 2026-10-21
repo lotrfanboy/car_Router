@@ -56,7 +56,7 @@ Valores monetários são armazenados em **centavos inteiros**. A diferença é `
 - `src/components`: componentes, formulário e estado da interface.
 - `prisma/schema.prisma` e `prisma/migrations`: modelo e migração versionada.
 
-Uma única entidade Vehicle reúne os dados do anúncio neste MVP; não há entidades artificiais sem uso. IDs, campos obrigatórios e índices estão no banco; limites, URLs HTTP/HTTPS, enumerações e coerência de anos são validados no servidor. Futuras integrações poderão chamar a camada de persistência/validação sem depender da interface.
+Vehicle reúne os dados do anúncio neste MVP; VehiclePrice mantém as observações locais de preço. IDs, campos obrigatórios e índices estão no banco; limites, URLs HTTP/HTTPS, enumerações e coerência de anos são validados no servidor. Futuras integrações poderão chamar a camada de persistência/validação sem depender da interface.
 
 A instalação usa o motor JavaScript do Prisma. O **adaptador de migrações no Prisma 6 é experimental** e está fixado na versão 6.19. O motor nativo não pôde ser baixado na nuvem por restrição de rede; a alternativa JavaScript foi efetivamente validada com migrações e testes. Webpack é usado explicitamente para evitar a dependência de sockets internos do Turbopack neste ambiente.
 
@@ -105,6 +105,24 @@ Veja [resultados de validação](docs/VALIDACAO.md) e [screenshots](docs/screens
 - O catálogo é carregado integralmente e filtrado no navegador. Paginação e consulta filtrada no servidor ficam para volumes maiores.
 - Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no SQLite.
 - Imagens são URLs externas carregadas pelo navegador, sem upload, cache ou garantia de disponibilidade; não há busca de imagens pelo servidor.
-- Não há histórico de preços, sincronização, múltiplos usuários, notificações ou coleta automática.
+- Não há sincronização, múltiplos usuários, notificações ou coleta automática. O histórico local de preços foi acrescentado na etapa de pesquisa descrita abaixo.
 - Instalação inicial requer acesso ao npm; depois de instalado, o núcleo funciona sem serviços externos.
 - A execução foi validada em Linux na nuvem; as instruções Windows são fornecidas, mas não houve máquina Windows disponível para verificação.
+
+## Pesquisa e base de monitoramento (21/10/2026)
+
+A branch de pesquisa acrescenta histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
+
+Depois de atualizar o código, use `npm run setup` para gerar o cliente e aplicar a migração aditiva. Faça backup antes de atualizar seu banco de uso. O histórico pode ser consultado em `GET /api/vehicles/:id/prices`; não há tela nova ou coleta automática.
+
+Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
+
+Documentos desta investigação:
+
+- [Pesquisa e matriz de decisão](docs/pesquisa-integracoes.md)
+- [Custos e cenários](docs/comparativo-custos.md)
+- [Arquitetura alinhada ao código](docs/arquitetura-integracoes.md)
+- [Plano e aprovações pendentes](docs/plano-implementacao.md)
+- [Evidências desta etapa](docs/evidencias-integracoes.md)
+
+Nenhuma fonte externa foi ativada ou comprovada por teste autenticado nesta etapa. A aprovação de fonte, licença e uso de credenciais precede qualquer integração específica.
