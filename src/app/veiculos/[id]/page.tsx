@@ -222,7 +222,13 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
           )}
           <div className={styles.provenance}>
             <span>
-              Fonte informada: <strong>{v.source}</strong>
+              Portal ou canal: <strong>{v.source}</strong>
+              {v.sellerType && (
+                <>
+                  {" "}
+                  · vendedor: <strong>{v.sellerType}</strong>
+                </>
+              )}
             </span>
             <span>
               {registeredPrice
@@ -398,7 +404,8 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
             ["Combustível", v.fuel],
             ["Câmbio", v.transmission],
             ["Localização", location(v)],
-            ["Fonte informada", v.source],
+            ["Portal ou canal", v.source],
+            ["Tipo de vendedor", v.sellerType || "Não informado"],
             ["Cadastrado em", recordedDate(v.createdAt)],
             ["Cadastro atualizado em", recordedDate(v.updatedAt)],
           ].map(([label, value]) => (

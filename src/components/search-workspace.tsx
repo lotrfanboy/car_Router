@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Search, ExternalLink, RefreshCw, BookmarkPlus } from "lucide-react";
 import {
   searchSchema,
@@ -22,6 +23,9 @@ type Integration = {
   cost: number;
   reservedToday: number;
   dailyLimit: number;
+  lastAttemptAt: string | null;
+  lastAttemptStatus: "ok" | "error" | "unconfigured" | null;
+  lastSuccessfulAt: string | null;
 };
 const when = (date: string) => new Date(date).toLocaleString("pt-BR");
 
@@ -84,6 +88,7 @@ export function SearchWorkspace() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [failedAttemptAt, setFailedAttemptAt] = useState<string | null>(null);
   const [showNear, setShowNear] = useState(false);
   async function refresh() {
     const response = await fetch("/api/searches", { cache: "no-store" });
@@ -118,6 +123,12 @@ export function SearchWorkspace() {
   const run = active?.latest;
   const listings = run?.sources.flatMap((s) => s.listings) ?? [];
   const eligible = listings.filter((r) => !r.reasons.length);
+  const configuredSources = new Set(
+    integrations.filter((item) => item.configured).map((item) => item.source),
+  );
+  const activeHasUsableSource = Boolean(
+    active?.criteria.sources.some((source) => configuredSources.has(source)),
+  );
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -168,16 +179,30 @@ export function SearchWorkspace() {
     setBusy(true);
     setError("");
     setNotice("");
+    setFailedAttemptAt(null);
     try {
       const response = await fetch(`/api/searches/${active.id}/run`, {
         method: "POST",
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
+      const completed = result as Run;
       await refresh();
       setShowNear(false);
-      setNotice("Consulta concluída. Confira o estado de cada fonte abaixo.");
+      const succeeded = completed.sources.filter(
+        (source) => source.status === "ok",
+      );
+      setNotice(
+        succeeded.length === completed.sources.length
+          ? succeeded.some((source) => source.partial)
+            ? "Consulta concluída com cobertura parcial. Confira os limites de cada fonte."
+            : "Consulta concluída com todas as fontes selecionadas."
+          : succeeded.length
+            ? "Resultado parcial: ao menos uma fonte respondeu e outra não concluiu."
+            : "A tentativa terminou sem uma consulta válida. Confira o estado das fontes.",
+      );
     } catch (e) {
+      setFailedAttemptAt(new Date().toISOString());
       setError(e instanceof Error ? e.message : "Falha ao consultar.");
     } finally {
       setBusy(false);
@@ -198,15 +223,22 @@ export function SearchWorkspace() {
         {integrations.map((i) => (
           <section className="panel" key={i.source}>
             <h2>{sourceNames[i.source]}</h2>
-            <p className={i.configured ? "discovery-good" : "muted"}>
-              {i.configured
-                ? "Conectada para consulta manual"
-                : "Ainda não conectada"}
+            <p className={i.lastSuccessfulAt ? "discovery-info" : "muted"}>
+              {!i.configured
+                ? "Configuração necessária"
+                : i.lastSuccessfulAt
+                  ? `Verificada em consulta em ${when(i.lastSuccessfulAt)}`
+                  : "Configurada · conexão ainda não verificada"}
             </p>
             <p className="muted">
               Até {i.cost} crédito(s) por consulta · controle local:{" "}
               {i.reservedToday}/{i.dailyLimit} hoje
             </p>
+            {i.lastAttemptAt && i.lastAttemptStatus !== "ok" && (
+              <p className="discovery-warning">
+                Última tentativa em {when(i.lastAttemptAt)} não foi concluída.
+              </p>
+            )}
           </section>
         ))}
       </div>
@@ -343,12 +375,14 @@ export function SearchWorkspace() {
                   setSelected(e.target.value);
                   setShowNear(false);
                   setNotice("");
+                  setFailedAttemptAt(null);
                 }}
               >
                 {!saved.length && <option value="">Nenhuma busca salva</option>}
                 {saved.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.criteria.name}
+                    {s.criteria.name} · {s.criteria.brand} {s.criteria.model} ·{" "}
+                    {s.criteria.city}/{s.criteria.state}
                   </option>
                 ))}
               </select>
@@ -364,7 +398,7 @@ export function SearchWorkspace() {
                 </p>
                 <button
                   className="button primary"
-                  disabled={busy}
+                  disabled={busy || !activeHasUsableSource}
                   onClick={() => void execute()}
                 >
                   {busy ? (
@@ -374,6 +408,19 @@ export function SearchWorkspace() {
                   )}
                   {busy ? "Consultando…" : "Consultar agora"}
                 </button>
+                {!activeHasUsableSource && (
+                  <div className="discovery-blocked" role="status">
+                    <strong>Nenhuma fonte utilizável nesta busca.</strong>
+                    <span>
+                      Configure ao menos uma integração selecionada antes de
+                      consultar. Salvar os critérios continua disponível e não
+                      consome créditos.
+                    </span>
+                    <Link className="button" href="/configuracoes">
+                      Abrir configurações
+                    </Link>
+                  </div>
+                )}
                 <p className="discovery-help muted">
                   Ano-modelo: {active.criteria.yearMin ?? "sem mínimo"} a{" "}
                   {active.criteria.yearMax ?? "sem máximo"} · Preço:{" "}
@@ -417,9 +464,16 @@ export function SearchWorkspace() {
             </div>
           ) : (
             <>
+              {failedAttemptAt && (
+                <div className="discovery-stale-note" role="status">
+                  A tentativa de {when(failedAttemptAt)} falhou antes de gerar
+                  novos resultados. Os dados abaixo pertencem à consulta
+                  anterior.
+                </div>
+              )}
               <p className="muted">
-                Última tentativa: {when(run.createdAt)}. Resultados refletem a
-                observação desta consulta.
+                Consulta armazenada em {when(run.createdAt)}. Os resultados
+                abaixo pertencem somente a essa execução.
               </p>
               {run.interrupted && (
                 <div className="error-box">
@@ -440,6 +494,11 @@ export function SearchWorkspace() {
                         ? "Não conectada"
                         : "Falhou"}
                   </h2>
+                  {s.status === "ok" && s.partial && (
+                    <p className="discovery-warning">
+                      Resultado parcial: a cobertura foi limitada a uma página.
+                    </p>
+                  )}
                   <p>{s.message}</p>
                   {!!s.locationCredits && (
                     <p className="muted">
@@ -477,11 +536,19 @@ export function SearchWorkspace() {
               {!listings.length &&
                 run.sources.some((s) => s.status === "ok") && (
                   <div className="empty-state">
-                    <h2>Nenhum anúncio recebido</h2>
+                    <h2>Nenhuma correspondência na consulta válida</h2>
                     <p>
-                      O recorte pode não ter ofertas. Confira também a situação
-                      de cada fonte.
+                      Ao menos uma fonte respondeu sem anúncios para este
+                      recorte. Confira fontes que falharam e os limites de
+                      cobertura acima.
                     </p>
+                  </div>
+                )}
+              {!run.interrupted &&
+                !run.sources.some((source) => source.status === "ok") && (
+                  <div className="error-box">
+                    Nenhuma fonte concluiu esta tentativa. Isso não significa
+                    que não existam anúncios para os critérios informados.
                   </div>
                 )}
               {!!listings.length && !eligible.length && !showNear && (

@@ -41,7 +41,7 @@ Em Linux/macOS, substitua `Copy-Item .env.example .env` por `cp .env.example .en
 - Ordenação por preço crescente/decrescente, menor quilometragem, maior ano e cadastro recente.
 - Favoritos persistentes; seleção de até quatro veículos para comparação, com destaque das diferenças.
 - Comparação de preço com referência manual, em reais e percentual. Sem consulta à FIPE ou nota arbitrária.
-- Tema escuro, navegação responsiva, estados vazios, skeletons, foco acessível, retorno visual das ações e fallback para imagens ausentes ou quebradas.
+- Área de trabalho clara com navegação grafite, navegação responsiva, estados vazios, skeletons, foco acessível em azul, retorno visual das ações e fallback para imagens ausentes ou quebradas.
 
 Valores monetários são armazenados em **centavos inteiros**. A diferença é `preço - referência`; o percentual é `diferença / referência × 100`. A referência deve ser maior que zero, quando preenchida.
 
@@ -144,7 +144,7 @@ Esta implementação parte da `main` em `5626b17`. O [relatório de entrega](doc
 - `/configuracoes`: estado não secreto dos conectores, limites de uso, dados locais e metodologia.
 - `/buscar`: conectores e fluxos existentes mantidos; nenhum fornecedor é consultado automaticamente ao navegar.
 
-A migração `20261021040000_catalog_searches` adiciona apenas a tabela de filtros salvos. O histórico de preços e todos os dados existentes são preservados. As APIs de veículos passam a retornar os dois últimos registros de preço e `priceRecordedAt`; o endpoint `/prices` continua oferecendo o histórico completo. Faça backup e use `npm run setup` para aplicar a migração à sua instalação.
+As migrações `20261021040000_catalog_searches` e `20261021050000_vehicle_seller_type` são aditivas: criam a tabela de filtros salvos e separam opcionalmente o tipo de vendedor do texto legado de origem. O histórico de preços, os identificadores e todos os valores anteriores são preservados. As APIs de veículos passam a retornar os dois últimos registros de preço e `priceRecordedAt`; o endpoint `/prices` continua oferecendo o histórico completo. Faça backup e use `npm run setup` para aplicar as migrações à sua instalação.
 
 **Não há integração FIPE nesta versão.** O valor de referência do cadastro não possui código/mês/combustível/versão verificados. Uma fonte licenciada e um fluxo de correspondência são necessários antes de chamar esse dado de FIPE. Descobertas de OLX/Webmotors não são promovidas automaticamente a veículos normalizados: faltam atributos para análises equivalentes e confirmação de direitos das fotografias.
 

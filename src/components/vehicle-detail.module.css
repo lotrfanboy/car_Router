@@ -38,7 +38,7 @@
   position: relative;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--surface, #181c19);
+  background: var(--surface, #ffffff);
   overflow: hidden;
   flex: 1;
   min-height: 310px;
@@ -109,7 +109,7 @@
   border-radius: 4px;
 }
 .positive {
-  color: var(--accent, var(--green));
+  color: var(--positive, #3f5d8a);
 }
 .negative {
   color: #f0ad98;
@@ -215,7 +215,7 @@
   line-height: 1.75;
 }
 .reasons li::marker {
-  color: var(--green);
+  color: var(--accent);
 }
 .limitations {
   color: var(--muted);
@@ -245,7 +245,7 @@
   margin: 12px 0;
 }
 .disclosure a {
-  color: var(--green);
+  color: var(--accent);
 }
 .referenceAmount {
   font-size: 28px;
@@ -303,7 +303,7 @@
   font-size: 32px;
   letter-spacing: -0.06em;
   font-weight: 400;
-  color: var(--green);
+  color: var(--accent);
   white-space: nowrap;
 }
 .historyEmpty h3 {
@@ -360,15 +360,15 @@
   stroke-dasharray: 4 5;
 }
 .chartLine {
-  stroke: var(--green);
+  stroke: var(--accent);
   stroke-width: 2.5;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .chartDot {
-  fill: var(--green);
-  stroke: var(--surface, #181c19);
+  fill: var(--accent);
+  stroke: var(--surface, #ffffff);
   stroke-width: 2;
 }
 .chartDates {
@@ -408,14 +408,14 @@
   min-width: 0;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: var(--bg, #101211);
+  background: var(--bg, #f5f5f3);
   padding: 12px;
   color: var(--ink);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 .simulationForm input:focus-visible {
-  outline: 2px solid var(--green);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .simulationOutput {
@@ -505,7 +505,7 @@
 .lightbox {
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--bg, #101211);
+  background: var(--bg, #f5f5f3);
   color: var(--ink);
   padding: 0;
   width: min(1100px, 94vw);
@@ -554,7 +554,7 @@
 .compareCount {
   font-size: 30px;
   letter-spacing: -0.055em;
-  color: var(--green);
+  color: var(--accent);
 }
 .differencesLabel {
   display: flex;
@@ -566,13 +566,13 @@
 .differencesLabel input {
   width: 16px;
   height: 16px;
-  accent-color: var(--green);
+  accent-color: var(--accent);
 }
 .compareScroll {
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: var(--surface, #181c19);
+  background: var(--surface, #ffffff);
   max-width: 100%;
 }
 .compareTable {
@@ -661,10 +661,10 @@
   place-items: center;
   border-radius: 6px;
   border: 1px solid var(--line);
-  background: var(--bg, #101211);
+  background: var(--bg, #f5f5f3);
 }
 .compareSection th {
-  background: var(--bg, #101211);
+  background: var(--bg, #f5f5f3);
   color: var(--ink) !important;
   font-size: 10px;
   text-transform: uppercase;
@@ -891,15 +891,15 @@
 }
 
 .compareScroll .compareTable thead th {
-  background: var(--surface, #181c19);
+  background: var(--surface, #ffffff);
   vertical-align: top;
 }
 .compareScroll .compareTable thead a {
   color: var(--ink);
 }
 .compareScroll .compareTable thead a:hover {
-  color: var(--green);
+  color: var(--accent);
 }
 .compareTable small.positive {
-  color: var(--green);
+  color: var(--accent);
 }

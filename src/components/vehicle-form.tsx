@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Info } from "lucide-react";
@@ -9,10 +9,12 @@ import {
   states,
   fuels,
   transmissions,
+  sellerTypes,
 } from "@/lib/vehicle";
 import { useWorkspace } from "./workspace";
 import { PageHeading } from "./vehicle-ui";
 export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const { reload, notify } = useWorkspace();
   const [errors, setErrors] = useState<Record<string, string[] | undefined>>(
@@ -34,8 +36,20 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
       : null;
     const parsed = vehicleSchema.safeParse(data);
     if (!parsed.success) {
-      setErrors(parsed.error.flatten().fieldErrors);
-      setFailure("Revise os campos destacados antes de salvar.");
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      setErrors(fieldErrors);
+      setFailure(
+        `${parsed.error.issues.length} ${parsed.error.issues.length === 1 ? "pendência impede" : "pendências impedem"} o salvamento. Revise os campos destacados.`,
+      );
+      const first = parsed.error.issues[0]?.path[0];
+      requestAnimationFrame(() => {
+        if (typeof first === "string")
+          formRef.current
+            ?.querySelector<HTMLElement>(
+              `[name="${first === "priceCents" ? "price" : first === "referenceCents" ? "reference" : first}"]`,
+            )
+            ?.focus();
+      });
       return;
     }
     setSaving(true);
@@ -107,7 +121,7 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
     );
   }
   function select(
-    name: "state" | "fuel" | "transmission",
+    name: "state" | "fuel" | "transmission" | "sellerType",
     label: string,
     options: string[],
   ) {
@@ -140,7 +154,17 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
         title={vehicle ? "Editar anúncio" : "Novo anúncio"}
         description="Reúna as informações do veículo. Campos com * são obrigatórios."
       />
-      <form onSubmit={submit} className="vehicle-form">
+      <form ref={formRef} onSubmit={submit} className="vehicle-form" noValidate>
+        {failure && (
+          <div
+            className="error-box form-error-summary"
+            role="alert"
+            tabIndex={-1}
+          >
+            <strong>Revise o cadastro</strong>
+            <span>{failure}</span>
+          </div>
+        )}
         <section className="form-section">
           <div className="form-section-title">
             <span>01</span>
@@ -223,10 +247,16 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
           <div className="form-grid">
             {field("city", "Cidade")}
             {select("state", "Estado", states)}
-            {field("source", "Origem do anúncio", {
+            {field("source", "Portal ou canal de origem", {
               required: true,
-              placeholder: "Ex.: Loja, particular, OLX",
+              placeholder: "Ex.: OLX, Webmotors, indicação",
             })}
+            {select("sellerType", "Tipo de vendedor", sellerTypes)}
+            <p className="muted span-all form-legacy-note">
+              Cadastros antigos mantêm o texto original de origem. Se ele também
+              descrever o vendedor, escolha o tipo acima sem apagar o conteúdo
+              legado.
+            </p>
             <div className="span-all">
               {field("originalUrl", "URL do anúncio original", {
                 type: "url",
@@ -268,11 +298,6 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
             )}
           </label>
         </section>
-        {failure && (
-          <div className="error-box" role="alert">
-            {failure}
-          </div>
-        )}
         <div className="form-actions">
           <Link
             className="button"

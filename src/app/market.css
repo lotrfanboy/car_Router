@@ -237,7 +237,7 @@
   min-height: 2px;
   border: 0;
   border-radius: 3px 3px 0 0;
-  background: #60784f;
+  background: #69717c;
   cursor: pointer;
   transition: background 140ms;
 }
@@ -245,7 +245,7 @@
   background: var(--accent);
 }
 .market-bin-bar:hover {
-  background: #d2f79b;
+  background: #4f78d1;
 }
 .market-bin-bar span {
   position: absolute;
@@ -408,7 +408,7 @@
 .market-volume-track span {
   height: 100%;
   display: block;
-  background: #80916f;
+  background: #7a838f;
 }
 .market-model-table .button {
   white-space: nowrap;
@@ -462,7 +462,7 @@
 .market-empty-rule {
   width: 90px;
   height: 30px;
-  border-bottom: 1px dashed #657160;
+  border-bottom: 1px dashed #747b84;
   border-left: 1px solid var(--line);
 }
 .market-onboarding {

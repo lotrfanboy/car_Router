@@ -21,6 +21,7 @@ model Vehicle {
   fuel            String?
   transmission    String?
   source          String
+  sellerType      String?
   originalUrl     String?
   imageUrl        String?
   notes           String?

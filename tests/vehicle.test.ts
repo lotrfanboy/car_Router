@@ -58,6 +58,19 @@ describe("validation", () => {
       }).success,
     ).toBe(true);
   });
+  it("keeps the legacy source while storing seller type separately", () => {
+    expect(
+      vehicleSchema.parse({
+        ...input,
+        source: "OLX - texto legado",
+        sellerType: "Particular",
+      }),
+    ).toMatchObject({
+      source: "OLX - texto legado",
+      sellerType: "Particular",
+    });
+    expect(vehicleSchema.parse(input).sellerType).toBeNull();
+  });
 });
 describe("reference calculation", () => {
   it("calculates exact negative difference", () => {

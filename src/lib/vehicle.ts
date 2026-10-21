@@ -41,6 +41,7 @@ export const fuels = [
   "GNV",
 ];
 export const transmissions = ["Manual", "Automático", "Automatizado", "CVT"];
+export const sellerTypes = ["Particular", "Loja", "Concessionária"];
 const optionalText = (max: number) =>
   z
     .string()
@@ -95,6 +96,11 @@ export const vehicleSchema = z
       .optional()
       .transform((v) => v || null),
     source: z.string().trim().min(1, "Informe a origem.").max(100),
+    sellerType: z
+      .union([z.literal(""), z.enum(sellerTypes as [string, ...string[]])])
+      .nullable()
+      .optional()
+      .transform((v) => v || null),
     originalUrl: url,
     imageUrl: url,
     notes: optionalText(5000),

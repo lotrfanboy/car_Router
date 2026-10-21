@@ -290,6 +290,15 @@ it("persists observations and only changed prices, survives reconnect, and enfor
     listings: [{ isNew: true, priceCents: 10800000 }],
   });
   expect(first.sources[1].listings[0].reasons).toEqual([]);
+  expect(await store.integrationStatus()).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        source: "olx",
+        lastAttemptStatus: "ok",
+        lastSuccessfulAt: expect.any(Date),
+      }),
+    ]),
+  );
   await expect(store.executeSearch(search.id)).rejects.toMatchObject({
     status: 429,
   });
@@ -351,11 +360,11 @@ it("requires Reef free-trial opt-in and prevents concurrent or cross-site execut
     ...criteria,
     sources: ["webmotors"],
   });
-  expect((await store.executeSearch(search.id)).sources[0].status).toBe(
-    "unconfigured",
-  );
+  await expect(store.executeSearch(search.id)).rejects.toMatchObject({
+    status: 409,
+  });
+  expect(await db.db.searchRun.count()).toBe(0);
   expect(calls).toHaveLength(0);
-  await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
   await db.db.searchLock.create({
     data: { id: "manual-search", expiresAt: new Date(Date.now() + 10000) },
   });

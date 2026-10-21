@@ -91,7 +91,10 @@ export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
         <Link href={"/veiculos/" + v.id}>
           <VehicleImage vehicle={v} />
         </Link>
-        <span className="source-tag">{v.source}</span>
+        <span className="source-tag">
+          {v.source}
+          {v.sellerType ? ` · ${v.sellerType}` : ""}
+        </span>
         <button
           className={"favorite-button " + (v.favorite ? "is-favorite" : "")}
           aria-label={

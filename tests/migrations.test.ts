@@ -25,13 +25,30 @@ it("adds a current-price baseline to an existing database without changing vehic
     await client.$executeRawUnsafe(
       `INSERT INTO Vehicle (id, brand, model, manufactureYear, modelYear, mileage, priceCents, source, favorite, createdAt, updatedAt) VALUES ('old', 'Toyota', 'Corolla', 2020, 2021, 50000, 9000000, 'Manual', true, '2020-01-01', '2020-01-01')`,
     );
+    const legacySelect = {
+      id: true,
+      brand: true,
+      model: true,
+      manufactureYear: true,
+      modelYear: true,
+      mileage: true,
+      priceCents: true,
+      source: true,
+      favorite: true,
+      createdAt: true,
+      updatedAt: true,
+    } as const;
     const before = await client.vehicle.findUniqueOrThrow({
       where: { id: "old" },
+      select: legacySelect,
     });
     await apply("prisma/migrations/20261021010000_price_history/migration.sql");
-    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
-      before,
-    );
+    expect(
+      await client.vehicle.findUnique({
+        where: { id: "old" },
+        select: legacySelect,
+      }),
+    ).toEqual(before);
     const history = await client.vehiclePrice.findMany();
     expect(history).toHaveLength(1);
     expect(history[0]).toMatchObject({
@@ -43,15 +60,21 @@ it("adds a current-price baseline to an existing database without changing vehic
       new Date("2020-01-02").getTime(),
     );
     await apply("prisma/migrations/20261021020000_discovery/migration.sql");
-    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
-      before,
-    );
+    expect(
+      await client.vehicle.findUnique({
+        where: { id: "old" },
+        select: legacySelect,
+      }),
+    ).toEqual(before);
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.savedSearch.count()).toBe(0);
     await apply("prisma/migrations/20261021030000_olx_locations/migration.sql");
-    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
-      before,
-    );
+    expect(
+      await client.vehicle.findUnique({
+        where: { id: "old" },
+        select: legacySelect,
+      }),
+    ).toEqual(before);
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.olxLocation.count()).toBe(0);
 
@@ -82,9 +105,12 @@ it("adds a current-price baseline to an existing database without changing vehic
     await apply(
       "prisma/migrations/20261021040000_catalog_searches/migration.sql",
     );
-    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
-      before,
-    );
+    expect(
+      await client.vehicle.findUnique({
+        where: { id: "old" },
+        select: legacySelect,
+      }),
+    ).toEqual(before);
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.savedSearch.findMany()).toEqual([search]);
     expect(await client.searchRun.findMany()).toEqual([run]);
@@ -93,6 +119,14 @@ it("adds a current-price baseline to an existing database without changing vehic
     expect(await client.olxLocation.findMany()).toEqual([location]);
     expect(await client.providerSpend.findMany()).toEqual([spend]);
     expect(await client.catalogSearch.count()).toBe(0);
+    await apply(
+      "prisma/migrations/20261021050000_vehicle_seller_type/migration.sql",
+    );
+    const migratedVehicle = await client.vehicle.findUniqueOrThrow({
+      where: { id: "old" },
+    });
+    expect(migratedVehicle.source).toBe("Manual");
+    expect(migratedVehicle.sellerType).toBeNull();
   } finally {
     await client.$disconnect();
   }

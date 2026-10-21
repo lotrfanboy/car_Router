@@ -42,6 +42,11 @@ export async function reserveCredits(provider: string, credits: number) {
   });
 }
 export async function integrationStatus() {
+  const runs = await db.searchRun.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 100,
+    select: { createdAt: true, result: true },
+  });
   return Promise.all(
     (["olx", "webmotors"] as Source[]).map(async (source) => {
       const { configured, cost, provider } = providerConfig(source);
@@ -51,12 +56,29 @@ export async function integrationStatus() {
         where: { provider, createdAt: { gte: day } },
         _sum: { credits: true },
       });
+      const attempts = runs.flatMap((run) => {
+        try {
+          const result = JSON.parse(run.result) as SearchResult & {
+            interrupted?: boolean;
+          };
+          return (result.sources ?? [])
+            .filter((item) => item.source === source)
+            .map((item) => ({ ...item, runAt: run.createdAt }));
+        } catch {
+          return [];
+        }
+      });
+      const latest = attempts[0];
+      const successful = attempts.find((item) => item.status === "ok");
       return {
         source,
         configured,
         cost,
         reservedToday: spent._sum.credits ?? 0,
         dailyLimit,
+        lastAttemptAt: latest?.runAt ?? null,
+        lastAttemptStatus: latest?.status ?? null,
+        lastSuccessfulAt: successful?.runAt ?? null,
       };
     }),
   );
@@ -90,6 +112,11 @@ export async function executeSearch(id: string) {
   const search = await db.savedSearch.findUnique({ where: { id } });
   if (!search) throw new SearchError("Busca não encontrada.", 404);
   const criteria = searchSchema.parse(JSON.parse(search.criteria));
+  if (!criteria.sources.some((source) => providerConfig(source).configured))
+    throw new SearchError(
+      "Nenhuma fonte selecionada está configurada. Revise as integrações antes de consultar.",
+      409,
+    );
   const last = await db.searchRun.findFirst({
     where: { searchId: id },
     orderBy: { createdAt: "desc" },
