@@ -4,7 +4,9 @@ Aplicação local de usuário único para cadastrar, organizar e comparar anúnc
 
 ## Executar no Windows
 
-Instale **Node.js 24 LTS** e Git. No PowerShell:
+Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. Os comandos de clone/branch pressupõem que a branch já foi enviada ao GitHub.
+
+No PowerShell:
 
 ```powershell
 git clone https://github.com/lotrfanboy/car_Router.git
