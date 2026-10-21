@@ -46,6 +46,8 @@ O e-mail contém carro, preço, média, percentual, localização e link do deta
 
 Dependências da hospedagem: processo Next persistente, **SQLite em volume persistente**, cron externo autorizado e conta/canal de e-mail. O `render.yaml` existente é um preview gratuito com SQLite em `/tmp`, sem cron e sem credenciais; foi preservado. Ele não é uma base adequada para monitoramento durável. Não criamos nem publicamos serviços. Proteger o app com o controle de acesso existente no ambiente antes de hospedar; o projeto continua pessoal, sem autenticação multiusuário.
 
+No preview do Render, o Blueprint solicita `GECKO_API_KEY` e `REEF_API_KEY` como segredos, sem versioná-las. Para testar Webmotors, altere `REEF_FREE_TRIAL` para `true` somente depois de confirmar que a conta possui créditos promocionais e não fará cobrança automática. O plano gratuito usa SQLite em `/tmp`: buscas, salvos e históricos podem desaparecer após reinício ou recriação do serviço. `RADAR_SCHEDULER_ENABLED` permanece `false`, portanto o preview não se apresenta como monitoramento ativo.
+
 ## Dados, recuperação e credenciais
 
 A migração `20261021060000_search_focus` apenas acrescenta campos/tabelas/índices. Não apaga, redefine IDs ou recria tabelas antigas. `savedAt` marca descobertas salvas; `queryKey` é inicialmente nulo para registros antigos. Históricos, favoritos, buscas, locais e gastos permanecem intactos. Migrações foram aplicadas somente em bancos temporários de teste.
