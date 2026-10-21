@@ -48,6 +48,12 @@ it("adds a current-price baseline to an existing database without changing vehic
     );
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.savedSearch.count()).toBe(0);
+    await apply("prisma/migrations/20261021030000_olx_locations/migration.sql");
+    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
+      before,
+    );
+    expect(await client.vehiclePrice.findMany()).toEqual(history);
+    expect(await client.olxLocation.count()).toBe(0);
   } finally {
     await client.$disconnect();
   }

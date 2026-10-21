@@ -55,7 +55,8 @@ export const searchSchema = z
         message: "Revise o intervalo dos anos.",
         path: ["yearMax"],
       });
-    if (s.sources.includes("olx")) {
+    // Legacy saved URLs remain valid, but normal searches no longer require one.
+    if (s.olxUrl) {
       try {
         const u = new URL(s.olxUrl);
         if (
@@ -102,6 +103,7 @@ export type SourceResult = {
   observedAt: string;
   elapsedMs: number;
   creditsReserved: number;
+  locationCredits?: number;
   total: number | null;
   partial: boolean;
   listings: Listing[];

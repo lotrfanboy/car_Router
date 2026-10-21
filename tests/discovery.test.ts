@@ -8,6 +8,7 @@ import {
   publicListingUrl,
 } from "../src/lib/discovery";
 import { normalizeOlx, normalizeReef } from "../src/lib/discovery-providers";
+import { buildOlxUrl, regionCandidates } from "../src/lib/olx-search";
 
 const root = mkdtempSync(path.join(process.env.RADAR_TEST_ROOT!, "searches-"));
 process.env.DATABASE_URL =
@@ -33,7 +34,7 @@ const olx = (price = 108000) => ({
   url: "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/corolla-123",
   price,
   professionalAd: false,
-  location: { city: "Curitiba", state: "PR" },
+  location: { city: currentCity, state: currentState },
   properties: [
     { name: "vehicle_brand", value: "Toyota" },
     { name: "vehicle_model", value: "Corolla XEi 2.0" },
@@ -63,6 +64,9 @@ let db: typeof import("../src/lib/db");
 let routes: typeof import("../src/app/api/searches/route");
 let runRoute: typeof import("../src/app/api/searches/[id]/run/route");
 let currentPrice = 108000;
+let currentCity = "Curitiba";
+let currentState = "PR";
+let regions = ["norte-de-santa-catarina"];
 let reefFails = false;
 const calls: string[] = [];
 beforeAll(async () => {
@@ -82,8 +86,12 @@ beforeEach(async () => {
   await db.db.discoveredListing.deleteMany();
   await db.db.providerSpend.deleteMany();
   await db.db.searchLock.deleteMany();
+  await db.db.olxLocation.deleteMany();
   calls.length = 0;
   currentPrice = 108000;
+  currentCity = "Curitiba";
+  currentState = "PR";
+  regions = ["norte-de-santa-catarina"];
   reefFails = false;
   vi.stubEnv("GECKO_API_KEY", "test-only");
   vi.stubEnv("REEF_API_KEY", "test-only");
@@ -113,6 +121,11 @@ beforeEach(async () => {
             nextPageUrl: "https://www.olx.com.br/?o=2",
           },
         });
+      if (url.endsWith("/locations"))
+        return Response.json({
+          ok: true,
+          data: { regions: regions.map((slug) => ({ slug })) },
+        });
       if (reefFails)
         return new Response("provider diagnostic with secret", { status: 503 });
       return Response.json({
@@ -129,6 +142,9 @@ afterAll(async () => {
 });
 
 it("rejects unsafe source URLs and invalid ranges before any provider access", () => {
+  expect(searchSchema.safeParse({ ...criteria, olxUrl: "" }).success).toBe(
+    true,
+  );
   expect(
     searchSchema.safeParse({
       ...criteria,
@@ -145,6 +161,83 @@ it("rejects unsafe source URLs and invalid ranges before any provider access", (
     publicListingUrl("https://www.webmotors.com.br/solutions/ads", "webmotors"),
   ).toBe(false);
   expect(calls).toHaveLength(0);
+});
+
+it("builds a city-scoped OLX URL automatically with encoded search and price", () => {
+  const u = new URL(
+    buildOlxUrl(
+      {
+        ...criteria,
+        city: "Blumenau",
+        state: "SC",
+        brand: "BMW",
+        model: "320i & teste",
+      },
+      "norte-de-santa-catarina",
+    ),
+  );
+  expect(u.pathname).toBe(
+    "/autos-e-pecas/carros-vans-e-utilitarios/estado-sc/norte-de-santa-catarina/blumenau",
+  );
+  expect(u.searchParams.get("q")).toBe("BMW 320i & teste");
+  expect(u.searchParams.get("pe")).toBe("120000");
+  expect(
+    new URL(buildOlxUrl(criteria, "regiao-de-curitiba-e-paranagua")).pathname,
+  ).toBe(
+    "/autos-e-pecas/carros-vans-e-utilitarios/estado-pr/regiao-de-curitiba-e-paranagua",
+  );
+  expect(
+    regionCandidates({
+      regions: [
+        { slug: "../wrong" },
+        { slug: "valid-region" },
+        { slug: "valid-region" },
+      ],
+    }),
+  ).toEqual(["valid-region"]);
+});
+
+it("resolves a new city on demand, verifies its listings, and caches without another lookup charge", async () => {
+  currentCity = "Joinville";
+  currentState = "SC";
+  const search = await store.saveSearch({
+    ...criteria,
+    city: "Joinville",
+    state: "SC",
+    olxUrl: "",
+    sources: ["olx"],
+  });
+  const first = await store.executeSearch(search.id);
+  expect(first.sources[0]).toMatchObject({ status: "ok", locationCredits: 1 });
+  expect(
+    await db.db.olxLocation.findUnique({ where: { id: "SC:joinville" } }),
+  ).toMatchObject({ region: "norte-de-santa-catarina" });
+  await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  expect((await store.executeSearch(search.id)).sources[0]).toMatchObject({
+    status: "ok",
+  });
+  expect(calls.filter((url) => url.endsWith("/locations"))).toHaveLength(1);
+});
+
+it("does not invent a region or pass off national results as a city search", async () => {
+  const search = await store.saveSearch({
+    ...criteria,
+    city: "Joinville",
+    state: "SC",
+    olxUrl: "",
+    sources: ["olx"],
+  });
+  regions = ["one-region", "another-region"];
+  expect((await store.executeSearch(search.id)).sources[0]).toMatchObject({
+    status: "error",
+    listings: [],
+  });
+  expect(calls.some((url) => url.endsWith("/extract"))).toBe(false);
+  regions = ["norte-de-santa-catarina"];
+  await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
+  const second = await store.executeSearch(search.id);
+  expect(second.sources[0]).toMatchObject({ status: "error", listings: [] });
+  expect(await db.db.olxLocation.count()).toBe(0);
 });
 it("excludes unknown fields and Corolla Cross, preserves monetary units and strips seller contacts", () => {
   const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];

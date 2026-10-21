@@ -1,5 +1,17 @@
 # MVP pessoal: buscas integradas
 
+## Atualização: OLX sem link manual
+
+O formulário agora usa apenas carro e cidade/UF; não exige URL OLX. `olx-search.ts` monta uma URL com UF, região interna e cidade, palavra-chave codificada e preço máximo. O seletor público da OLX confirmou Blumenau em `/estado-sc/norte-de-santa-catarina/blumenau`; Curitiba selecionada resolve para `/estado-pr/regiao-de-curitiba-e-paranagua`, sem sufixo `/curitiba`. Essas duas resoluções têm bootstrap verificado; não constituem cadastro nacional inventado.
+
+Outras cidades usam `POST /olx/v1/locations` da Reef (`country=br`, UF e nome), sob o mesmo orçamento gratuito, com reserva de 1 crédito. Esse endpoint fornece regiões observadas numa amostra de anúncios, **não um diretório completo de municípios**. Só se usa uma candidata inequívoca. Após a consulta Gecko, é preciso encontrar a cidade/UF nos resultados e não receber outro estado para guardar a região em `OlxLocation` por 30 dias. Caso ambíguo ou localização não confirmada vira falha explícita, sem buscar no Brasil inteiro silenciosamente e sem pedir que o usuário cole um link.
+
+Regiões ainda desconhecidas e sem ofertas suficientes podem não ser resolvidas; a ausência de confirmação não é apresentada como prova de zero ofertas. Curitiba utiliza recorte metropolitano e mantém conferência local da cidade. As URLs de buscas antigas continuam aceitas e não há alteração nos registros manuais.
+
+O campo explicativo informa o possível crédito Reef adicional na primeira resolução. Busca de cidade já verificada/cached não repete esse lookup. As demais fontes continuam independentes. Nenhuma promessa de cobertura de todas as cidades decorre desta alteração.
+
+Verificação: 38 testes passaram; inclui aceitar busca sem URL, construir/escapar URL por cidade, cache sem nova cobrança de lookup, recusar região ambígua e descartar resultados de estado divergente. ESLint, TypeScript/build passaram. Teste real no MVP: BMW 320i em Blumenau sem URL retornou 42 anúncios OLX, 39 elegíveis, usando um crédito Gecko. Consulta exploratória de localização Reef consumiu um crédito gratuito fora do contador do MVP. Joinville, que não está no bootstrap, foi resolvida pelo mecanismo dinâmico: 50 anúncios recebidos, 134 declarados (cobertura parcial), 25 elegíveis. Região confirmada nos anúncios e persistida no cache. Custo dessa consulta: 1 crédito Reef de localização e 1 Gecko. Total desta correção: 2 Gecko e 2 Reef (incluindo a consulta exploratória), sem pagamento.
+
 ## Escopo entregue
 
 Área `/buscar`, adicionada à navegação existente: salvar critérios, executar consulta manual OLX/Gecko e Webmotors/Reef, abrir anúncios originais, separar elegíveis e fora dos critérios, persistir observações e comparar preços. Os veículos manuais, favoritos e comparador existentes continuam separados e preservados.
@@ -19,7 +31,7 @@ Exemplo sem segredos em `.env.integrations.example`. Nunca usar `NEXT_PUBLIC_`, 
 
 ## Consumo controlado
 
-Salvar/carregar buscas, recarregar a página e abrir histórico **não consultam fornecedores**. Consultas ocorrem apenas em POST explícito pelo botão. Uma página por fonte: OLX usa URL pública fornecida pelo usuário; Reef envia filtros e pede até 24 anúncios. Nada de paginação automática ou repetição em falha. Ambas as fontes podem ser selecionadas; uma indisponível não apaga o sucesso da outra.
+Salvar/carregar buscas, recarregar a página e abrir histórico **não consultam fornecedores**. Consultas ocorrem apenas em POST explícito pelo botão. Uma página por fonte: OLX monta a URL pública automaticamente (ou preserva a URL de uma busca antiga); Reef envia filtros e pede até 24 anúncios. Nada de paginação automática ou repetição em falha. Ambas as fontes podem ser selecionadas; uma indisponível não apaga o sucesso da outra.
 
 - Gecko: antes da extração, verificar plano `free`, saldo entre 1 e 100 e custo de 1 crédito no catálogo autenticado. Alteração de plano/custo suspende a consulta.
 - Reef: consulta documentada de 2 créditos. O teste público não estabeleceu endpoint autenticado de saldo/plano: exige confirmação local explícita de créditos gratuitos via `REEF_FREE_TRIAL=true`. Essa opção não verifica faturamento no fornecedor; nunca habilitar para conta paga sob a autorização atual.
@@ -42,9 +54,9 @@ Adaptadores isolados em `discovery-providers.ts`; regras compartilhadas em `disc
 
 ## Verificação
 
-35 testes passaram em cinco arquivos, incluindo sete testes novos: validação de URL/faixa, critérios desconhecidos e Corolla Cross, ausência de contatos no modelo persistido, salvar sem custo, proteção de origem, persistência/reconexão, histórico sem duplicação, cooldown/trava, orçamento, plano gratuito e sucesso parcial. Testes usam HTTP simulado e SQLite temporário, sem consumir créditos. O teste de migração confirma preservação dos veículos e histórico anteriores após a nova migração.
+38 testes passaram em cinco arquivos, incluindo dez testes novos: validação de URL/faixa, critérios desconhecidos e Corolla Cross, ausência de contatos no modelo persistido, salvar sem custo, proteção de origem, persistência/reconexão, histórico sem duplicação, cooldown/trava, orçamento, plano gratuito e sucesso parcial. Testes usam HTTP simulado e SQLite temporário, sem consumir créditos. O teste de migração confirma preservação dos veículos e histórico anteriores após a nova migração.
 
-Também passaram ESLint, TypeScript e build de produção. Verificação no navegador local: busca salva, chamada OLX real, separação dos critérios, histórico e recarga sem reexecutar fornecedores. Primeira chamada do MVP: 50 anúncios OLX, 1 elegível para Corolla 2020/Curitiba até R$ 120 mil, 49 separados; um crédito reservado. A validação Webmotors com chave própria é registrada abaixo após sua execução; a demonstração pública anterior não substitui esse teste.
+Também passaram ESLint, TypeScript e build de produção. Verificação no navegador local: busca salva, chamada OLX real, separação dos critérios, histórico e recarga sem reexecutar fornecedores. Primeira chamada do MVP: 50 anúncios OLX, 1 elegível para Corolla 2020/Curitiba até R$ 120 mil, 49 separados; um crédito reservado. A validação Webmotors com chave própria está registrada abaixo; a demonstração pública anterior não substitui esse teste.
 
 ### Consulta real com as duas chaves próprias
 

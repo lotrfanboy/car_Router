@@ -136,7 +136,7 @@ export function SearchWorkspace() {
       priceMax: nullable("priceMax"),
       mileageMax: nullable("mileageMax"),
       privateOnly: form.get("privateOnly") === "on",
-      olxUrl: form.get("olxUrl"),
+      olxUrl: "",
       sources: form.getAll("sources"),
     });
     if (!parsed.success) {
@@ -322,18 +322,11 @@ export function SearchWorkspace() {
                 Webmotors
               </label>
             </fieldset>
-            <label>
-              Link da busca na OLX
-              <input
-                name="olxUrl"
-                type="url"
-                placeholder="https://www.olx.com.br/autos-e-pecas/…"
-              />
-              <span className="muted">
-                Se selecionar OLX, copie o endereço da busca filtrada no portal.
-                Cidade e modelo serão conferidos novamente.
-              </span>
-            </label>
+            <p className="muted discovery-help">
+              A busca na OLX é montada automaticamente com o carro e a cidade
+              informados. Uma cidade nova pode consumir 1 crédito Reef adicional
+              para localizar a região; depois essa informação é reaproveitada.
+            </p>
             <button disabled={busy} className="button primary" type="submit">
               <BookmarkPlus size={17} /> Salvar busca
             </button>
@@ -448,6 +441,12 @@ export function SearchWorkspace() {
                         : "Falhou"}
                   </h2>
                   <p>{s.message}</p>
+                  {!!s.locationCredits && (
+                    <p className="muted">
+                      Localização automática: {s.locationCredits} crédito(s)
+                      Reef reservado(s).
+                    </p>
+                  )}
                   {s.status === "ok" && (
                     <p className="muted">
                       {s.listings.length} recebidos ·{" "}

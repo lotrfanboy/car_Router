@@ -1,5 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
 import {
+  buildOlxUrl,
+  locationKey,
+  regionCandidates,
+  verifiedRegions,
+} from "./olx-search";
+import {
   eligibility,
   normalized,
   publicListingUrl,
@@ -226,7 +232,48 @@ export async function fetchSource(
           : "Conecte uma conta gratuita Reef para consultar a Webmotors.",
     };
   try {
+    const { db } = await import("./db");
     if (source === "olx") await checkGecko(config.key);
+    let olxUrl = criteria.olxUrl;
+    let resolvedRegion: string | null = null;
+    let needsVerification = false;
+    if (source === "olx" && !olxUrl) {
+      const key = locationKey(criteria);
+      const cached = await db.olxLocation.findUnique({ where: { id: key } });
+      resolvedRegion =
+        verifiedRegions[key] ??
+        (cached && Date.now() - cached.verifiedAt.getTime() < 30 * 86400000
+          ? cached.region
+          : null);
+      if (!resolvedRegion) {
+        const reef = providerConfig("webmotors");
+        if (!reef.configured)
+          throw new Error(
+            "Localização OLX ainda não conhecida. Conecte a conta gratuita Reef para resolvê-la automaticamente.",
+          );
+        await reserve("reef", 1);
+        result.locationCredits = 1;
+        const lookup = await providerJson(
+          "https://api.reefapi.com/olx/v1/locations",
+          reef.key,
+          {
+            country: "br",
+            state: criteria.state.toLowerCase(),
+            query: criteria.city,
+          },
+          true,
+        );
+        const candidates =
+          lookup.ok === true ? regionCandidates(lookup.data) : [];
+        if (candidates.length !== 1)
+          throw new Error(
+            "Localização OLX não pôde ser resolvida com segurança nesta cidade. A outra fonte pode continuar funcionando.",
+          );
+        resolvedRegion = candidates[0];
+        needsVerification = true;
+      }
+      olxUrl = buildOlxUrl(criteria, resolvedRegion);
+    }
     await reserve(config.provider, config.cost);
     result.creditsReserved = config.cost;
     const payload =
@@ -234,7 +281,7 @@ export async function fetchSource(
         ? await providerJson(
             "https://api.geckoapi.com.br/v1/extract",
             config.key,
-            { target: "olx.com.br", type: "plp", url: criteria.olxUrl },
+            { target: "olx.com.br", type: "plp", url: olxUrl },
           )
         : await providerJson(
             "https://api.reefapi.com/webmotors/v1/search",
@@ -273,6 +320,36 @@ export async function fetchSource(
       source === "olx"
         ? normalizeOlx(data, observedAt)
         : normalizeReef(data, observedAt);
+    if (source === "olx" && !criteria.olxUrl) {
+      if (
+        result.listings.some((row) => row.state && row.state !== criteria.state)
+      ) {
+        result.listings = [];
+        throw new Error(
+          "Localização OLX divergente: a fonte ampliou a região. Resultados descartados para não misturar estados.",
+        );
+      }
+      if (needsVerification) {
+        if (
+          !result.listings.some(
+            (row) =>
+              row.city &&
+              normalized(row.city) === normalized(criteria.city) &&
+              row.state === criteria.state,
+          )
+        ) {
+          result.listings = [];
+          throw new Error(
+            "Localização OLX ainda não confirmada pelos resultados. Não vou apresentar uma busca nacional como se fosse da sua cidade.",
+          );
+        }
+        await db.olxLocation.upsert({
+          where: { id: locationKey(criteria) },
+          create: { id: locationKey(criteria), region: resolvedRegion! },
+          update: { region: resolvedRegion!, verifiedAt: new Date() },
+        });
+      }
+    }
     result.listings = [
       ...new Map(result.listings.map((row) => [row.externalId, row])).values(),
     ].map((row) => ({ ...row, reasons: eligibility(row, criteria) }));
@@ -290,7 +367,7 @@ export async function fetchSource(
     result.status = "error";
     result.message =
       error instanceof Error &&
-      /^(Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
+      /^(Localização|Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
         error.message,
       )
         ? error.message

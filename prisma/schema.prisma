@@ -98,3 +98,9 @@ model SearchLock {
   id        String @id
   expiresAt DateTime
 }
+
+model OlxLocation {
+  id         String @id
+  region     String
+  verifiedAt DateTime @default(now())
+}
