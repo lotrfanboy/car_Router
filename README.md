@@ -4,14 +4,14 @@ Aplicação local de usuário único para cadastrar, organizar e comparar anúnc
 
 ## Executar no Windows
 
-Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O incremento de buscas integradas está na branch `research/integracoes-2026-10-21`, em revisão no PR #2.
+Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. As buscas integradas foram incorporadas à `main`. A evolução visual e analítica descrita abaixo preserva os conectores existentes.
 
 No PowerShell:
 
 ```powershell
 git clone https://github.com/lotrfanboy/car_Router.git
 cd car_Router
-git switch research/integracoes-2026-10-21
+git switch main
 Copy-Item .env.example .env
 npm ci
 npm run setup
@@ -33,15 +33,15 @@ Em Linux/macOS, substitua `Copy-Item .env.example .env` por `cp .env.example .en
 
 ## Funcionalidades
 
-- Dashboard com total de anúncios, favoritos, preço médio, contagem abaixo da referência, origens e registros recentes.
+- Visão geral com quantidade de anúncios, mediana, oportunidades auditáveis, reduções registradas e contexto da amostra.
 - Cadastro, edição, exclusão com confirmação e página própria de detalhes.
 - Marca, modelo, versão, fabricação/modelo, quilometragem, preço, referência, cidade/UF, combustível, câmbio, origem, links, imagem por URL e observações.
-- Catálogo em cards e tabela; busca sem distinção de acentos e maiúsculas.
+- Radar em cards, lista compacta e tabela configurável; busca sem distinção de acentos e maiúsculas.
 - Filtros combináveis: marca, modelo, intervalo de ano/preço, quilometragem máxima, cidade, estado, origem e favoritos.
 - Ordenação por preço crescente/decrescente, menor quilometragem, maior ano e cadastro recente.
-- Favoritos persistentes; seleção de até três veículos para comparação lado a lado.
+- Favoritos persistentes; seleção de até quatro veículos para comparação, com destaque das diferenças.
 - Comparação de preço com referência manual, em reais e percentual. Sem consulta à FIPE ou nota arbitrária.
-- Layout responsivo, menu mobile, estados vazios, carregamento, erros, retorno visual das ações e fallback para imagens ausentes ou quebradas.
+- Tema escuro, navegação responsiva, estados vazios, skeletons, foco acessível, retorno visual das ações e fallback para imagens ausentes ou quebradas.
 
 Valores monetários são armazenados em **centavos inteiros**. A diferença é `preço - referência`; o percentual é `diferença / referência × 100`. A referência deve ser maior que zero, quando preenchida.
 
@@ -79,7 +79,7 @@ npm run build
 
 Os testes Vitest usam um SQLite temporário e removem-no ao concluir. Não modificam o banco de uso diário.
 
-O roteiro opcional de navegador `scripts/browser_check.py` usa Python, Playwright e Chromium instalado. Ele inicia o build de produção em 127.0.0.1:3100 com **outro banco temporário**, testa os fluxos e salva screenshots em `docs/screenshots`. Execute após o build:
+O roteiro opcional de navegador `scripts/browser_check.py` usa Python, Playwright e Chromium instalado. Ele inicia o build de produção em uma porta livre de `127.0.0.1` com **outro banco temporário**, testa os fluxos e salva screenshots em `test-results/screenshots` (ou `RADAR_SCREENSHOT_DIR`). Execute após o build:
 
 ```sh
 python scripts/browser_check.py
@@ -87,7 +87,7 @@ python scripts/browser_check.py
 
 O caminho padrão do Chromium nesse script é `/usr/bin/chromium`; em outro sistema, informe a variável `CHROMIUM_PATH`. Python/Playwright não são necessários para usar o produto ou rodar os testes Vitest.
 
-Veja [resultados de validação](docs/VALIDACAO.md) e [screenshots](docs/screenshots). Os registros que aparecem nas imagens são **fixtures exclusivas dos testes**, nunca um seed do produto.
+Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [validação original](docs/VALIDACAO.md) e os [screenshots](docs/screenshots). Os registros que aparecem nas imagens são **fixtures exclusivas dos testes**, nunca um seed do produto.
 
 ## Roteiro de aceitação manual
 
@@ -95,25 +95,25 @@ Veja [resultados de validação](docs/VALIDACAO.md) e [screenshots](docs/screens
 2. Confira a indicação de 10% abaixo (R$ 10.000) nos detalhes.
 3. Favorite, recarregue a página, pare e reinicie a aplicação; confira a persistência.
 4. Cadastre outros veículos, combine filtros e alterne entre cards e tabela.
-5. Selecione dois ou três anúncios e abra o comparador.
+5. Selecione até quatro anúncios e abra o comparador.
 6. Edite um anúncio, salve e confira os valores atualizados.
 7. Cancele uma exclusão; depois confirme-a e confira a remoção do catálogo e da seleção.
 
 ## Limitações reais e segurança local
 
 - **Não exponha publicamente sem autenticação, autorização, HTTPS e medidas de segurança adicionais.** Não há autenticação; a checagem de origem nas mutações não substitui controle de acesso.
-- O catálogo é carregado integralmente e filtrado no navegador. Paginação e consulta filtrada no servidor ficam para volumes maiores.
+- O catálogo é carregado integralmente e filtrado no navegador; o radar pagina 12 anúncios por vez. Filtragem/paginação no servidor continuam necessárias para volumes grandes.
 - Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no SQLite.
 - Imagens são URLs externas carregadas pelo navegador, sem upload, cache ou garantia de disponibilidade; não há busca de imagens pelo servidor.
-- Não há sincronização, múltiplos usuários, notificações ou coleta automática. O histórico local de preços foi acrescentado na etapa de pesquisa descrita abaixo.
+- Não há sincronização, múltiplos usuários, envio de notificações ou coleta automática. O monitoramento mostra mudanças já registradas nos favoritos; novas observações dependem de edição ou consulta manual.
 - Instalação inicial requer acesso ao npm; depois de instalado, o núcleo funciona sem serviços externos.
 - A execução foi validada em Linux na nuvem; as instruções Windows são fornecidas, mas não houve máquina Windows disponível para verificação.
 
 ## Pesquisa e base de monitoramento (21/10/2026)
 
-A branch de pesquisa acrescenta histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
+A pesquisa, já integrada à `main`, acrescentou histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
 
-Depois de atualizar o código, use `npm run setup` para gerar o cliente e aplicar a migração aditiva. Faça backup antes de atualizar seu banco de uso. O histórico pode ser consultado em `GET /api/vehicles/:id/prices`; não há tela nova ou coleta automática.
+Depois de atualizar o código, use `npm run setup` para gerar o cliente e aplicar a migração aditiva. Faça backup antes de atualizar seu banco de uso. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e agora aparece nos detalhes do veículo; não há coleta automática.
 
 Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
 
@@ -130,3 +130,24 @@ Os documentos iniciais registram etapas históricas. As provas posteriores de fo
 ## Buscas nos portais — MVP pessoal
 
 A área `/buscar` permite salvar critérios e consultar manualmente OLX via Gecko e Webmotors via Reef, com estado por fonte, conferência local de filtros e histórico dos preços observados. Configuração, limites gratuitos e restrições: [guia do MVP](docs/mvp-buscas-integradas.md). Não há consultas automáticas ao abrir a página.
+
+## Evolução visual e analítica (21/10/2026)
+
+Esta implementação parte da `main` em `5626b17`. O [relatório de entrega](docs/ENTREGA.md) reúne funcionalidades, arquitetura, limitações e próximos passos. [Auditoria e plano](docs/TRANSFORMACAO.md), [metodologia](docs/METODOLOGIA.md) e [validação da transformação](docs/VALIDACAO-TRANSFORMACAO.md) registram a base encontrada, decisões e resultados.
+
+- `/`: visão geral editorial, medianas, reduções reais, destaques e cobertura do catálogo.
+- `/veiculos`: filtros compartilháveis pela URL, chips, ordenações, paginação de 12 registros, três visualizações e colunas configuráveis. Filtros salvos no SQLite podem ser reabertos sem consultar fornecedores.
+- `/veiculos/:id`: imagem cadastrada ampliável, referência **manual**, comparáveis estritos, histórico completo preservado e simulação ajustável de compra/custos/venda/margem. `updatedAt` não determina recência financeira.
+- `/mercado`: filtros, distribuição de preços, dispersão preço × quilometragem, tabelas acessíveis, agrupamentos por modelo e CSV. A amostra é o catálogo cadastrado, não todas as descobertas dos portais nem o mercado nacional.
+- `/comparar`: até quatro veículos, filtro para diferenças, referências e histórico recente.
+- `/favoritos`: veículos favoritos, buscas salvas e últimas reduções registradas nos últimos 30 dias.
+- `/configuracoes`: estado não secreto dos conectores, limites de uso, dados locais e metodologia.
+- `/buscar`: conectores e fluxos existentes mantidos; nenhum fornecedor é consultado automaticamente ao navegar.
+
+A migração `20261021040000_catalog_searches` adiciona apenas a tabela de filtros salvos. O histórico de preços e todos os dados existentes são preservados. As APIs de veículos passam a retornar os dois últimos registros de preço e `priceRecordedAt`; o endpoint `/prices` continua oferecendo o histórico completo. Faça backup e use `npm run setup` para aplicar a migração à sua instalação.
+
+**Não há integração FIPE nesta versão.** O valor de referência do cadastro não possui código/mês/combustível/versão verificados. Uma fonte licenciada e um fluxo de correspondência são necessários antes de chamar esse dado de FIPE. Descobertas de OLX/Webmotors não são promovidas automaticamente a veículos normalizados: faltam atributos para análises equivalentes e confirmação de direitos das fotografias.
+
+As classificações usam critérios determinísticos e configuráveis em `OPPORTUNITY_RULES`, sem pontuação arbitrária. Exigem ao menos cinco comparáveis recentes e equivalentes. Reduções, suficiência amostral e limitações aparecem nos detalhes; condições do veículo e lucro de revenda nunca são garantidos. Os indicadores de redução usam a última mudança registrada, e não inventam séries temporais agregadas.
+
+Não há novas dependências de runtime, cobrança ou publicação. O arquivo SQLite de uso pessoal e as chaves de conectores não são versionados. As imagens de validação com veículos usam exclusivamente registros temporários de teste; a aplicação inicia vazia em um banco novo.

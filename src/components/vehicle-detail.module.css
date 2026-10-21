@@ -1,0 +1,905 @@
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin: 22px 0 28px;
+}
+.heading h1 {
+  font-size: clamp(32px, 4vw, 48px);
+  letter-spacing: -0.05em;
+  line-height: 1.05;
+  margin: 10px 0 12px;
+  font-weight: 550;
+}
+.heading p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+.gallery {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.photo {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface, #181c19);
+  overflow: hidden;
+  flex: 1;
+  min-height: 310px;
+}
+.photo :global(.vehicle-image) {
+  height: 100%;
+  min-height: 310px;
+  aspect-ratio: 16 / 10;
+}
+.photo :global(.vehicle-image img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.photo :global(.image-placeholder) {
+  min-height: 310px;
+  background: transparent;
+}
+.zoom {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  background: rgba(16, 18, 17, 0.92);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  font-size: 12px;
+  min-height: 40px;
+}
+.photoCaption {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.pricePanel {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+}
+.price {
+  display: block;
+  font-size: clamp(29px, 3vw, 39px);
+  letter-spacing: -0.045em;
+  font-weight: 550;
+  margin: 12px 0 14px;
+  font-variant-numeric: tabular-nums;
+}
+.badge {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 5px 8px;
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 550;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.positive {
+  color: var(--accent, var(--green));
+}
+.negative {
+  color: #f0ad98;
+}
+.primaryFacts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 21px 20px;
+  margin: 25px 0;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.primaryFacts dt {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+.primaryFacts dd {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+.provenance {
+  margin-top: 16px;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 11px;
+  display: grid;
+  gap: 2px;
+}
+.provenance strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.analysisGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+.section {
+  padding: 28px;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+.analysisGrid .section {
+  margin: 0;
+}
+.sectionHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.sectionHeading h2 {
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  margin: 9px 0 0;
+}
+.subtle {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.metrics dt {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+.metrics dd {
+  display: grid;
+  gap: 7px;
+  font-size: 23px;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.metrics small {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.reasons {
+  padding-left: 17px;
+  display: grid;
+  gap: 10px;
+  margin: 0 0 18px;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.reasons li::marker {
+  color: var(--green);
+}
+.limitations {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.75;
+}
+.limitations ul {
+  padding-left: 17px;
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+.disclosure {
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.disclosure summary {
+  cursor: pointer;
+  color: var(--ink);
+  padding: 4px 0;
+}
+.disclosure p {
+  color: var(--muted);
+  margin: 12px 0;
+}
+.disclosure a {
+  color: var(--green);
+}
+.referenceAmount {
+  font-size: 28px;
+  font-weight: 500;
+  display: block;
+  margin: 15px 0;
+  letter-spacing: -0.035em;
+}
+.referenceEmpty {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  padding: 8px 0 20px;
+}
+.referenceExplanation {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footnote {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-top: 20px;
+}
+.technicalGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 26px 24px;
+}
+.technicalGrid dt {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.technicalGrid dd {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.notes {
+  white-space: pre-wrap;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.historyEmpty {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  padding: 24px 0;
+}
+.editorialNumber {
+  font-size: 32px;
+  letter-spacing: -0.06em;
+  font-weight: 400;
+  color: var(--green);
+  white-space: nowrap;
+}
+.historyEmpty h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.historyEmpty p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 620px;
+}
+.historyLoading {
+  height: 140px;
+  display: grid;
+  place-content: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.historyError {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  color: #f0ad98;
+  font-size: 13px;
+  padding: 18px 0;
+  flex-wrap: wrap;
+}
+.chart {
+  display: grid;
+  grid-template-columns: 105px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+}
+.chart svg {
+  width: 100%;
+  max-height: 245px;
+  overflow: visible;
+}
+.chartRange {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4% 0;
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.chartGuide {
+  stroke: var(--line);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 4 5;
+}
+.chartLine {
+  stroke: var(--green);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.chartDot {
+  fill: var(--green);
+  stroke: var(--surface, #181c19);
+  stroke-width: 2;
+}
+.chartDates {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 128px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.intro {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 750px;
+  margin-bottom: 26px;
+}
+.simulationLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 0.95fr);
+  gap: 36px;
+}
+.simulationForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+  align-content: start;
+}
+.simulationForm label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.simulationForm input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg, #101211);
+  padding: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.simulationForm input:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+.simulationOutput {
+  border-left: 1px solid var(--line);
+  padding-left: 30px;
+  min-width: 0;
+}
+.simulationResult {
+  display: block;
+  font-size: clamp(25px, 3vw, 36px);
+  letter-spacing: -0.045em;
+  margin: 12px 0 22px;
+  font-weight: 500;
+}
+.simulationTotals {
+  display: grid;
+  gap: 14px;
+}
+.simulationTotals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.simulationTotals dt {
+  color: var(--muted);
+}
+.simulationTotals dd {
+  font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.simulationPrompt {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 250px;
+}
+.simulationPrompt h3 {
+  margin: 18px 0 12px;
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.simulationPrompt p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.sensitivity {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.sensitivity h3 {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.sensitivity table {
+  width: 100%;
+  font-size: 11px;
+}
+.sensitivity th,
+.sensitivity td {
+  padding: 9px 0;
+  text-align: right;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.sensitivity th:first-child {
+  text-align: left;
+}
+.sensitivity thead th {
+  color: var(--muted);
+  font-size: 10px;
+}
+.comparables {
+  margin-top: 36px;
+}
+.comparableGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.lightbox {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg, #101211);
+  color: var(--ink);
+  padding: 0;
+  width: min(1100px, 94vw);
+  max-height: 92vh;
+  margin: auto;
+}
+.lightbox::backdrop {
+  background: rgba(5, 8, 6, 0.9);
+}
+.lightboxHeader {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.lightboxImage :global(.vehicle-image) {
+  max-height: 73vh;
+  aspect-ratio: 16/10;
+}
+.lightboxImage :global(img) {
+  object-fit: contain;
+  height: 100%;
+  width: 100%;
+}
+.lightboxCaption {
+  color: var(--muted);
+  font-size: 11px;
+  padding: 14px 20px;
+}
+.compareToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+.compareToolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.compareCount {
+  font-size: 30px;
+  letter-spacing: -0.055em;
+  color: var(--green);
+}
+.differencesLabel {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.differencesLabel input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+}
+.compareScroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface, #181c19);
+  max-width: 100%;
+}
+.compareTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.compareTable th,
+.compareTable td {
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  padding: 20px;
+  vertical-align: top;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.compareTable th:last-child,
+.compareTable td:last-child {
+  border-right: 0;
+}
+.compareTable tbody th {
+  color: var(--muted);
+}
+.compareTable thead th {
+  padding-bottom: 24px;
+}
+.compareTable thead th:first-child {
+  width: 175px;
+}
+.compareTable thead th > a {
+  display: block;
+  font-size: 19px;
+  line-height: 1.3;
+  margin: 10px 0 6px;
+  letter-spacing: -0.025em;
+}
+.compareTable thead p {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.compareTable small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 6px;
+}
+.compareTable strong {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.compareTable :global(.opportunity) {
+  display: block;
+  line-height: 1.6;
+}
+.compareTable :global(.opportunity) > svg {
+  display: inline;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.compareCorner {
+  display: block;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.comparePhoto {
+  position: relative;
+  margin: -20px -20px 18px;
+  overflow: hidden;
+}
+.comparePhoto :global(.vehicle-image) {
+  aspect-ratio: 16/11;
+}
+.comparePhoto > button {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--bg, #101211);
+}
+.compareSection th {
+  background: var(--bg, #101211);
+  color: var(--ink) !important;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.compareEmpty {
+  text-align: center;
+  padding: 60px 28px;
+}
+.compareEmptyVisual {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 30px;
+}
+.compareEmptyVisual span {
+  width: 62px;
+  height: 84px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: flex;
+  align-items: flex-end;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.compareEmpty h2 {
+  font-size: clamp(22px, 3vw, 31px);
+  letter-spacing: -0.04em;
+  line-height: 1.3;
+  font-weight: 500;
+  margin: 16px 0;
+}
+.compareEmpty p {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 490px;
+  line-height: 1.9;
+  margin: 0 auto 25px;
+}
+.compareNote {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 24px 0;
+}
+.compareNote p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 800px;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 1100px) {
+  .hero,
+  .analysisGrid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 1fr);
+    gap: 18px;
+  }
+  .pricePanel,
+  .section {
+    padding: 22px;
+  }
+  .simulationLayout {
+    gap: 24px;
+  }
+  .simulationOutput {
+    padding-left: 22px;
+  }
+  .comparableGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 800px) {
+  .heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .hero,
+  .analysisGrid {
+    grid-template-columns: 1fr;
+  }
+  .photo :global(.vehicle-image) {
+    min-height: 230px;
+  }
+  .photo,
+  .photo :global(.image-placeholder) {
+    min-height: 230px;
+  }
+  .primaryFacts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .technicalGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .simulationLayout {
+    grid-template-columns: 1fr;
+  }
+  .simulationOutput {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 24px 0 0;
+  }
+  .simulationPrompt {
+    min-height: 160px;
+  }
+  .compareTable thead th:first-child {
+    width: 150px;
+  }
+}
+@media (max-width: 480px) {
+  .heading {
+    margin-top: 20px;
+  }
+  .heading h1 {
+    font-size: 35px;
+  }
+  .heading p {
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .actions {
+    width: 100%;
+  }
+  .actions :global(.button) {
+    flex: 1;
+    font-size: 11px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .photoCaption {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .pricePanel,
+  .section {
+    padding: 20px;
+  }
+  .sectionHeading {
+    flex-wrap: wrap;
+  }
+  .sectionHeading h2 {
+    font-size: 20px;
+  }
+  .primaryFacts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metrics {
+    gap: 15px;
+  }
+  .metrics dd {
+    font-size: 20px;
+  }
+  .metrics small {
+    font-size: 10px;
+  }
+  .historyEmpty {
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .historyEmpty h3 {
+    font-size: 14px;
+  }
+  .editorialNumber {
+    font-size: 25px;
+  }
+  .chart {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 0;
+  }
+  .chartRange {
+    font-size: 9px;
+  }
+  .chartDates {
+    padding-left: 90px;
+    font-size: 9px;
+  }
+  .simulationForm {
+    gap: 16px 12px;
+  }
+  .simulationForm label {
+    font-size: 10px;
+  }
+  .simulationForm input {
+    padding: 12px 8px;
+  }
+  .simulationTotals > div {
+    font-size: 10px;
+  }
+  .comparableGrid {
+    grid-template-columns: 1fr;
+  }
+  .compareEmpty {
+    padding: 40px 20px;
+  }
+  .compareEmptyVisual {
+    gap: 6px;
+  }
+  .compareEmptyVisual span {
+    width: 53px;
+    height: 73px;
+  }
+  .lightboxHeader {
+    padding: 10px 12px;
+  }
+  .lightboxCaption {
+    padding: 12px;
+  }
+}
+
+.heading h1,
+.provenance {
+  overflow-wrap: anywhere;
+}
+
+.compareScroll .compareTable thead th {
+  background: var(--surface, #181c19);
+  vertical-align: top;
+}
+.compareScroll .compareTable thead a {
+  color: var(--ink);
+}
+.compareScroll .compareTable thead a:hover {
+  color: var(--green);
+}
+.compareTable small.positive {
+  color: var(--green);
+}

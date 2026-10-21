@@ -54,6 +54,45 @@ it("adds a current-price baseline to an existing database without changing vehic
     );
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.olxLocation.count()).toBe(0);
+
+    // Preserve existing provider searches, observations and location cache while
+    // adding independent local catalog filters.
+    const search = await client.savedSearch.create({
+      data: { name: "Busca anterior", criteria: '{"brand":"Toyota"}' },
+    });
+    const run = await client.searchRun.create({
+      data: { searchId: search.id, result: '{"listings":[]}' },
+    });
+    const discovered = await client.discoveredListing.create({
+      data: {
+        source: "fixture",
+        externalId: "before-migration",
+        payload: "{}",
+      },
+    });
+    const discoveredPrice = await client.listingPrice.create({
+      data: { listingId: discovered.id, priceCents: 9000000 },
+    });
+    const location = await client.olxLocation.create({
+      data: { id: "cached-location", region: "regiao-de-curitiba-e-paranagua" },
+    });
+    const spend = await client.providerSpend.create({
+      data: { provider: "fixture", credits: 1 },
+    });
+    await apply(
+      "prisma/migrations/20261021040000_catalog_searches/migration.sql",
+    );
+    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
+      before,
+    );
+    expect(await client.vehiclePrice.findMany()).toEqual(history);
+    expect(await client.savedSearch.findMany()).toEqual([search]);
+    expect(await client.searchRun.findMany()).toEqual([run]);
+    expect(await client.discoveredListing.findMany()).toEqual([discovered]);
+    expect(await client.listingPrice.findMany()).toEqual([discoveredPrice]);
+    expect(await client.olxLocation.findMany()).toEqual([location]);
+    expect(await client.providerSpend.findMany()).toEqual([spend]);
+    expect(await client.catalogSearch.count()).toBe(0);
   } finally {
     await client.$disconnect();
   }

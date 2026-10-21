@@ -1,4 +1,15 @@
+import { Suspense } from "react";
 import { Catalog } from "@/components/catalog";
 export default function Page() {
-  return <Catalog favorites />;
+  return (
+    <Suspense
+      fallback={
+        <div className="loading" role="status">
+          Carregando favoritos…
+        </div>
+      }
+    >
+      <Catalog favorites />
+    </Suspense>
+  );
 }

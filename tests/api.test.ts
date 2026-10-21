@@ -130,6 +130,48 @@ describe("HTTP routes with isolated SQLite and real migrations", () => {
       await vehicleRepository.delete(v.id);
     }
   });
+  it("exposes only two recent price observations and favorites do not change their dates", async () => {
+    const created = await (await collection.POST(request("POST", data))).json();
+    const ctx = { params: Promise.resolve({ id: created.id }) };
+    expect(created.priceHistory).toHaveLength(1);
+    expect(created.priceRecordedAt).toBe(created.priceHistory[0].observedAt);
+    await item.PUT(request("PUT", { ...data, priceCents: 8500000 }), ctx);
+    const last = await (
+      await item.PUT(request("PUT", { ...data, priceCents: 8000000 }), ctx)
+    ).json();
+    expect(
+      last.priceHistory.map((row: { priceCents: number }) => row.priceCents),
+    ).toEqual([8500000, 8000000]);
+    expect(last.priceRecordedAt).toBe(last.priceHistory[1].observedAt);
+    const favorite = await (
+      await item.PATCH(request("PATCH", { favorite: true }), ctx)
+    ).json();
+    expect(favorite.priceHistory).toEqual(last.priceHistory);
+    expect(favorite.priceRecordedAt).toBe(last.priceRecordedAt);
+    const edited = await (
+      await item.PUT(
+        request("PUT", {
+          ...data,
+          priceCents: 8000000,
+          model: "Corolla edição",
+        }),
+        ctx,
+      )
+    ).json();
+    expect(edited.priceHistory).toEqual(last.priceHistory);
+    expect(edited.priceRecordedAt).toBe(last.priceRecordedAt);
+    const listed = (await (await collection.GET()).json()).find(
+      (row: { id: string }) => row.id === created.id,
+    );
+    expect(listed.priceHistory).toEqual(last.priceHistory);
+    expect(
+      (await (await item.GET(request("GET"), ctx)).json()).priceRecordedAt,
+    ).toBe(last.priceRecordedAt);
+    expect(await (await prices.GET(request("GET"), ctx)).json()).toHaveLength(
+      3,
+    );
+    await item.DELETE(request("DELETE"), ctx);
+  });
   it("rejects invalid input and cross-origin mutation", async () => {
     expect(
       (await collection.POST(request("POST", { ...data, priceCents: -1 })))

@@ -9,11 +9,14 @@ import {
   Columns3,
   Plus,
   ArrowDownRight,
+  Radar,
 } from "lucide-react";
 import { Vehicle, money, number, location, opportunity } from "@/lib/vehicle";
+import { analyzeVehicle, priceRecordDate } from "@/lib/intelligence";
 import { useWorkspace } from "./workspace";
 export function VehicleImage({ vehicle }: { vehicle: Vehicle }) {
-  const [failed, setFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const failed = failedUrl !== null && failedUrl === vehicle.imageUrl;
   return (
     <div className="vehicle-image">
       {vehicle.imageUrl && !failed ? (
@@ -23,15 +26,21 @@ export function VehicleImage({ vehicle }: { vehicle: Vehicle }) {
           alt={vehicle.brand + " " + vehicle.model}
           loading="lazy"
           referrerPolicy="no-referrer"
-          onError={() => setFailed(true)}
+          onError={() => setFailedUrl(vehicle.imageUrl)}
+          decoding="async"
         />
       ) : (
         <div className="image-placeholder">
           <CarFront size={48} strokeWidth={1} />
           <span>
-            {failed ? "Imagem indisponível" : "Sem imagem cadastrada"}
+            {failed ? "Imagem indisponível" : "Fotografia não disponível"}
           </span>
         </div>
+      )}
+      {vehicle.imageUrl && !failed && (
+        <span className="photo-origin">
+          Imagem informada · {new URL(vehicle.imageUrl).hostname}
+        </span>
       )}
     </div>
   );
@@ -49,6 +58,7 @@ export function Opportunity({
   const below = result.difference < 0;
   return (
     <span
+      title="Comparação com a referência manual cadastrada. Não é FIPE verificada."
       className={
         below
           ? "opportunity below"
@@ -65,6 +75,7 @@ export function Opportunity({
           }) +
           "% " +
           (below ? "abaixo" : "acima")}
+      <span className="reference-label"> da ref. manual</span>
       {full && result.difference !== 0
         ? " · " + money(Math.abs(result.difference))
         : ""}
@@ -72,7 +83,8 @@ export function Opportunity({
   );
 }
 export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
-  const { favorite, selected, toggleCompare } = useWorkspace();
+  const { vehicles, favorite, selected, toggleCompare } = useWorkspace();
+  const analysis = analyzeVehicle(v, vehicles);
   return (
     <article className="vehicle-card">
       <div className="image-wrap">
@@ -107,6 +119,19 @@ export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
         </div>
         <div className="card-price">{money(v.priceCents)}</div>
         <Opportunity vehicle={v} />
+        <div className="card-analysis">
+          <span
+            className={"analysis-label " + analysis.classification}
+            title={[...analysis.reasons, ...analysis.limitations].join(" ")}
+          >
+            {analysis.label}
+          </span>
+          <span title="Data do último preço registrado no catálogo">
+            {new Date(priceRecordDate(v)).toLocaleDateString("pt-BR", {
+              timeZone: "America/Sao_Paulo",
+            })}
+          </span>
+        </div>
         <div className="card-bottom">
           <span>
             <MapPin size={13} />
@@ -124,6 +149,18 @@ export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
             <Columns3 size={14} />
             {selected.includes(v.id) ? "Selecionado" : "Comparar"}
           </button>
+          {v.originalUrl && (
+            <a
+              href={v.originalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="original-action"
+              aria-label={`Abrir anúncio original de ${v.model}`}
+              title="Abrir anúncio original"
+            >
+              <ArrowUpRight size={15} />
+            </a>
+          )}
         </div>
       </div>
     </article>
@@ -141,7 +178,7 @@ export function Empty({
   return (
     <div className="empty-state">
       <div className="empty-icon">
-        <CarFront size={36} strokeWidth={1.3} />
+        <Radar size={36} strokeWidth={1.1} />
       </div>
       <h2>{title}</h2>
       <p>{description}</p>

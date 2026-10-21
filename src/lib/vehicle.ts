@@ -105,11 +105,20 @@ export const vehicleSchema = z
   });
 
 export type VehicleInput = z.infer<typeof vehicleSchema>;
+export type PriceObservation = {
+  id?: number;
+  priceCents: number;
+  observedAt: string;
+  reason?: string;
+};
 export type Vehicle = VehicleInput & {
   id: string;
   favorite: boolean;
   createdAt: string;
   updatedAt: string;
+  /** Dates of actual price records. updatedAt also changes on favorite actions. */
+  priceRecordedAt?: string | null;
+  priceHistory?: PriceObservation[];
 };
 export function opportunity(price: number, reference?: number | null) {
   if (!reference || reference <= 0) return null;
@@ -141,6 +150,15 @@ export type Filters = {
   source: string;
   favorite: boolean;
   sort: string;
+  version: string;
+  fuel: string;
+  transmission: string;
+  manufactureYear: string;
+  days: string;
+  reduced: boolean;
+  referenceDiscountMin: string;
+  classification: string;
+  exactMatch: boolean;
 };
 export const defaultFilters: Filters = {
   q: "",
@@ -156,15 +174,35 @@ export const defaultFilters: Filters = {
   source: "",
   favorite: false,
   sort: "recent",
+  version: "",
+  fuel: "",
+  transmission: "",
+  manufactureYear: "",
+  days: "",
+  reduced: false,
+  referenceDiscountMin: "",
+  classification: "",
+  exactMatch: false,
 };
 const normalize = (v: string) =>
   v
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .replace(/\s+/g, " ")
     .toLowerCase();
-export function filterVehicles(vehicles: Vehicle[], f: Filters) {
+export function filterVehicles(
+  vehicles: Vehicle[],
+  f: Filters,
+  now = Date.now(),
+) {
   const includes = (value: string | null | undefined, search: string) =>
     normalize(value ?? "").includes(normalize(search.trim()));
+  const matches = (value: string | null | undefined, search: string) =>
+    !search.trim() ||
+    (f.exactMatch
+      ? normalize(value ?? "").trim() === normalize(search).trim()
+      : includes(value, search));
   return vehicles
     .filter(
       (v) =>
@@ -172,8 +210,13 @@ export function filterVehicles(vehicles: Vehicle[], f: Filters) {
           [v.brand, v.model, v.version, v.city, v.source].join(" "),
           f.q,
         ) &&
-        includes(v.brand, f.brand) &&
-        includes(v.model, f.model) &&
+        matches(v.brand, f.brand) &&
+        matches(v.model, f.model) &&
+        matches(v.version, f.version || "") &&
+        (!f.fuel || v.fuel === f.fuel) &&
+        (!f.transmission || v.transmission === f.transmission) &&
+        (!f.manufactureYear ||
+          v.manufactureYear === Number(f.manufactureYear)) &&
         (!f.yearMin || v.modelYear >= Number(f.yearMin)) &&
         (!f.yearMax || v.modelYear <= Number(f.yearMax)) &&
         (!f.priceMin || v.priceCents >= Math.round(Number(f.priceMin) * 100)) &&
@@ -181,7 +224,16 @@ export function filterVehicles(vehicles: Vehicle[], f: Filters) {
         (!f.mileageMax || v.mileage <= Number(f.mileageMax)) &&
         (!f.state || v.state === f.state) &&
         includes(v.city, f.city) &&
-        includes(v.source, f.source) &&
+        matches(v.source, f.source) &&
+        (!f.days ||
+          (Number.isFinite(Date.parse(v.createdAt)) &&
+            Date.parse(v.createdAt) <= now &&
+            now - Date.parse(v.createdAt) <= Number(f.days) * 86400000)) &&
+        (!f.referenceDiscountMin ||
+          (v.referenceCents != null &&
+            v.referenceCents > 0 &&
+            ((v.referenceCents - v.priceCents) / v.referenceCents) * 100 >=
+              Number(f.referenceDiscountMin))) &&
         (!f.favorite || v.favorite),
     )
     .sort((a, b) => {
@@ -194,6 +246,15 @@ export function filterVehicles(vehicles: Vehicle[], f: Filters) {
           return a.mileage - b.mileage;
         case "year":
           return b.modelYear - a.modelYear;
+        case "referenceDiscount": {
+          const aDiscount = a.referenceCents
+            ? (a.referenceCents - a.priceCents) / a.referenceCents
+            : -Infinity;
+          const bDiscount = b.referenceCents
+            ? (b.referenceCents - b.priceCents) / b.referenceCents
+            : -Infinity;
+          return bDiscount - aDiscount || a.id.localeCompare(b.id);
+        }
         default:
           return (
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

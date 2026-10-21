@@ -1,0 +1,284 @@
+[
+  {
+    "height": 844,
+    "repeat": 0,
+    "treatment": false,
+    "cls": 0.16205492769473812,
+    "shifts": [
+      {
+        "value": 0.16205492769473812,
+        "hadRecentInput": false,
+        "time": 1326.5,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 695,
+              "width": 358,
+              "height": 149,
+              "top": 695,
+              "right": 374,
+              "bottom": 844,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 844,
+    "repeat": 0,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  },
+  {
+    "height": 844,
+    "repeat": 1,
+    "treatment": false,
+    "cls": 0.16205492769473812,
+    "shifts": [
+      {
+        "value": 0.16205492769473812,
+        "hadRecentInput": false,
+        "time": 962.6000000000931,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 695,
+              "width": 358,
+              "height": 149,
+              "top": 695,
+              "right": 374,
+              "bottom": 844,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 844,
+    "repeat": 1,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  },
+  {
+    "height": 844,
+    "repeat": 2,
+    "treatment": false,
+    "cls": 0.16205492769473812,
+    "shifts": [
+      {
+        "value": 0.16205492769473812,
+        "hadRecentInput": false,
+        "time": 808.2000000001863,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 695,
+              "width": 358,
+              "height": 149,
+              "top": 695,
+              "right": 374,
+              "bottom": 844,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 844,
+    "repeat": 2,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 0,
+    "treatment": false,
+    "cls": 0.13677435897435897,
+    "shifts": [
+      {
+        "value": 0.13677435897435897,
+        "hadRecentInput": false,
+        "time": 1042.5,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 851,
+              "width": 358,
+              "height": 149,
+              "top": 851,
+              "right": 374,
+              "bottom": 1000,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 0,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 1,
+    "treatment": false,
+    "cls": 0.13677435897435897,
+    "shifts": [
+      {
+        "value": 0.13677435897435897,
+        "hadRecentInput": false,
+        "time": 995.5,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 851,
+              "width": 358,
+              "height": 149,
+              "top": 851,
+              "right": 374,
+              "bottom": 1000,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 1,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 2,
+    "treatment": false,
+    "cls": 0.13677435897435897,
+    "shifts": [
+      {
+        "value": 0.13677435897435897,
+        "hadRecentInput": false,
+        "time": 1130.3000000002794,
+        "sources": [
+          {
+            "node": "<footer class=\"app-footer\"><span>RADAR AUTOMOTIVO</span><span>Preços anunciados · Amostra do seu catálogo ·<!-- --> <a href=\"/configuracoes\">Metodologia</a></span></footer>",
+            "previous": {
+              "x": 16,
+              "y": 851,
+              "width": 358,
+              "height": 149,
+              "top": 851,
+              "right": 374,
+              "bottom": 1000,
+              "left": 16
+            },
+            "current": {
+              "x": 0,
+              "y": 0,
+              "width": 0,
+              "height": 0,
+              "top": 0,
+              "right": 0,
+              "bottom": 0,
+              "left": 0
+            }
+          }
+        ]
+      }
+    ],
+    "overflow": false
+  },
+  {
+    "height": 1000,
+    "repeat": 2,
+    "treatment": true,
+    "cls": 0,
+    "shifts": [],
+    "overflow": false
+  }
+]

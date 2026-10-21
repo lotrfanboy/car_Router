@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Radar,
   LayoutDashboard,
@@ -20,6 +20,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Search,
+  ChartNoAxesCombined,
+  Settings2,
+  ArrowUpRight,
 } from "lucide-react";
 import type { Vehicle } from "@/lib/vehicle";
 
@@ -48,9 +51,12 @@ export function Workspace({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState("");
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const [globalQuery, setGlobalQuery] = useState("");
   const notify = useCallback((message: string) => setToast(message), []);
   const reload = useCallback(async () => {
     setError("");
+    setLoading(true);
     try {
       const response = await fetch("/api/vehicles", { cache: "no-store" });
       if (!response.ok)
@@ -58,8 +64,8 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       const rows: Vehicle[] = await response.json();
       setVehicles(rows);
       setSelected((ids) => ids.filter((id) => rows.some((v) => v.id === id)));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Falha ao carregar.");
+    } catch {
+      setError("Não foi possível carregar seus anúncios.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +81,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
         if (Array.isArray(saved)) {
           const ids = saved
             .filter((id): id is string => typeof id === "string")
-            .slice(0, 3);
+            .slice(0, 4);
           setSelected(ids);
         }
       } catch {
@@ -85,6 +91,19 @@ export function Workspace({ children }: { children: React.ReactNode }) {
     };
     void initialize();
   }, [reload]);
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", close);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
   const persistSelection = (ids: string[]) => {
     setSelected(ids);
     try {
@@ -103,8 +122,8 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       persistSelection(selected.filter((x) => x !== id));
       return;
     }
-    if (selected.length >= 3) {
-      notify("Você pode comparar até 3 veículos. Remova um da seleção.");
+    if (selected.length >= 4) {
+      notify("Você pode comparar até 4 veículos. Remova um da seleção.");
       return;
     }
     persistSelection([...selected, id]);
@@ -125,16 +144,18 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       notify(
         row.favorite ? "Adicionado aos favoritos." : "Removido dos favoritos.",
       );
-    } catch (e) {
-      notify(e instanceof Error ? e.message : "Falha ao salvar.");
+    } catch {
+      notify("Não foi possível atualizar o favorito. Tente novamente.");
     }
   };
   const nav = [
     { href: "/", label: "Visão geral", icon: LayoutDashboard },
-    { href: "/veiculos", label: "Catálogo", icon: CarFront },
+    { href: "/veiculos", label: "Radar de veículos", icon: CarFront },
+    { href: "/mercado", label: "Explorar mercado", icon: ChartNoAxesCombined },
     { href: "/buscar", label: "Buscar nos portais", icon: Search },
     { href: "/favoritos", label: "Favoritos", icon: Heart },
     { href: "/comparar", label: "Comparador", icon: Columns3 },
+    { href: "/configuracoes", label: "Configurações", icon: Settings2 },
   ];
   return (
     <Context.Provider
@@ -151,6 +172,9 @@ export function Workspace({ children }: { children: React.ReactNode }) {
       }}
     >
       <div className="app-shell">
+        <a href="#conteudo" className="skip-link">
+          Pular para o conteúdo
+        </a>
         {open && (
           <button
             className="nav-scrim"
@@ -167,13 +191,18 @@ export function Workspace({ children }: { children: React.ReactNode }) {
               radar<span className="brand-sub">AUTOMOTIVO</span>
             </span>
           </Link>
-          <div className="workspace-label">ESPAÇO DE TRABALHO</div>
-          <nav>
+          <div className="workspace-label">INTELIGÊNCIA AUTOMOTIVA</div>
+          <nav aria-label="Navegação principal">
             {nav.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
+                aria-current={
+                  (href === "/" ? pathname === "/" : pathname.startsWith(href))
+                    ? "page"
+                    : undefined
+                }
                 className={
                   (href === "/" ? pathname === "/" : pathname.startsWith(href))
                     ? "nav-link active"
@@ -194,8 +223,15 @@ export function Workspace({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="sidebar-bottom">
-            <span className="status-dot" /> Ambiente local
-            <span className="muted">Seus anúncios, no seu computador.</span>
+            <span className="status-dot" /> Seu espaço pessoal
+            <span className="muted">
+              Dados persistidos localmente.
+              <br />
+              Decisões com contexto.
+            </span>
+            <Link href="/configuracoes" className="sidebar-method">
+              Fontes e metodologia <ArrowUpRight size={13} />
+            </Link>
           </div>
         </aside>
         <div className="main-shell">
@@ -204,30 +240,49 @@ export function Workspace({ children }: { children: React.ReactNode }) {
               <button
                 className="icon-button mobile-menu"
                 onClick={() => setOpen(!open)}
-                aria-label="Abrir menu"
+                aria-label={open ? "Fechar menu" : "Abrir menu"}
+                aria-expanded={open}
               >
                 <Menu size={20} />
               </button>
               <span className="breadcrumb">
                 Meu espaço <span>/</span>{" "}
                 <strong>
-                  {pathname === "/"
-                    ? "Visão geral"
-                    : pathname === "/buscar"
-                      ? "Buscar nos portais"
-                      : pathname === "/comparar"
-                        ? "Comparador"
-                        : pathname === "/favoritos"
-                          ? "Favoritos"
-                          : "Veículos"}
+                  {nav.find((item) =>
+                    item.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(item.href),
+                  )?.label || "Veículo"}
                 </strong>
               </span>
             </div>
-            <Link className="button primary small" href="/veiculos/novo">
+            <form
+              className="global-search"
+              role="search"
+              onSubmit={(e) => {
+                e.preventDefault();
+                router.push("/veiculos?q=" + encodeURIComponent(globalQuery));
+              }}
+            >
+              <Search size={15} />
+              <input
+                aria-label="Busca global de veículos"
+                placeholder="Encontre seu próximo veículo…"
+                value={globalQuery}
+                onChange={(e) => setGlobalQuery(e.target.value)}
+              />
+              <button type="submit" aria-label="Buscar no radar">
+                <ArrowUpRight size={15} />
+              </button>
+            </form>
+            <Link
+              className="button primary small header-add"
+              href="/veiculos/novo"
+            >
               <Plus size={16} /> Novo anúncio
             </Link>
           </header>
-          <main>
+          <main id="conteudo" tabIndex={-1}>
             {error ? (
               <div className="error-box" role="alert">
                 <AlertCircle />
@@ -237,9 +292,19 @@ export function Workspace({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
             ) : loading ? (
-              <div className="loading" role="status">
-                <span className="spinner" />
-                Carregando seu radar…
+              <div
+                className="loading-skeleton"
+                role="status"
+                aria-live="polite"
+              >
+                <span className="sr-only">Carregando seu radar…</span>
+                <div className="skeleton skeleton-title" />
+                <div className="skeleton skeleton-hero" />
+                <div className="skeleton-grid">
+                  <div className="skeleton" />
+                  <div className="skeleton" />
+                  <div className="skeleton" />
+                </div>
               </div>
             ) : (
               children
@@ -247,7 +312,10 @@ export function Workspace({ children }: { children: React.ReactNode }) {
           </main>
           <footer className="app-footer">
             <span>RADAR AUTOMOTIVO</span>
-            <span>Organize. Compare. Decida.</span>
+            <span>
+              Preços anunciados · Amostra do seu catálogo ·{" "}
+              <Link href="/configuracoes">Metodologia</Link>
+            </span>
           </footer>
         </div>
         {toast && (
@@ -266,7 +334,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
             <div className="compare-bar">
               <Columns3 size={20} />
               <span>
-                <strong>{selected.length} de 3</strong> selecionados
+                <strong>{selected.length} de 4</strong> selecionados
               </span>
               <button onClick={() => persistSelection([])}>Limpar</button>
               <Link href="/comparar" className="button primary small">

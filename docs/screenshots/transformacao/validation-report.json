@@ -1,0 +1,166 @@
+{
+  "checks": [
+    "Empty initial database and truthful empty state",
+    "Details, persisted favorite, manual reference, simulator and original link",
+    "CRUD and persistence after reload and server restart",
+    "Rapid character entry stays synchronized with the URL",
+    "Combined filters, shareable URL, reload and back navigation",
+    "Saved local filters and compact list preserve the result",
+    "Four-vehicle comparison, limit, differences and remove action",
+    "Market sample count, median, filters, CSV and drilldown",
+    "Saved catalog search opens and removes from monitoring",
+    "Favorites saved-search manager and dropdown update together without reload",
+    "Real price-change history and updated comparison",
+    "Source unavailability and persisted search without provider calls",
+    "Nine routes without page overflow at 390/768/1280/1440 pixels",
+    "API failure and working retry",
+    "Real 13-record pagination preserves filters and sorting, then fixtures removed",
+    "Registered image loads with attribution, detail zoom restores focus, home uses registered image and broken URLs show honest fallback"
+  ],
+  "browserExceptions": [],
+  "externalSourceRuns": 0,
+  "localLabMetrics": [
+    {
+      "screenshot": "01-dashboard-vazio.png",
+      "url": "http://127.0.0.1:44197/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 2088,
+      "cls": 0.02062288230613426
+    },
+    {
+      "screenshot": "02-detalhes-teste.png",
+      "url": "http://127.0.0.1:44197/veiculos/cmvide5r00000opph9s12jlrf",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 652,
+      "cls": 0.04908333333333333
+    },
+    {
+      "screenshot": "03-catalogo-teste.png",
+      "url": "http://127.0.0.1:44197/veiculos?view=cards&sort=priceAsc",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 604,
+      "cls": 0.006348984555844907
+    },
+    {
+      "screenshot": "04-comparacao-teste.png",
+      "url": "http://127.0.0.1:44197/comparar",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 604,
+      "cls": 0.006348984555844907
+    },
+    {
+      "screenshot": "09-mercado-1440.png",
+      "url": "http://127.0.0.1:44197/mercado",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 508,
+      "cls": 0.035001167353877316
+    },
+    {
+      "screenshot": "10-mercado-390.png",
+      "url": "http://127.0.0.1:44197/mercado",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "lcpMs": 508,
+      "cls": 0.035001167353877316
+    },
+    {
+      "screenshot": "05-mobile-catalogo-teste.png",
+      "url": "http://127.0.0.1:44197/veiculos",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "lcpMs": 608,
+      "cls": 0.16205492769473812
+    },
+    {
+      "screenshot": "06-mobile-cadastro.png",
+      "url": "http://127.0.0.1:44197/veiculos/novo",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "lcpMs": 376,
+      "cls": 0.16205492769473812
+    },
+    {
+      "screenshot": "07-buscas-sem-conexao.png",
+      "url": "http://127.0.0.1:44197/buscar",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 372,
+      "cls": 0.0621220558449074
+    },
+    {
+      "screenshot": "08-radar-390.png",
+      "url": "http://127.0.0.1:44197/veiculos",
+      "viewport": {
+        "width": 390,
+        "height": 1000
+      },
+      "lcpMs": 404,
+      "cls": 0.13677435897435897
+    },
+    {
+      "screenshot": "08-radar-768.png",
+      "url": "http://127.0.0.1:44197/veiculos",
+      "viewport": {
+        "width": 768,
+        "height": 1000
+      },
+      "lcpMs": 604,
+      "cls": 0.035778581380208334
+    },
+    {
+      "screenshot": "08-radar-1280.png",
+      "url": "http://127.0.0.1:44197/veiculos",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "lcpMs": 544,
+      "cls": 0.002546114349365234
+    },
+    {
+      "screenshot": "08-radar-1440.png",
+      "url": "http://127.0.0.1:44197/veiculos",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 512,
+      "cls": 0.003349980107060185
+    },
+    {
+      "screenshot": "11-dashboard-populado.png",
+      "url": "http://127.0.0.1:44197/",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "lcpMs": 480,
+      "cls": 0.0265058521412037
+    }
+  ],
+  "metricsLimit": "Local Chromium with synthetic test records. LCP/CLS observations only; no field Core Web Vitals or INP measurement.",
+  "fixtures": "Temporary test-only records, removed with the SQLite database after execution"
+}

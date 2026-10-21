@@ -104,3 +104,13 @@ model OlxLocation {
   region     String
   verifiedAt DateTime @default(now())
 }
+
+// Saved local catalog filters are separate from provider searches and never consume credits.
+model CatalogSearch {
+  id        String   @id @default(cuid())
+  name      String
+  query     String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

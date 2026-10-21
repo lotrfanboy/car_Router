@@ -239,7 +239,8 @@ export function VehicleForm({ vehicle }: { vehicle?: Vehicle }) {
                 placeholder: "https://…",
               })}
               <small className="muted">
-                Use o endereço direto de uma imagem. Ela será carregada pelo
+                Use somente uma foto deste veículo que você tenha permissão para
+                exibir. A origem será identificada; a imagem será carregada pelo
                 navegador.
               </small>
             </div>
