@@ -6,7 +6,7 @@ services:
     buildCommand: npm ci --no-audit --no-fund && npm run db:generate && npm run build
     startCommand: npm run db:migrate && node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port $PORT
     healthCheckPath: /
-    autoDeploy: false
+    autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: 24.19.0
@@ -17,6 +17,6 @@ services:
       - key: REEF_API_KEY
         sync: false
       - key: REEF_FREE_TRIAL
-        value: "false"
+        sync: false
       - key: RADAR_SCHEDULER_ENABLED
         value: "false"
