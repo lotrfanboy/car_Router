@@ -29,10 +29,7 @@ type Integration = {
   dailyLimit: number;
   lastSuccessfulAt: string | null;
 };
-const verifiedSearchLocations = [
-  { city: "Blumenau", state: "SC" },
-  { city: "Curitiba", state: "PR" },
-] as const;
+type SearchOption = { code: string; name: string };
 export function SearchWorkspace({
   initialSearchId = "",
 }: {
@@ -54,6 +51,10 @@ export function SearchWorkspace({
   const [city, setCity] = useState("");
   const [state, setState] = useState("PR");
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [brandOptions, setBrandOptions] = useState<SearchOption[]>([]);
+  const [modelOptions, setModelOptions] = useState<SearchOption[]>([]);
+  const [cityOptions, setCityOptions] = useState<SearchOption[]>([]);
+  const [catalogNotice, setCatalogNotice] = useState("");
   const refresh = useCallback(async () => {
     const res = await fetch("/api/searches", { cache: "no-store" });
     if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
@@ -75,6 +76,67 @@ export function SearchWorkspace({
       cancelled = true;
     };
   }, [refresh]);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/search-options?type=brands")
+      .then((response) => {
+        if (!response.ok) throw new Error();
+        return response.json() as Promise<SearchOption[]>;
+      })
+      .then((options) => {
+        if (!cancelled) setBrandOptions(options);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setCatalogNotice("Catálogo FIPE indisponível; digitação manual liberada.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/search-options?type=cities&state=${encodeURIComponent(state)}`)
+      .then((response) => {
+        if (!response.ok) throw new Error();
+        return response.json() as Promise<SearchOption[]>;
+      })
+      .then((options) => {
+        if (!cancelled) setCityOptions(options);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setCatalogNotice("Catálogo de municípios indisponível; digitação manual liberada.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [state]);
+  useEffect(() => {
+    let cancelled = false;
+    const selectedBrand = brandOptions.find(
+      (option) =>
+        option.name.localeCompare(brand, "pt-BR", { sensitivity: "base" }) === 0,
+    );
+    if (!selectedBrand) return;
+    fetch(
+      `/api/search-options?type=models&brand=${encodeURIComponent(selectedBrand.code)}`,
+    )
+      .then((response) => {
+        if (!response.ok) throw new Error();
+        return response.json() as Promise<SearchOption[]>;
+      })
+      .then((options) => {
+        if (!cancelled) setModelOptions(options);
+      })
+      .catch(() => {
+        if (!cancelled)
+          setCatalogNotice("Modelos FIPE indisponíveis; digitação manual liberada.");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [brand, brandOptions]);
   const active = saved.find((s) => s.id === selected),
     criteria = active?.criteria,
     run = active?.latest;
@@ -99,12 +161,6 @@ export function SearchWorkspace({
   /* eslint-enable react-hooks/set-state-in-effect */
   const suggestions = useMemo(() => {
     const rows = [
-      ...verifiedSearchLocations.map((location) => ({
-        brand: null,
-        model: null,
-        version: null,
-        ...location,
-      })),
       ...vehicles.map((v) => ({
         brand: v.brand,
         model: v.model,
@@ -124,20 +180,24 @@ export function SearchWorkspace({
     const same = (a: string | null | undefined, b: string) =>
       !b || a?.localeCompare(b, "pt-BR", { sensitivity: "base" }) === 0;
     return {
-      brands: unique(rows.map((r) => r.brand)),
+      brands: unique([...brandOptions.map((option) => option.name), ...rows.map((r) => r.brand)]),
       models: unique(
-        rows.filter((r) => same(r.brand, brand)).map((r) => r.model),
+        [
+          ...modelOptions.map((option) => option.name),
+          ...rows.filter((r) => same(r.brand, brand)).map((r) => r.model),
+        ],
       ),
       versions: unique(
         rows
           .filter((r) => same(r.brand, brand) && same(r.model, model))
           .map((r) => r.version),
       ),
-      cities: unique(
-        rows.map((r) => r.city),
-      ),
+      cities: unique([
+        ...cityOptions.map((option) => option.name),
+        ...rows.filter((r) => same(r.state, state)).map((r) => r.city),
+      ]),
     };
-  }, [brand, model, saved, vehicles]);
+  }, [brand, brandOptions, cityOptions, model, modelOptions, saved, state, vehicles]);
   const candidates = sortListings(
     run?.sources
       .filter((s) => s.status === "ok")
@@ -281,6 +341,7 @@ export function SearchWorkspace({
                     setBrand(event.target.value);
                     setModel("");
                     setVersion("");
+                    setModelOptions([]);
                   }}
                 />
               </label>
@@ -312,9 +373,8 @@ export function SearchWorkspace({
               ))}
             </datalist>
             <p className="discovery-help muted">
-              Digite livremente ou escolha sugestões aprendidas com suas buscas
-              e anúncios reais já consultados. Modelo e versão acompanham a
-              marca escolhida.
+              Escolha no catálogo FIPE. Se um item não aparecer, digite
+              manualmente. Os modelos acompanham a marca escolhida.
             </p>
             <label>
               Versão{" "}
@@ -338,34 +398,6 @@ export function SearchWorkspace({
             </label>
             <div className="form-grid two">
               <label>
-                Cidade
-                <input
-                  name="city"
-                  list="known-cities"
-                  required
-                  maxLength={120}
-                  placeholder="Curitiba"
-                  value={city}
-                  autoComplete="off"
-                  onChange={(event) => {
-                    const value = event.target.value;
-                    setCity(value);
-                    const verified = verifiedSearchLocations.find(
-                      (location) =>
-                        location.city.localeCompare(value, "pt-BR", {
-                          sensitivity: "base",
-                        }) === 0,
-                    );
-                    if (verified) setState(verified.state);
-                  }}
-                />
-                <datalist id="known-cities">
-                  {suggestions.cities.map((x) => (
-                    <option key={x} value={x} />
-                  ))}
-                </datalist>
-              </label>
-              <label>
                 UF
                 <select
                   name="state"
@@ -373,6 +405,7 @@ export function SearchWorkspace({
                   onChange={(event) => {
                     setState(event.target.value);
                     setCity("");
+                    setCityOptions([]);
                   }}
                 >
                   {states.map((x) => (
@@ -380,7 +413,30 @@ export function SearchWorkspace({
                   ))}
                 </select>
               </label>
+              <label>
+                Cidade
+                <input
+                  name="city"
+                  list="known-cities"
+                  required
+                  maxLength={120}
+                  placeholder="Escolha a UF primeiro"
+                  value={city}
+                  autoComplete="off"
+                  onChange={(event) => setCity(event.target.value)}
+                />
+                <datalist id="known-cities">
+                  {suggestions.cities.map((x) => (
+                    <option key={x} value={x} />
+                  ))}
+                </datalist>
+              </label>
             </div>
+            {catalogNotice && (
+              <p className="discovery-warning" role="status">
+                {catalogNotice}
+              </p>
+            )}
             <details
               className="advanced-filters"
               open={advancedOpen}

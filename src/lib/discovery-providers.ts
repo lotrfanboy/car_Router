@@ -66,7 +66,8 @@ export function providerConfig(source: Source) {
   );
   // Reef has no account-free-balance endpoint established by our proof. Explicit local opt-in is required.
   const enabled =
-    gecko || secret("REEF_FREE_TRIAL", ".env.reef.local") === "true";
+    gecko ||
+    secret("REEF_FREE_TRIAL", ".env.reef.local").toLowerCase() === "true";
   return {
     key,
     configured: Boolean(key) && enabled,
