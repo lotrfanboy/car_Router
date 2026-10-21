@@ -4,6 +4,8 @@ Consulta em 21/10/2026. Esta revisão incorpora a demonstração enviada pelo us
 
 ## O que mudou na conclusão
 
+**Atualização após provas reais:** [Webmotors: alternativas e prova Reef](webmotors-alternativas-e-prova-reef.md). GeckoAPI segue candidata OLX por URL correta; ReefAPI passa a candidata Webmotors após quatro buscas públicas gratuitas bem-sucedidas. A seleção documental inicial abaixo é histórica; nenhuma integração de produção foi aprovada.
+
 Há agora evidência de uma busca multicanal funcionando no recorte testado. Isso corrige uma lacuna da primeira investigação, que examinou ofertas e documentos, mas não realizou uma busca em um agregador público. Ainda não há prova autenticada de um fornecedor de API integrado ao CarRouter, licença aprovada ou cobertura contínua de Facebook.
 
 A candidata técnica principal para prova de OLX/Webmotors passa a ser **GeckoAPI**. Para Facebook, a gravação revela referência à **Apify**, mas também a falta de configuração naquela sessão. BrScrapp entra como alternativa documental com incidente de disponibilidade observado. Nenhuma dessas classificações equivale a aprovação de produção.
