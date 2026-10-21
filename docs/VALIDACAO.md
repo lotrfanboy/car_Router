@@ -42,7 +42,18 @@ Turbopack não conseguiu abrir seu socket interno neste ambiente. Desenvolviment
 
 O teste de navegador detectou uma rejeição indevida de origem no cadastro por 127.0.0.1. O servidor agora compara a origem com o Host recebido; a correção tem teste de regressão e passou pelo fluxo completo.
 
-## Limites da verificação
+## Revalidação em 21/10/2026
+
+O MVP do commit `439c99e` foi novamente validado em Linux com Node.js 24.19.0 antes da integração à `main`:
+
+- `npm ci --no-audit --no-fund`, `npm run setup`, `npm run typecheck`, `npm run lint` e `npm run build`: concluídos com sucesso.
+- `npm test`: 25 testes aprovados em três arquivos.
+- Roteiro `scripts/browser_check.py`: aprovado em desktop e mobile, incluindo CRUD, filtros, ordenação, favoritos, comparação, cálculos e persistência após reiniciar o servidor, sem exceções JavaScript.
+- O roteiro usou banco temporário; as novas screenshots foram gravadas em `/tmp/radar-validation-20261021`, preservando as imagens versionadas.
+
+O Prisma continua emitindo o aviso documentado sobre a URL do datasource ser substituída pela configuração do adaptador. A migração foi aplicada com sucesso.
+
+## Limites da revalidação
 
 - Não houve execução em Windows; as instruções PowerShell foram documentadas, mas não validadas em uma máquina Windows.
 - Não foram feitos testes de carga, auditoria formal de acessibilidade ou teste de segurança completo.

@@ -4,14 +4,14 @@ Aplicação local de usuário único para cadastrar, organizar e comparar anúnc
 
 ## Executar no Windows
 
-Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. Os comandos de clone/branch pressupõem que a branch já foi enviada ao GitHub.
+Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O MVP está disponível na branch `main`.
 
 No PowerShell:
 
 ```powershell
 git clone https://github.com/lotrfanboy/car_Router.git
 cd car_Router
-git switch feat/radar-automotivo
+git switch main
 Copy-Item .env.example .env
 npm ci
 npm run setup
