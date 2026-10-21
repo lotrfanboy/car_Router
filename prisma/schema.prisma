@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "client"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Vehicle {
+  id              String   @id @default(cuid())
+  brand           String
+  model           String
+  version         String?
+  manufactureYear Int
+  modelYear       Int
+  mileage         Int
+  priceCents      Int
+  referenceCents  Int?
+  city            String?
+  state           String?
+  fuel            String?
+  transmission    String?
+  source          String
+  originalUrl     String?
+  imageUrl        String?
+  notes           String?
+  favorite        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([brand, model])
+  @@index([createdAt])
+  @@index([favorite])
+}
