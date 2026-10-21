@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
@@ -44,6 +44,11 @@ export function SearchWorkspace({
     [sort, setSort] = useState<"discount" | "price" | "recent">("discount");
   const pending = useRef(false);
   const { vehicles } = useWorkspace();
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [version, setVersion] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("PR");
   const refresh = useCallback(async () => {
     const res = await fetch("/api/searches", { cache: "no-store" });
     if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
@@ -68,6 +73,51 @@ export function SearchWorkspace({
   const active = saved.find((s) => s.id === selected),
     criteria = active?.criteria,
     run = active?.latest;
+  /* The selected saved search is an external record loaded from the API. */
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    setBrand(criteria?.brand ?? "");
+    setModel(criteria?.model ?? "");
+    setVersion(criteria?.version ?? "");
+    setCity(criteria?.city ?? "");
+    setState(criteria?.state ?? "PR");
+  }, [criteria]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+  const suggestions = useMemo(() => {
+    const rows = [
+      ...vehicles.map((v) => ({
+        brand: v.brand,
+        model: v.model,
+        version: v.version,
+        city: v.city,
+        state: v.state,
+      })),
+      ...saved.map((s) => s.criteria),
+      ...saved.flatMap((s) =>
+        s.latest?.sources.flatMap((source) => source.listings) ?? [],
+      ),
+    ];
+    const unique = (values: (string | null | undefined)[]) =>
+      [...new Set(values.filter((x): x is string => Boolean(x?.trim())))].sort(
+        (a, b) => a.localeCompare(b, "pt-BR"),
+      );
+    const same = (a: string | null | undefined, b: string) =>
+      !b || a?.localeCompare(b, "pt-BR", { sensitivity: "base" }) === 0;
+    return {
+      brands: unique(rows.map((r) => r.brand)),
+      models: unique(
+        rows.filter((r) => same(r.brand, brand)).map((r) => r.model),
+      ),
+      versions: unique(
+        rows
+          .filter((r) => same(r.brand, brand) && same(r.model, model))
+          .map((r) => r.version),
+      ),
+      cities: unique(
+        rows.filter((r) => same(r.state, state)).map((r) => r.city),
+      ),
+    };
+  }, [brand, model, saved, state, vehicles]);
   const candidates = sortListings(
     run?.sources
       .filter((s) => s.status === "ok")
@@ -205,7 +255,13 @@ export function SearchWorkspace({
                   required
                   maxLength={80}
                   placeholder="Toyota"
-                  defaultValue={criteria?.brand}
+                  value={brand}
+                  autoComplete="off"
+                  onChange={(event) => {
+                    setBrand(event.target.value);
+                    setModel("");
+                    setVersion("");
+                  }}
                 />
               </label>
               <label>
@@ -216,20 +272,30 @@ export function SearchWorkspace({
                   required
                   maxLength={100}
                   placeholder="Corolla"
-                  defaultValue={criteria?.model}
+                  value={model}
+                  autoComplete="off"
+                  onChange={(event) => {
+                    setModel(event.target.value);
+                    setVersion("");
+                  }}
                 />
               </label>
             </div>
             <datalist id="known-brands">
-              {[...new Set(vehicles.map((v) => v.brand))].map((x) => (
+              {suggestions.brands.map((x) => (
                 <option key={x} value={x} />
               ))}
             </datalist>
             <datalist id="known-models">
-              {[...new Set(vehicles.map((v) => v.model))].map((x) => (
+              {suggestions.models.map((x) => (
                 <option key={x} value={x} />
               ))}
             </datalist>
+            <p className="discovery-help muted">
+              Digite livremente ou escolha sugestões aprendidas com suas buscas
+              e anúncios reais já consultados. Modelo e versão acompanham a
+              marca escolhida.
+            </p>
             <label>
               Versão{" "}
               <small>
@@ -237,25 +303,48 @@ export function SearchWorkspace({
               </small>
               <input
                 name="version"
+                list="known-versions"
                 maxLength={120}
                 placeholder="Ex.: XEi 2.0"
-                defaultValue={criteria?.version}
+                value={version}
+                autoComplete="off"
+                onChange={(event) => setVersion(event.target.value)}
               />
+              <datalist id="known-versions">
+                {suggestions.versions.map((x) => (
+                  <option key={x} value={x} />
+                ))}
+              </datalist>
             </label>
             <div className="form-grid two">
               <label>
                 Cidade
                 <input
                   name="city"
+                  list="known-cities"
                   required
                   maxLength={120}
                   placeholder="Curitiba"
-                  defaultValue={criteria?.city}
+                  value={city}
+                  autoComplete="off"
+                  onChange={(event) => setCity(event.target.value)}
                 />
+                <datalist id="known-cities">
+                  {suggestions.cities.map((x) => (
+                    <option key={x} value={x} />
+                  ))}
+                </datalist>
               </label>
               <label>
                 UF
-                <select name="state" defaultValue={criteria?.state ?? "PR"}>
+                <select
+                  name="state"
+                  value={state}
+                  onChange={(event) => {
+                    setState(event.target.value);
+                    setCity("");
+                  }}
+                >
                   {states.map((x) => (
                     <option key={x}>{x}</option>
                   ))}
