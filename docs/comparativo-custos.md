@@ -1,5 +1,7 @@
 # Comparativo de custos
 
+> **Revisão após demonstração:** veja [GarimpaMotors e fornecedores](garimpamotors-e-fornecedores.md). Inclui busca pública multicanal executada, conferência de anúncios na origem, a pista Apify na gravação e GeckoAPI como candidata prioritária a prova OLX/Webmotors. Esta revisão substitui a priorização anterior de estoque de lojas como primeira solução para a necessidade do usuário.
+
 Consulta em 21/10/2026. Valores em USD quando publicados nessa moeda. Não foi adotado câmbio fictício: `total BRL = total USD × câmbio efetivo de pagamento + tributos/tarifas aplicáveis`. Nenhuma compra foi feita. Preço acessível em uma página não comprova licença, disponibilidade ou cobertura.
 
 ## Tarifas verificadas e preços ausentes

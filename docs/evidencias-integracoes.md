@@ -1,5 +1,7 @@
 # Evidências da investigação e validação
 
+> **Revisão após demonstração:** veja [GarimpaMotors e fornecedores](garimpamotors-e-fornecedores.md). Inclui busca pública multicanal executada, conferência de anúncios na origem, a pista Apify na gravação e GeckoAPI como candidata prioritária a prova OLX/Webmotors. Esta revisão substitui a priorização anterior de estoque de lojas como primeira solução para a necessidade do usuário.
+
 Data: 21/10/2026 (America/Sao_Paulo). Ambiente: Windows, Node.js v22.15.1, npm 10.9.2, dependências do lockfile original. Base: `64e360c3de4426f1c21f76411b18d18deddb8bae`. Branch: `research/integracoes-2026-10-21`.
 
 ## Resultado executado nesta etapa

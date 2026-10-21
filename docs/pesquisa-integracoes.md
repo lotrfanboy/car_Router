@@ -1,5 +1,7 @@
 # Pesquisa de integrações do CarRouter
 
+> **Revisão após demonstração:** veja [GarimpaMotors e fornecedores](garimpamotors-e-fornecedores.md). Inclui busca pública multicanal executada, conferência de anúncios na origem, a pista Apify na gravação e GeckoAPI como candidata prioritária a prova OLX/Webmotors. Esta revisão substitui a priorização anterior de estoque de lojas como primeira solução para a necessidade do usuário.
+
 Data da consulta: 21/10/2026, America/Sao_Paulo. Base analisada: `64e360c3de4426f1c21f76411b18d18deddb8bae`, repositório [lotrfanboy/car_Router](https://github.com/lotrfanboy/car_Router). Pesquisa documental pública; nenhum token comercial usado, conta criada, fornecedor contratado ou anúncio coletado por contorno técnico.
 
 ## Conclusão para decisão

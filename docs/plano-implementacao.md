@@ -1,5 +1,7 @@
 # Plano de implementação e pontos de aprovação
 
+> **Revisão após demonstração:** veja [GarimpaMotors e fornecedores](garimpamotors-e-fornecedores.md). Inclui busca pública multicanal executada, conferência de anúncios na origem, a pista Apify na gravação e GeckoAPI como candidata prioritária a prova OLX/Webmotors. Esta revisão substitui a priorização anterior de estoque de lojas como primeira solução para a necessidade do usuário.
+
 21/10/2026. A investigação não comprovou ainda uma fonte externa pronta com licença e funcionamento testado para o CarRouter. A etapa independente foi desenvolvida; a missão de aquisição sustentável de anúncios continua pendente de autorização/fornecedor.
 
 ## Entrega desta branch
