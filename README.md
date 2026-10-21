@@ -1,17 +1,17 @@
 # Radar Automotivo
 
-Aplicação local de usuário único para cadastrar, organizar e comparar anúncios de veículos usados. Banco SQLite persistente, sem serviços pagos, credenciais, importadores, scraping, integrações ou dados de demonstração na inicialização.
+Aplicação local de usuário único para cadastrar, organizar e comparar anúncios de veículos. A área de buscas consulta OLX/Gecko e Webmotors/Reef mediante configuração opcional no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
 ## Executar no Windows
 
-Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O MVP está disponível na branch `main`.
+Instale **Node.js 24 LTS** e Git. Se recebeu um ZIP, extraia-o, abra o PowerShell na pasta extraída e comece em `Copy-Item` abaixo. O incremento de buscas integradas está na branch `research/integracoes-2026-10-21`, em revisão no PR #2.
 
 No PowerShell:
 
 ```powershell
 git clone https://github.com/lotrfanboy/car_Router.git
 cd car_Router
-git switch main
+git switch research/integracoes-2026-10-21
 Copy-Item .env.example .env
 npm ci
 npm run setup
@@ -125,4 +125,8 @@ Documentos desta investigação:
 - [Plano e aprovações pendentes](docs/plano-implementacao.md)
 - [Evidências desta etapa](docs/evidencias-integracoes.md)
 
-Nenhuma fonte externa foi ativada ou comprovada por teste autenticado nesta etapa. A aprovação de fonte, licença e uso de credenciais precede qualquer integração específica.
+Os documentos iniciais registram etapas históricas. As provas posteriores de fonte e a implementação pessoal autorizada estão no [guia do MVP](docs/mvp-buscas-integradas.md). Uso comercial e operação contínua ainda dependem de qualificação.
+
+## Buscas nos portais — MVP pessoal
+
+A área `/buscar` permite salvar critérios e consultar manualmente OLX via Gecko e Webmotors via Reef, com estado por fonte, conferência local de filtros e histórico dos preços observados. Configuração, limites gratuitos e restrições: [guia do MVP](docs/mvp-buscas-integradas.md). Não há consultas automáticas ao abrir a página.

@@ -44,3 +44,57 @@ model VehiclePrice {
 
   @@index([vehicleId, id])
 }
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  name      String
+  criteria  String
+  createdAt DateTime @default(now())
+  runs      SearchRun[]
+}
+
+model SearchRun {
+  id        String   @id @default(cuid())
+  searchId  String
+  createdAt DateTime @default(now())
+  result    String
+  search    SavedSearch @relation(fields: [searchId], references: [id], onDelete: Cascade)
+
+  @@index([searchId, createdAt])
+}
+
+model DiscoveredListing {
+  id         String   @id @default(cuid())
+  source     String
+  externalId String
+  payload    String
+  firstSeen  DateTime @default(now())
+  lastSeen   DateTime @default(now())
+  prices     ListingPrice[]
+
+  @@unique([source, externalId])
+}
+
+model ListingPrice {
+  id         Int @id @default(autoincrement())
+  listingId  String
+  priceCents Int
+  observedAt DateTime @default(now())
+  listing    DiscoveredListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, id])
+}
+
+model ProviderSpend {
+  id        Int @id @default(autoincrement())
+  provider  String
+  credits   Int
+  createdAt DateTime @default(now())
+
+  @@index([provider, createdAt])
+}
+
+model SearchLock {
+  id        String @id
+  expiresAt DateTime
+}

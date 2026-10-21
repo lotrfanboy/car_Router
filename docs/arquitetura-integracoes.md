@@ -1,5 +1,7 @@
 # Arquitetura de integrações do CarRouter
 
+> Atualização: o [MVP de buscas integradas](mvp-buscas-integradas.md), posteriormente autorizado pelo usuário, implementa adaptadores OLX/Gecko e Webmotors/Reef, tabelas separadas de observações e consumo e consultas manuais. A análise abaixo documenta a arquitetura anterior e a proposta inicial; não descreve sozinha o estado final da branch.
+
 > **Revisão após demonstração:** veja [GarimpaMotors e fornecedores](garimpamotors-e-fornecedores.md). Inclui busca pública multicanal executada, conferência de anúncios na origem, a pista Apify na gravação e GeckoAPI como candidata prioritária a prova OLX/Webmotors. Esta revisão substitui a priorização anterior de estoque de lojas como primeira solução para a necessidade do usuário.
 
 Base: commit `64e360c`, analisado em 21/10/2026. Esta proposta parte do código real e distingue o que foi implementado do que depende da primeira fonte aprovada.

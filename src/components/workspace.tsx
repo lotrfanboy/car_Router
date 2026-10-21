@@ -19,6 +19,7 @@ import {
   X,
   CheckCircle2,
   AlertCircle,
+  Search,
 } from "lucide-react";
 import type { Vehicle } from "@/lib/vehicle";
 
@@ -131,6 +132,7 @@ export function Workspace({ children }: { children: React.ReactNode }) {
   const nav = [
     { href: "/", label: "Visão geral", icon: LayoutDashboard },
     { href: "/veiculos", label: "Catálogo", icon: CarFront },
+    { href: "/buscar", label: "Buscar nos portais", icon: Search },
     { href: "/favoritos", label: "Favoritos", icon: Heart },
     { href: "/comparar", label: "Comparador", icon: Columns3 },
   ];
@@ -211,11 +213,13 @@ export function Workspace({ children }: { children: React.ReactNode }) {
                 <strong>
                   {pathname === "/"
                     ? "Visão geral"
-                    : pathname === "/comparar"
-                      ? "Comparador"
-                      : pathname === "/favoritos"
-                        ? "Favoritos"
-                        : "Veículos"}
+                    : pathname === "/buscar"
+                      ? "Buscar nos portais"
+                      : pathname === "/comparar"
+                        ? "Comparador"
+                        : pathname === "/favoritos"
+                          ? "Favoritos"
+                          : "Veículos"}
                 </strong>
               </span>
             </div>
