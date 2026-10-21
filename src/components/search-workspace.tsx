@@ -29,6 +29,10 @@ type Integration = {
   dailyLimit: number;
   lastSuccessfulAt: string | null;
 };
+const verifiedSearchLocations = [
+  { city: "Blumenau", state: "SC" },
+  { city: "Curitiba", state: "PR" },
+] as const;
 export function SearchWorkspace({
   initialSearchId = "",
 }: {
@@ -95,6 +99,12 @@ export function SearchWorkspace({
   /* eslint-enable react-hooks/set-state-in-effect */
   const suggestions = useMemo(() => {
     const rows = [
+      ...verifiedSearchLocations.map((location) => ({
+        brand: null,
+        model: null,
+        version: null,
+        ...location,
+      })),
       ...vehicles.map((v) => ({
         brand: v.brand,
         model: v.model,
@@ -124,10 +134,10 @@ export function SearchWorkspace({
           .map((r) => r.version),
       ),
       cities: unique(
-        rows.filter((r) => same(r.state, state)).map((r) => r.city),
+        rows.map((r) => r.city),
       ),
     };
-  }, [brand, model, saved, state, vehicles]);
+  }, [brand, model, saved, vehicles]);
   const candidates = sortListings(
     run?.sources
       .filter((s) => s.status === "ok")
@@ -337,7 +347,17 @@ export function SearchWorkspace({
                   placeholder="Curitiba"
                   value={city}
                   autoComplete="off"
-                  onChange={(event) => setCity(event.target.value)}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setCity(value);
+                    const verified = verifiedSearchLocations.find(
+                      (location) =>
+                        location.city.localeCompare(value, "pt-BR", {
+                          sensitivity: "base",
+                        }) === 0,
+                    );
+                    if (verified) setState(verified.state);
+                  }}
                 />
                 <datalist id="known-cities">
                   {suggestions.cities.map((x) => (
