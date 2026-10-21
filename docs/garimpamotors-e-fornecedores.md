@@ -106,7 +106,9 @@ Fluxo-alvo: escolher o carro/região/fontes → buscar anúncios de terceiros �
 
 A gravação demonstra estados úteis, mas não entrega de alerta ou estabilidade prolongada. O diferencial inicial deve ser **cobertura e frescor medidos, filtros confiáveis e transparência quando uma fonte falha**. Vitrine, assistente de negociação e demais módulos ficam depois da aquisição comprovada.
 
-## Próxima prova proposta para aprovação
+## Próxima prova — testes gratuitos autorizados em 21/10/2026
+
+O usuário autorizou seguir com validações exclusivamente gratuitas. A [prova real](validacao-gratuita-gecko.md) consumiu oito créditos gratuitos: OLX por URL correta e paginação funcionaram; filtros estruturados OLX e filtros Webmotors falharam. Detalhes individuais de ambas responderam. Saldo final 86, sem compra. A autorização não permite compras ou consumo pago.
 
 1. Fonte: GeckoAPI OLX e Webmotors, contas/chaves somente após aprovação expressa do usuário. Sem compra ou aceite de contrato em nome do usuário automaticamente.
 2. Limite: usar apenas créditos gratuitos, teto de 100 créditos; conferir custo por ação antes de executar. Se teste exigir pagamento, parar nesse ponto.
@@ -115,4 +117,4 @@ A gravação demonstra estados úteis, mas não entrega de alerta ou estabilidad
 5. Antes de disponibilizar aos clientes, confirmar caso de uso, método sem contorno, direitos de fotos/dados, retenção e limites comerciais com o fornecedor.
 6. Facebook/Apify: qualificar Actor, região BR e método separadamente; a mensagem do concorrente é pista, não permissão. Não implementar integração específica antes de aprovação.
 
-Sem credencial aprovada, não declarei prova de API concluída. O resultado desta etapa é uma seleção mais concreta de fornecedores, evidência de busca agregada real e critérios claros para superar a experiência demonstrada.
+Esta seção começou como proposta; a execução gratuita posteriormente autorizada está registrada no relatório vinculado acima. Não confundir a seleção documental inicial com a aprovação técnica integral: a busca Webmotors segue reprovada e a OLX exige URL correta e validação dos critérios.
