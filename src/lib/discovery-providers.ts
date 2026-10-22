@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { catalogBrandSearchName, catalogModelFamily } from "./vehicle-catalog";
 import {
   buildOlxUrl,
   locationKey,
@@ -37,10 +38,12 @@ const listingPhoto = (row: Row) => {
   const images = Array.isArray(row.images) ? row.images : [];
   return (
     photoUrl(row.image_url) ??
-    images.map((value) => {
-      const image = obj(value);
-      return photoUrl(image.url) ?? photoUrl(image.webpUrl);
-    }).find((value) => value !== null) ??
+    images
+      .map((value) => {
+        const image = obj(value);
+        return photoUrl(image.url) ?? photoUrl(image.webpUrl);
+      })
+      .find((value) => value !== null) ??
     null
   );
 };
@@ -167,12 +170,12 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
         if (str(p.name) && str(p.value))
           attrs[String(p.name)] = String(p.value);
       }
-    const fullModel = attrs.vehicle_model ?? "";
-    const words = fullModel.split(/\s+/);
-    // OLX mixes model and trim. Preserve uncertainty for multiword models; protect common Corolla derivatives.
-    const model = /^corolla (cross|fielder)\b/i.test(fullModel)
-      ? words.slice(0, 2).join(" ")
-      : words[0] || null;
+    const sourceModel = str(attrs.vehicle_model);
+    const fullModel = sourceModel?.replace(/\s+/g, " ") ?? "";
+    // Shared conservative boundaries keep compound models intact. Preserve the
+    // original attribute and do not claim an inferred trim is FIPE-verified.
+    const model = fullModel ? catalogModelFamily(fullModel) : null;
+    const explicitVersion = str(attrs.vehicle_version);
     return [
       {
         source: "olx",
@@ -181,12 +184,13 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
         title: str(r.title) ?? "Anúncio OLX",
         brand: str(attrs.vehicle_brand),
         model,
+        sourceModel,
         version:
-          str(attrs.vehicle_version) ??
+          explicitVersion ??
           (model && fullModel.length > model.length
             ? fullModel.slice(model.length).trim()
             : null),
-        versionOrigin: attrs.vehicle_version
+        versionOrigin: explicitVersion
           ? "explicit"
           : fullModel.length > (model?.length ?? 0)
             ? "inferred"
@@ -230,6 +234,7 @@ export function normalizeReef(value: unknown, observedAt: string): Listing[] {
         title: str(r.title) ?? "Anúncio Webmotors",
         brand: str(r.make),
         model: str(r.model),
+        sourceModel: str(r.model),
         version: str(r.version),
         versionOrigin: str(r.version) ? "explicit" : "unknown",
         fuel: str(r.fuel),
@@ -334,7 +339,7 @@ export async function fetchSource(
             "https://api.reefapi.com/webmotors/v1/search",
             config.key,
             {
-              make: criteria.brand,
+              make: catalogBrandSearchName(criteria.brand),
               model: criteria.model,
               location: `${criteria.state.toLowerCase()}-${normalized(criteria.city).replaceAll(" ", "-")}`,
               ...(criteria.yearMin !== null

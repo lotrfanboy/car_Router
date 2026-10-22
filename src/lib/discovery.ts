@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { states } from "./vehicle";
+import { catalogBrandSearchName } from "./vehicle-catalog";
 
 export const sourceNames = { olx: "OLX", webmotors: "Webmotors" };
 export type Source = keyof typeof sourceNames;
@@ -11,8 +12,10 @@ export const normalized = (s: string) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 export const canonicalBrand = (value: string) => {
-  const name = normalized(value);
-  return name === "mercedes" || name === "mercedes benz" ? "mercedes benz" : name;
+  const name = normalized(catalogBrandSearchName(value));
+  return name === "mercedes" || name === "mercedes benz"
+    ? "mercedes benz"
+    : name;
 };
 export const canonicalModel = (value: string) =>
   normalized(value).replace(/^c 180\b/, "c180");
@@ -41,6 +44,33 @@ export const searchSchema = z
     brand: z.string().trim().min(1).max(80),
     model: z.string().trim().min(1).max(200),
     version: z.string().trim().max(120).optional(),
+    // FIPE provenance is separate from the textual query and source attributes.
+    // A family selection has a brand identity but no fabricated FIPE model ID.
+    catalog: z
+      .object({
+        provider: z.literal("fipe"),
+        brandCode: z.string().regex(/^\d{1,4}$/),
+        brandName: z.string().trim().min(1).max(100),
+        // Local family-selector identity; never a FIPE model code or query term.
+        modelGroup: z
+          .string()
+          .trim()
+          .max(240)
+          .regex(/^family:.+/)
+          .optional(),
+        modelCode: z
+          .string()
+          .regex(/^\d{1,10}$/)
+          .optional(),
+        modelName: z.string().trim().min(1).max(200).optional(),
+      })
+      .refine(
+        (value) => Boolean(value.modelCode) === Boolean(value.modelName),
+        {
+          message: "Código e nome do catálogo devem ser informados juntos.",
+        },
+      )
+      .optional(),
     city: z.string().trim().min(1).max(120),
     state: z.enum(states as [string, ...string[]]),
     yearMin: z.number().int().min(1900).max(2100).nullable(),
@@ -92,6 +122,8 @@ export type Listing = {
   title: string;
   brand: string | null;
   model: string | null;
+  /** Original model attribute from this source, not a catalog identity. */
+  sourceModel?: string | null;
   version?: string | null;
   versionOrigin?: "explicit" | "inferred" | "unknown";
   fuel?: string | null;
@@ -133,7 +165,8 @@ export function eligibility(row: Listing, s: SearchCriteria) {
     reasons.push("Modelo diferente ou não confirmado");
   if (
     s.version &&
-    (!row.version || normalized(row.version) !== normalized(s.version))
+    (!row.version ||
+      !` ${normalized(row.version)} `.includes(` ${normalized(s.version)} `))
   )
     reasons.push("Versão diferente ou desconhecida");
   if (

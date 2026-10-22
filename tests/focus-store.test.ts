@@ -2,7 +2,11 @@ import { beforeAll, beforeEach, afterAll, expect, it, vi } from "vitest";
 import { mkdtempSync } from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { searchSchema, type Listing } from "../src/lib/discovery";
+import {
+  searchSchema,
+  type Listing,
+  type SourceResult,
+} from "../src/lib/discovery";
 const state = vi.hoisted(() => ({
   calls: [] as unknown[],
   price: 10000000,
@@ -179,6 +183,317 @@ it("deduplicates repeated search creation and reuses a collection across budgets
     7,
   );
 });
+it("preserves catalog identities without collecting the same source query twice", async () => {
+  const brandCatalog = {
+    provider: "fipe",
+    brandCode: "59",
+    brandName: "Toyota",
+  };
+  const modelCatalog = {
+    ...brandCatalog,
+    modelCode: "123",
+    modelName: "Corolla XEi 2.0 Flex 16V Aut.",
+  };
+  const first = await store.saveSearch({ ...criteria, catalog: brandCatalog });
+  const second = await store.saveSearch({ ...criteria, catalog: modelCatalog });
+  expect(first.id).not.toBe(second.id);
+  expect(JSON.parse(first.criteria).catalog).toEqual(brandCatalog);
+  expect(JSON.parse(second.criteria).catalog).toEqual(modelCatalog);
+  const collected = await store.executeSearch(first.id);
+  const reused = await store.executeSearch(second.id);
+  expect(reused).toHaveProperty("cached", true);
+  expect(state.calls).toHaveLength(1);
+  expect(await db.providerSpend.count()).toBe(1);
+  expect(reused.sources[0]).toMatchObject({
+    creditsReserved: 0,
+    observedAt: collected.sources[0].observedAt,
+  });
+  expect(reused.sources[0].listings[0].observedAt).toBe(
+    collected.sources[0].listings[0].observedAt,
+  );
+  expect(await db.discoveredListing.count()).toBe(7);
+});
+
+it("recovers an earlier successful page after more than one batch of failed or interrupted attempts", async () => {
+  const search = await store.saveSearch(criteria);
+  const successful = await store.executeSearch(search.id);
+  await db.searchRun.update({
+    where: { id: successful.id },
+    data: { createdAt: new Date(0) },
+  });
+  for (let i = 0; i < 22; i++)
+    await db.searchRun.create({
+      data: {
+        searchId: search.id,
+        createdAt: new Date(i + 1),
+        result:
+          i === 10
+            ? "unreadable historical record"
+            : JSON.stringify({ sources: [], interrupted: true }),
+      },
+    });
+  const failure = await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      result: JSON.stringify({
+        sources: [
+          {
+            ...successful.sources[0],
+            status: "error",
+            listings: [],
+            message: "TESTE ISOLADO · fonte indisponível",
+          },
+        ],
+      }),
+    },
+  });
+  const before = await db.searchRun.findMany({
+    where: { searchId: search.id },
+    orderBy: { id: "asc" },
+  });
+  const [row] = await store.listSearches();
+  expect(row.latest?.id).toBe(failure.id);
+  expect(row.latest?.sources[0].status).toBe("error");
+  expect(row.lastSuccessful?.id).toBe(successful.id);
+  expect(row.lastSuccessful?.createdAt).toEqual(new Date(0));
+  expect(row.lastSuccessful?.sources[0].listings[0].observedAt).toBe(
+    successful.sources[0].listings[0].observedAt,
+  );
+  expect(
+    await db.searchRun.findMany({
+      where: { searchId: search.id },
+      orderBy: { id: "asc" },
+    }),
+  ).toEqual(before);
+});
+
+it("recovers the failed source during partial failure instead of replacing current successful results", async () => {
+  const search = await store.saveSearch({
+    ...criteria,
+    sources: ["olx", "webmotors"],
+  });
+  const template: SourceResult = {
+    source: "olx",
+    status: "ok",
+    message: "TESTE ISOLADO",
+    observedAt: "2026-01-01T00:00:00.000Z",
+    elapsedMs: 1,
+    creditsReserved: 0,
+    total: 0,
+    partial: false,
+    listings: [],
+  };
+  const oldListing: Listing = {
+    source: "webmotors",
+    externalId: "test-previous-wm",
+    url: "https://www.webmotors.com.br/comprar/test-previous-wm",
+    title: "TESTE ISOLADO · Corolla anterior",
+    brand: "Toyota",
+    model: "Corolla",
+    modelYear: 2021,
+    priceCents: 10000000,
+    mileage: 50000,
+    city: "Curitiba",
+    state: "PR",
+    sellerType: "private",
+    observedAt: template.observedAt,
+    reasons: [],
+  };
+  const recovered = await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      createdAt: new Date(0),
+      result: JSON.stringify({
+        sources: [
+          template,
+          {
+            ...template,
+            source: "webmotors",
+            total: 1,
+            listings: [oldListing],
+          },
+        ],
+      }),
+    },
+  });
+  // The immediately preceding run succeeds only in OLX, so it cannot recover
+  // Webmotors. It must remain in history without blocking the older result.
+  await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      createdAt: new Date(1),
+      result: JSON.stringify({ sources: [template] }),
+    },
+  });
+  const partial = await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      createdAt: new Date(2),
+      result: JSON.stringify({
+        sources: [
+          { ...template, observedAt: "2026-01-02T00:00:00.000Z" },
+          { ...template, source: "webmotors", status: "unconfigured" },
+        ],
+      }),
+    },
+  });
+  const [row] = await store.listSearches();
+  expect(row.latest?.id).toBe(partial.id);
+  expect(row.latest?.sources.map((source) => source.status)).toEqual([
+    "ok",
+    "unconfigured",
+  ]);
+  expect(row.latest?.sources[0].observedAt).toBe("2026-01-02T00:00:00.000Z");
+  expect(row.lastSuccessful?.id).toBe(recovered.id);
+  expect(row.lastSuccessful?.sources[1]).toMatchObject({
+    source: "webmotors",
+    status: "ok",
+    observedAt: "2026-01-01T00:00:00.000Z",
+    listings: [oldListing],
+  });
+  expect(row.previousSourceRuns).toHaveLength(1);
+  expect(row.previousSourceRuns[0].id).toBe(recovered.id);
+  expect(
+    row.previousSourceRuns[0].sources.map((source) => source.source),
+  ).toEqual(["webmotors"]);
+  expect(await db.searchRun.count({ where: { searchId: search.id } })).toBe(3);
+  expect(state.calls).toHaveLength(0);
+});
+
+it("recovers each source independently when partial failure is followed by total failure", async () => {
+  const search = await store.saveSearch({
+    ...criteria,
+    sources: ["olx", "webmotors"],
+  });
+  const sourceResult = (
+    source: SourceResult["source"],
+    status: SourceResult["status"],
+    observedAt: string,
+  ): SourceResult => ({
+    source,
+    status,
+    observedAt,
+    message: "TESTE ISOLADO · recuperação por fonte",
+    elapsedMs: 1,
+    creditsReserved: 0,
+    total: status === "ok" ? 1 : null,
+    partial: false,
+    listings:
+      status === "ok"
+        ? [
+            {
+              source,
+              externalId: `test-${source}`,
+              url:
+                source === "olx"
+                  ? "https://pr.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/test-only"
+                  : "https://www.webmotors.com.br/comprar/test-only",
+              title: "TESTE ISOLADO · Corolla",
+              brand: "Toyota",
+              model: "Corolla",
+              modelYear: 2021,
+              mileage: 50000,
+              priceCents: 10000000,
+              city: "Curitiba",
+              state: "PR",
+              sellerType: "private",
+              observedAt,
+              reasons: [],
+            },
+          ]
+        : [],
+  });
+  const dates = [
+    "2026-01-01T00:00:00.000Z",
+    "2026-01-02T00:00:00.000Z",
+    "2026-01-03T00:00:00.000Z",
+  ];
+  const runs = [];
+  for (let index = 0; index < dates.length; index++)
+    runs.push(
+      await db.searchRun.create({
+        data: {
+          searchId: search.id,
+          createdAt: new Date(dates[index]),
+          result: JSON.stringify({
+            sources: [
+              sourceResult("olx", index < 2 ? "ok" : "error", dates[index]),
+              sourceResult(
+                "webmotors",
+                index === 0 ? "ok" : "error",
+                dates[index],
+              ),
+            ],
+          }),
+        },
+      }),
+    );
+  const [row] = await store.listSearches();
+  expect(row.latest?.id).toBe(runs[2].id);
+  expect(row.latest?.sources.map((source) => source.status)).toEqual([
+    "error",
+    "error",
+  ]);
+  expect(row.lastSuccessful?.id).toBe(runs[1].id);
+  expect(
+    row.previousSourceRuns.map((run) => ({
+      id: run.id,
+      sources: run.sources.map((source) => source.source),
+    })),
+  ).toEqual([
+    { id: runs[1].id, sources: ["olx"] },
+    { id: runs[0].id, sources: ["webmotors"] },
+  ]);
+  for (const [index, run] of row.previousSourceRuns.entries()) {
+    const originalDate = dates[1 - index];
+    expect(run.createdAt).toEqual(new Date(originalDate));
+    expect(run.sources[0].observedAt).toBe(originalDate);
+    expect(run.sources[0].listings[0].observedAt).toBe(originalDate);
+  }
+  expect(
+    await db.searchRun.findMany({
+      where: { searchId: search.id },
+      orderBy: { createdAt: "asc" },
+    }),
+  ).toEqual(runs);
+  expect(state.calls).toHaveLength(0);
+});
+
+it("returns no recovery for an interrupted first attempt or an empty successful page", async () => {
+  const search = await store.saveSearch(criteria);
+  await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      createdAt: new Date(0),
+      result: JSON.stringify({ sources: [], interrupted: true }),
+    },
+  });
+  expect((await store.listSearches())[0].lastSuccessful).toBeNull();
+  await db.searchRun.create({
+    data: {
+      searchId: search.id,
+      result: JSON.stringify({
+        sources: [
+          {
+            source: "olx",
+            status: "ok",
+            message: "TESTE ISOLADO · nenhum anúncio recebido",
+            observedAt: new Date().toISOString(),
+            elapsedMs: 1,
+            creditsReserved: 0,
+            total: 0,
+            partial: true,
+            listings: [],
+          },
+        ],
+      }),
+    },
+  });
+  const [row] = await store.listSearches();
+  expect(row.latest?.sources[0].status).toBe("ok");
+  expect(row.lastSuccessful).toBeNull();
+  expect(row.previousSourceRuns).toEqual([]);
+});
 it("persists save/un-save idempotently without manufacturing missing vehicle attributes", async () => {
   const search = await store.saveSearch(criteria);
   await store.executeSearch(search.id);
@@ -254,12 +569,20 @@ it("reports scheduled and running from persisted scheduler and execution records
     nextRunAt: expect.any(Date),
   });
   const run = await db.radarRun.create({
-    data: { radarId: row.id, status: "running", message: "Consultando fontes." },
+    data: {
+      radarId: row.id,
+      status: "running",
+      message: "Consultando fontes.",
+    },
   });
   expect((await radar.listRadars()).radars[0].state).toBe("running");
   await db.radarRun.update({
     where: { id: run.id },
-    data: { status: "ok", finishedAt: new Date(), message: "Consulta concluída." },
+    data: {
+      status: "ok",
+      finishedAt: new Date(),
+      message: "Consulta concluída.",
+    },
   });
   await db.$disconnect();
   expect((await radar.listRadars()).radars[0].state).toBe("success");

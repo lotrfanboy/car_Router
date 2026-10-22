@@ -2,10 +2,14 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-export type SearchOption = { code: string; name: string };
+export type SearchOption = { code: string; name: string; searchName?: string };
 
 const key = (value: string) =>
-  value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("pt-BR")
+    .trim();
 
 export function SearchCombobox({
   label,
@@ -13,6 +17,10 @@ export function SearchCombobox({
   value,
   options,
   onChange,
+  onSelect,
+  onManual,
+  selectedCode,
+  disabled = false,
   placeholder,
   maxLength,
   loading = false,
@@ -25,6 +33,10 @@ export function SearchCombobox({
   value: string;
   options: SearchOption[];
   onChange: (value: string) => void;
+  onSelect?: (option: SearchOption) => void;
+  onManual?: () => void;
+  selectedCode?: string;
+  disabled?: boolean;
   placeholder: string;
   maxLength: number;
   loading?: boolean;
@@ -44,15 +56,19 @@ export function SearchCombobox({
       seen.add(labelKey);
       return true;
     });
-    const query = key(value);
+    const query = selectedCode ? "" : key(value);
     return unique
-      .filter((option) => key(option.name).includes(query))
+      .filter((option) =>
+        key(`${option.name} ${option.searchName ?? ""}`).includes(query),
+      )
       .sort((a, b) => {
-        const prefix = Number(key(b.name).startsWith(query)) - Number(key(a.name).startsWith(query));
+        const prefix =
+          Number(key(b.name).startsWith(query)) -
+          Number(key(a.name).startsWith(query));
         return prefix || a.name.localeCompare(b.name, "pt-BR");
       })
       .slice(0, 50);
-  }, [options, value]);
+  }, [options, value, selectedCode]);
   useEffect(() => {
     if (!open || loading || error || !filtered[active]) return;
     const popup = popupRef.current;
@@ -67,18 +83,22 @@ export function SearchCombobox({
       popup.scrollTop = bottom - popup.clientHeight;
   }, [active, error, filtered, loading, open]);
   const choose = (option: SearchOption) => {
-    onChange(option.name);
+    if (onSelect) onSelect(option);
+    else onChange(option.name);
     setOpen(false);
     setActive(-1);
     document.getElementById(id)?.focus();
   };
   return (
-    <div className="search-combobox" onBlur={(event) => {
-      if (!event.currentTarget.contains(event.relatedTarget)) {
-        setOpen(false);
-        setActive(-1);
-      }
-    }}>
+    <div
+      className="search-combobox"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setOpen(false);
+          setActive(-1);
+        }
+      }}
+    >
       <label htmlFor={id}>{label}</label>
       <div className="search-combobox-input">
         <input
@@ -87,9 +107,18 @@ export function SearchCombobox({
           role="combobox"
           aria-autocomplete="list"
           aria-expanded={open}
-          aria-controls={open && !loading && !error && filtered.length ? `${id}-options` : undefined}
-          aria-activedescendant={open && !loading && !error && filtered[active] ? `${id}-option-${active}` : undefined}
+          aria-controls={
+            open && !loading && !error && filtered.length
+              ? `${id}-options`
+              : undefined
+          }
+          aria-activedescendant={
+            open && !loading && !error && filtered[active]
+              ? `${id}-option-${active}`
+              : undefined
+          }
           required={required}
+          disabled={disabled}
           maxLength={maxLength}
           placeholder={placeholder}
           value={value}
@@ -107,31 +136,102 @@ export function SearchCombobox({
             } else if (event.key === "ArrowDown") {
               event.preventDefault();
               setOpen(true);
-              setActive((index) => loading || error ? -1 : Math.min(index + 1, filtered.length - 1));
+              setActive((index) =>
+                loading || error
+                  ? -1
+                  : Math.min(index + 1, filtered.length - 1),
+              );
             } else if (event.key === "ArrowUp") {
               event.preventDefault();
               setOpen(true);
-              setActive((index) => loading || error || !filtered.length ? -1 : Math.max(index - 1, 0));
-            } else if (event.key === "Enter" && open && !loading && !error && active >= 0 && filtered[active]) {
+              setActive((index) =>
+                loading || error || !filtered.length
+                  ? -1
+                  : Math.max(index - 1, 0),
+              );
+            } else if (
+              event.key === "Enter" &&
+              open &&
+              !loading &&
+              !error &&
+              active >= 0 &&
+              filtered[active]
+            ) {
               event.preventDefault();
               choose(filtered[active]);
             }
           }}
         />
-        {value && <button type="button" aria-label={`Limpar ${label}`} onMouseDown={(event) => event.preventDefault()} onClick={() => { onChange(""); setActive(-1); setOpen(true); document.getElementById(id)?.focus(); }}>×</button>}
+        {value && (
+          <button
+            type="button"
+            disabled={disabled}
+            aria-label={`Limpar ${label}`}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => {
+              onChange("");
+              setActive(-1);
+              setOpen(true);
+              document.getElementById(id)?.focus();
+            }}
+          >
+            ×
+          </button>
+        )}
       </div>
-      {open && (
+      {open && !disabled && (
         <div className="search-combobox-popup" ref={popupRef}>
-          {loading ? <p role="status">Carregando opções…</p> : error ? (
-            <p role="status">Catálogo indisponível. Digite manualmente. {onRetry && <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={onRetry}>Tentar novamente</button>}</p>
-          ) : filtered.length === 0 ? <p>Nenhuma opção. Digite manualmente.</p> : (
+          {loading ? (
+            <p role="status">Carregando opções…</p>
+          ) : error ? (
+            <p role="status">
+              Catálogo indisponível. Digite manualmente.{" "}
+              {onRetry && (
+                <button
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={onRetry}
+                >
+                  Tentar novamente
+                </button>
+              )}
+            </p>
+          ) : filtered.length === 0 ? (
+            <p>Nenhuma opção. Digite manualmente.</p>
+          ) : (
             <ul id={`${id}-options`} role="listbox" aria-label={label}>
               {filtered.map((option, index) => (
-                <li id={`${id}-option-${index}`} role="option" aria-selected={index === active} key={option.code}>
-                  <button type="button" tabIndex={-1} onMouseDown={(event) => event.preventDefault()} onClick={() => choose(option)}>{option.name}</button>
+                <li
+                  id={`${id}-option-${index}`}
+                  role="option"
+                  aria-selected={index === active}
+                  key={option.code}
+                >
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => choose(option)}
+                  >
+                    {option.name}
+                  </button>
                 </li>
               ))}
             </ul>
+          )}
+          {onManual && value.trim() && (
+            <button
+              type="button"
+              className="text-button"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                onManual();
+                setOpen(false);
+                setActive(-1);
+              }}
+            >
+              Usar texto digitado em {label.toLowerCase()}
+            </button>
           )}
         </div>
       )}

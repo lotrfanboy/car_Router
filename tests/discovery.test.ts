@@ -6,9 +6,12 @@ import {
   eligibility,
   searchSchema,
   publicListingUrl,
+  canonicalBrand,
+  canonicalModel,
 } from "../src/lib/discovery";
 import { normalizeOlx, normalizeReef } from "../src/lib/discovery-providers";
 import { buildOlxUrl, regionCandidates } from "../src/lib/olx-search";
+import { parseCatalogModels } from "../src/lib/vehicle-catalog";
 
 const root = mkdtempSync(path.join(process.env.RADAR_TEST_ROOT!, "searches-"));
 process.env.DATABASE_URL =
@@ -268,6 +271,239 @@ it("excludes unknown fields and Corolla Cross, preserves monetary units and stri
   expect(safe).toHaveLength(1);
   expect(JSON.stringify(safe)).not.toContain("DO NOT PERSIST");
 });
+it("separates FIPE model labels from the textual query and normalized OLX attributes", () => {
+  const family = parseCatalogModels({
+    modelos: [
+      { codigo: 1, nome: "Corolla XEi 2.0 Flex 16V Aut." },
+      { codigo: 2, nome: "Corolla Cross XRE 2.0 16V Flex Aut." },
+    ],
+  }).find((option) => option.searchName === "Corolla")!;
+  const selected = searchSchema.parse({
+    ...criteria,
+    model: family.searchName,
+    version: "",
+    olxUrl: "",
+    catalog: {
+      provider: "fipe",
+      brandCode: "59",
+      brandName: "Toyota",
+      modelCode: family.versions[0].code,
+      modelName: family.versions[0].name,
+    },
+  });
+  const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
+  expect(
+    eligibility(row, { ...criteria, model: family.versions[0].name }),
+  ).toContain("Modelo diferente ou não confirmado");
+  expect(eligibility(row, selected)).toEqual([]);
+  expect(row).toMatchObject({
+    model: "Corolla",
+    sourceModel: "Corolla XEi 2.0",
+    version: "XEi 2.0",
+    versionOrigin: "inferred",
+  });
+  const url = new URL(buildOlxUrl(selected, "regiao-de-curitiba-e-paranagua"));
+  expect(url.searchParams.get("q")).toBe("Toyota Corolla");
+  expect(url.toString()).not.toContain("XEi");
+  expect(eligibility({ ...row, model: "Corolla Cross" }, selected)).toContain(
+    "Modelo diferente ou não confirmado",
+  );
+  expect(
+    searchSchema.safeParse({
+      ...selected,
+      catalog: { provider: "fipe", brandCode: "59", brandName: "Toyota" },
+    }).success,
+  ).toBe(true);
+  expect(
+    searchSchema.safeParse({
+      ...selected,
+      catalog: {
+        provider: "fipe",
+        brandCode: "59",
+        brandName: "Toyota",
+        modelCode: "1",
+      },
+    }).success,
+  ).toBe(false);
+});
+it("keeps known brand aliases and existing Mercedes C180 matching without broad model matches", () => {
+  const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
+  expect(canonicalBrand("Mercedes")).toBe(canonicalBrand("Mercedes-Benz"));
+  expect(canonicalModel("C 180")).toBe(canonicalModel("C180"));
+  const mercedes = { ...criteria, brand: "Mercedes-Benz", model: "C180" };
+  expect(
+    eligibility({ ...row, brand: "Mercedes", model: "C 180" }, mercedes),
+  ).toEqual([]);
+  expect(
+    eligibility({ ...row, brand: "Mercedes", model: "C180 Coupé" }, mercedes),
+  ).toContain("Modelo diferente ou não confirmado");
+  const chevrolet = { ...criteria, brand: "GM - Chevrolet", model: "Onix" };
+  expect(
+    eligibility({ ...row, brand: "Chevrolet", model: "Onix" }, chevrolet),
+  ).toEqual([]);
+  expect(
+    new URL(
+      buildOlxUrl(chevrolet, "regiao-de-curitiba-e-paranagua"),
+    ).searchParams.get("q"),
+  ).toBe("Chevrolet Onix");
+  expect(
+    eligibility({ ...row, brand: "GMC", model: "Onix" }, chevrolet),
+  ).toContain("Marca diferente ou desconhecida");
+});
+it("validates the optional local model-group identity separately from FIPE model codes", () => {
+  const catalog = {
+    provider: "fipe",
+    brandCode: "59",
+    brandName: "Toyota",
+    modelGroup: "family:corolla",
+  };
+  const selected = searchSchema.parse({ ...criteria, catalog });
+  expect(selected.catalog).toEqual(catalog);
+  expect(selected.catalog?.modelCode).toBeUndefined();
+  expect(selected.model).toBe("Corolla");
+  for (const modelGroup of [
+    "",
+    "family:",
+    "family:   ",
+    "corolla",
+    "fipe:1",
+    "family:" + "a".repeat(234),
+  ])
+    expect(
+      searchSchema.safeParse({
+        ...criteria,
+        catalog: { ...catalog, modelGroup },
+      }).success,
+    ).toBe(false);
+});
+it.each([
+  ["Grand Cherokee Limited 3.6", "Grand Cherokee", "Limited 3.6"],
+  ["Onix Plus LT 1.0", "Onix Plus", "LT 1.0"],
+  ["Range Rover Sport 3.0", "Range Rover Sport", "3.0"],
+  ["C 180 CGI Avantgarde 1.6", "C 180", "CGI Avantgarde 1.6"],
+  ["C180 Avantgarde 1.6", "C180", "Avantgarde 1.6"],
+  ["Civic Touring 1.5", "Civic", "Touring 1.5"],
+  ["Future Compound Name 1.6", "Future Compound Name", "1.6"],
+])(
+  "preserves compound model identity and source text for %s",
+  (sourceModel, model, version) => {
+    const raw = {
+      ...olx(),
+      properties: olx().properties.map((property) =>
+        property.name === "vehicle_model"
+          ? { ...property, value: sourceModel }
+          : property,
+      ),
+    };
+    const row = normalizeOlx({ items: [raw] }, new Date().toISOString())[0];
+    expect(row).toMatchObject({
+      sourceModel,
+      model,
+      version,
+      versionOrigin: "inferred",
+    });
+    expect(row.imageUrl).toBe("https://img.olx.com.br/test-only-corolla.webp");
+  },
+);
+it.each([
+  [
+    "C 180 Coupé CGI Avantgarde 1.6",
+    "C 180 Coupé",
+    "C180 Coupe",
+    "CGI Avantgarde 1.6",
+  ],
+  ["C-180 Coupe Avantgarde 1.6", "C-180 Coupe", "C180 Coupé", "Avantgarde 1.6"],
+  [
+    "C180 Cabriolet Avantgarde 1.6",
+    "C180 Cabriolet",
+    "C 180 Cabriolet",
+    "Avantgarde 1.6",
+  ],
+  [
+    "C 180 Touring Avantgarde 1.6",
+    "C 180 Touring",
+    "C180 Touring",
+    "Avantgarde 1.6",
+  ],
+  ["C-180 SW Avantgarde 1.6", "C-180 SW", "C180 SW", "Avantgarde 1.6"],
+  [
+    "C-180 CGI Coupe Avantgarde 1.6",
+    "C-180 CGI Coupe",
+    "C180 CGI Coupé",
+    "Avantgarde 1.6",
+  ],
+])(
+  "does not turn the explicit Mercedes body %s into a sedan",
+  (sourceModel, model, query, version) => {
+    const raw = {
+      ...olx(),
+      properties: olx().properties.map((property) =>
+        property.name === "vehicle_model"
+          ? { ...property, value: sourceModel }
+          : property.name === "vehicle_brand"
+            ? { ...property, value: "Mercedes" }
+            : property,
+      ),
+    };
+    const row = normalizeOlx({ items: [raw] }, new Date().toISOString())[0];
+    expect(row).toMatchObject({
+      sourceModel,
+      model,
+      version,
+      versionOrigin: "inferred",
+    });
+    expect(
+      eligibility(row, { ...criteria, brand: "Mercedes-Benz", model: "C180" }),
+    ).toContain("Modelo diferente ou não confirmado");
+    expect(
+      eligibility(row, {
+        ...criteria,
+        brand: "Mercedes-Benz",
+        model: query,
+        version: "Avantgarde",
+      }),
+    ).toEqual([]);
+    expect(canonicalModel(model)).toBe(canonicalModel(query));
+  },
+);
+it("filters optional versions by whole words, without claiming unavailable attributes", () => {
+  const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
+  expect(eligibility(row, { ...criteria, version: "xei" })).toEqual([]);
+  expect(eligibility(row, { ...criteria, version: "XE" })).toContain(
+    "Versão diferente ou desconhecida",
+  );
+  expect(
+    eligibility({ ...row, version: null }, { ...criteria, version: "xei" }),
+  ).toContain("Versão diferente ou desconhecida");
+});
+it("sends textual model queries to OLX while preserving selected FIPE identity", async () => {
+  const catalog = {
+    provider: "fipe",
+    brandCode: "59",
+    brandName: "Toyota",
+    modelGroup: "family:corolla",
+    modelCode: "1",
+    modelName: "Corolla XEi 2.0 Flex 16V Aut.",
+  };
+  const search = await store.saveSearch({
+    ...criteria,
+    olxUrl: "",
+    catalog,
+    sources: ["olx"],
+  });
+  const result = await store.executeSearch(search.id);
+  const extraction = vi
+    .mocked(fetch)
+    .mock.calls.find(([url]) => String(url).endsWith("/extract"));
+  expect(extraction).toBeDefined();
+  const payload = JSON.parse(String(extraction![1]?.body));
+  expect(Object.keys(payload).sort()).toEqual(["target", "type", "url"]);
+  expect(new URL(payload.url).searchParams.get("q")).toBe("Toyota Corolla");
+  expect(JSON.stringify(payload)).not.toContain(catalog.modelName);
+  expect(JSON.stringify(payload)).not.toContain(catalog.modelGroup);
+  expect(result.sources[0].listings[0].reasons).toEqual([]);
+  expect((await store.listSearches())[0].criteria.catalog).toEqual(catalog);
+});
 it("saving and reading searches costs nothing; cross-site POST is rejected", async () => {
   const foreign = new Request("http://localhost:3000/api/searches", {
     method: "POST",
@@ -291,11 +527,13 @@ it("persists observations and only changed prices, survives reconnect, and enfor
   expect(first.sources[0]).toMatchObject({
     status: "ok",
     partial: true,
-    listings: [{
-      isNew: true,
-      priceCents: 10800000,
-      imageUrl: "https://img.olx.com.br/test-only-corolla.webp",
-    }],
+    listings: [
+      {
+        isNew: true,
+        priceCents: 10800000,
+        imageUrl: "https://img.olx.com.br/test-only-corolla.webp",
+      },
+    ],
   });
   expect(first.sources[1].listings[0].reasons).toEqual([]);
   expect(await store.integrationStatus()).toEqual(
@@ -326,7 +564,7 @@ it("persists observations and only changed prices, survives reconnect, and enfor
   expect(await db.db.listingPrice.count()).toBe(3);
   await db.db.$disconnect();
   expect(
-    (await store.listSearches())[0].latest.sources[0].listings[0].priceCents,
+    (await store.listSearches())[0].latest?.sources[0].listings[0].priceCents,
   ).toBe(10300000);
   const listings = await import("../src/lib/listings-store");
   expect((await listings.getListing("olx", "123"))?.imageUrl).toBe(

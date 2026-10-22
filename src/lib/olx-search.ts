@@ -1,4 +1,5 @@
 import { normalized, type SearchCriteria } from "./discovery";
+import { catalogBrandSearchName } from "./vehicle-catalog";
 export const slug = (value: string) => normalized(value).replaceAll(" ", "-");
 // Verified against OLX's public location selector; not an invented national directory.
 export const verifiedRegions: Record<string, string> = {
@@ -16,7 +17,10 @@ export function buildOlxUrl(criteria: SearchCriteria, region: string) {
   const url = new URL(
     `https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-${criteria.state.toLowerCase()}/${region}${cityPath}`,
   );
-  url.searchParams.set("q", `${criteria.brand} ${criteria.model}`);
+  url.searchParams.set(
+    "q",
+    `${catalogBrandSearchName(criteria.brand)} ${criteria.model}`,
+  );
   url.searchParams.set("sf", "1");
   if (criteria.priceMax !== null)
     url.searchParams.set("pe", String(criteria.priceMax));

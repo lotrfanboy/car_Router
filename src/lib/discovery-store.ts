@@ -97,21 +97,128 @@ export async function integrationStatus() {
 export async function listSearches() {
   const rows = await db.savedSearch.findMany({
     orderBy: { createdAt: "desc" },
-    include: { runs: { orderBy: { createdAt: "desc" }, take: 1 } },
+    include: {
+      runs: { orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 1 },
+    },
   });
   return Promise.all(
-    rows.map(async (row) => ({
-      id: row.id,
-      criteria: JSON.parse(row.criteria),
-      latest: row.runs[0]
+    rows.map(async (row) => {
+      const criteria = JSON.parse(row.criteria) as SearchCriteria;
+      const latest = row.runs[0]
         ? {
             id: row.runs[0].id,
             createdAt: row.runs[0].createdAt,
-            ...(await enrichResult(JSON.parse(row.runs[0].result))),
+            ...(await enrichResult(
+              JSON.parse(row.runs[0].result) as SearchResult & {
+                interrupted?: boolean;
+              },
+            )),
           }
-        : null,
-    })),
+        : null;
+      const failedSources =
+        latest?.sources
+          .filter((source) => source.status !== "ok")
+          .map((source) => source.source) ?? [];
+      const hasCurrentSuccess =
+        latest?.sources.some((source) => source.status === "ok") ?? false;
+      // Keep failures and prior observations separate. With a partial failure,
+      // recover the failed source rather than the most recent successful source.
+      const partialFailure = !latest?.interrupted && hasCurrentSuccess;
+      const history =
+        latest &&
+        (latest.interrupted || !hasCurrentSuccess || failedSources.length > 0)
+          ? await recoverSearchRuns(
+              row.id,
+              latest.id,
+              partialFailure
+                ? failedSources
+                : [...new Set([...criteria.sources, ...failedSources])],
+              partialFailure ? failedSources : [],
+            )
+          : { lastSuccessful: null, previousSourceRuns: [] };
+      return {
+        id: row.id,
+        criteria,
+        latest,
+        ...history,
+      };
+    }),
   );
+}
+
+type HistoricalRun = SearchResult & {
+  id: string;
+  createdAt: Date;
+  interrupted?: boolean;
+};
+
+async function recoverSearchRuns(
+  searchId: string,
+  latestId: string,
+  recoverySources: Source[],
+  lastSuccessfulSources: Source[],
+) {
+  let cursor = latestId;
+  let lastSuccessful: HistoricalRun | null = null;
+  const previousSourceRuns: HistoricalRun[] = [];
+  const missingSources = new Set(recoverySources);
+  // Scan in small batches, preserving every historical record and its dates.
+  for (;;) {
+    const runs = await db.searchRun.findMany({
+      where: { searchId },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      cursor: { id: cursor },
+      skip: 1,
+      take: 20,
+    });
+    for (const run of runs) {
+      try {
+        const result = JSON.parse(run.result) as SearchResult & {
+          interrupted?: boolean;
+        };
+        const successfulSources = result.sources
+          .filter((source) => source.status === "ok")
+          .map((source) => source.source);
+        if (result.interrupted || !successfulSources.length) continue;
+        const isLastSuccessful =
+          !lastSuccessful &&
+          lastSuccessfulSources.every((source) =>
+            successfulSources.includes(source),
+          );
+        const recoveredSources = successfulSources.filter((source) =>
+          missingSources.has(source),
+        );
+        if (isLastSuccessful || recoveredSources.length) {
+          const enriched = {
+            id: run.id,
+            createdAt: run.createdAt,
+            ...(await enrichResult(result)),
+          };
+          if (isLastSuccessful) lastSuccessful = enriched;
+          if (recoveredSources.length) {
+            // One group per historical execution, with only the newest success
+            // for each requested source. Do not mix it into current results.
+            previousSourceRuns.push({
+              ...enriched,
+              sources: enriched.sources.filter(
+                (source) =>
+                  source.status === "ok" &&
+                  recoveredSources.includes(source.source),
+              ),
+            });
+            for (const source of recoveredSources)
+              missingSources.delete(source);
+          }
+        }
+        if (lastSuccessful && !missingSources.size)
+          return { lastSuccessful, previousSourceRuns };
+      } catch {
+        // A malformed old record must not hide earlier readable observations.
+      }
+    }
+    if (runs.length < 20) return { lastSuccessful, previousSourceRuns };
+    cursor = runs[runs.length - 1].id;
+  }
 }
 export function referenceCriteria(criteria: SearchCriteria): SearchCriteria {
   let olxUrl = criteria.olxUrl;
@@ -140,9 +247,12 @@ export function referenceCriteria(criteria: SearchCriteria): SearchCriteria {
       criteria.yearMax === null ? null : Math.min(2100, criteria.yearMax + 1),
   };
 }
-function criteriaKey(criteria: SearchCriteria) {
+function criteriaKey(criteria: SearchCriteria, collection = false) {
   const canonical = {
     ...criteria,
+    // Catalog provenance belongs to a saved selection, not the paid query.
+    // Reuse identical source queries even when their FIPE identities differ.
+    ...(collection ? { catalog: undefined } : {}),
     name: "",
     brand: normalized(criteria.brand),
     model: normalized(criteria.model),
@@ -255,7 +365,7 @@ export async function executeSearch(
       },
     });
     const reference = referenceCriteria(criteria),
-      cacheKey = criteriaKey(reference);
+      cacheKey = criteriaKey(reference, true);
     const cached = await db.searchCache.findUnique({ where: { id: cacheKey } });
     if (cached && Date.now() - cached.updatedAt.getTime() < 60000) {
       const result: SearchResult = JSON.parse(cached.result);

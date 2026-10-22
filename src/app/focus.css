@@ -706,3 +706,28 @@ summary {
     gap: 16px;
   }
 }
+
+/* Keep the existing layout and sticky mobile actions while protecting drafts. */
+.focus-workspace .discovery-form > fieldset.search-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  grid-column: 1 / -1;
+}
+.search-fields > * {
+  min-width: 0;
+}
+.previous-results {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 16px;
+}
+.previous-results > p,
+.previous-results > .listing-card {
+  margin-top: 12px;
+}

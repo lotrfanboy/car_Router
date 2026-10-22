@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
@@ -21,7 +21,13 @@ type Run = SearchResult & {
   interrupted?: boolean;
   cached?: boolean;
 };
-type Saved = { id: string; criteria: SearchCriteria; latest: Run | null };
+type Saved = {
+  id: string;
+  criteria: SearchCriteria;
+  latest: Run | null;
+  lastSuccessful?: Run | null;
+  previousSourceRuns?: Run[];
+};
 type Integration = {
   source: Source;
   configured: boolean;
@@ -31,50 +37,195 @@ type Integration = {
   dailyLimit: number;
   lastSuccessfulAt: string | null;
 };
+type DisplayResult = { searchId: string; criteria: SearchCriteria; run: Run };
+type Draft = {
+  brand: string;
+  model: string;
+  version: string;
+  city: string;
+  state: string;
+  yearMin: string;
+  yearMax: string;
+  mileageMax: string;
+  priceMax: string;
+  privateOnly: boolean;
+  sources: Source[];
+};
+const emptyDraft = (): Draft => ({
+  brand: "",
+  model: "",
+  version: "",
+  city: "",
+  state: "PR",
+  yearMin: "",
+  yearMax: "",
+  mileageMax: "",
+  priceMax: "",
+  privateOnly: false,
+  sources: ["olx", "webmotors"],
+});
+const draftFrom = (criteria: SearchCriteria): Draft => ({
+  ...criteria,
+  version: criteria.version ?? "",
+  yearMin: String(criteria.yearMin ?? ""),
+  yearMax: String(criteria.yearMax ?? ""),
+  mileageMax: String(criteria.mileageMax ?? ""),
+  priceMax: String(criteria.priceMax ?? ""),
+});
+const hasSuccess = (run?: Run | null) =>
+  !!run &&
+  !run.interrupted &&
+  run.sources.some((source) => source.status === "ok");
+async function readSearches(): Promise<{
+  searches: Saved[];
+  integrations: Integration[];
+}> {
+  const response = await fetch("/api/searches", { cache: "no-store" });
+  if (!response.ok) throw new Error("Não foi possível carregar suas buscas.");
+  return response.json();
+}
+function useCatalog(url: string | null) {
+  const [retry, setRetry] = useState(0);
+  const [result, setResult] = useState<{
+    url: string;
+    retry: number;
+    options: SearchOption[];
+    failed: boolean;
+  } | null>(null);
+  useEffect(() => {
+    if (!url) return;
+    const controller = new AbortController();
+    fetch(url, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error();
+        const options = await response.json();
+        if (!Array.isArray(options) || !options.length) throw new Error();
+        if (!controller.signal.aborted)
+          setResult({ url, retry, options, failed: false });
+      })
+      .catch(() => {
+        if (!controller.signal.aborted)
+          setResult({ url, retry, options: [], failed: true });
+      });
+    return () => controller.abort();
+  }, [url, retry]);
+  const current = result?.url === url && result?.retry === retry;
+  return {
+    options: current ? result.options : [],
+    loading: !!url && !current,
+    error: current && result.failed,
+    onRetry: () => setRetry((value) => value + 1),
+  };
+}
 export function SearchWorkspace({
   initialSearchId = "",
 }: {
   initialSearchId?: string;
 }) {
-  const [saved, setSaved] = useState<Saved[]>([]),
-    [integrations, setIntegrations] = useState<Integration[]>([]),
-    [selected, setSelected] = useState(initialSearchId),
-    [busy, setBusy] = useState(false),
-    [loading, setLoading] = useState(true),
-    [error, setError] = useState(""),
-    [notice, setNotice] = useState(""),
-    [sort, setSort] = useState<"discount" | "price" | "recent">("recent");
+  const [saved, setSaved] = useState<Saved[]>([]);
+  const [integrations, setIntegrations] = useState<Integration[]>([]);
+  const [selected, setSelected] = useState(initialSearchId);
+  const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [loadedCriteria, setLoadedCriteria] = useState<SearchCriteria | null>(
+    null,
+  );
+  const [brandChoice, setBrandChoice] = useState<SearchOption | null>(null);
+  const [modelChoice, setModelChoice] = useState<SearchOption | null>(null);
+  const [manualBrand, setManualBrand] = useState(false);
+  const [manualModel, setManualModel] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [display, setDisplay] = useState<DisplayResult | null>(null);
+  const [historical, setHistorical] = useState<DisplayResult[]>([]);
+  const [attempt, setAttempt] = useState<Run | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [sort, setSort] = useState<"discount" | "price" | "recent">("recent");
   const pending = useRef(false);
   const { vehicles } = useWorkspace();
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [version, setVersion] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("PR");
-  const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [brandOptions, setBrandOptions] = useState<SearchOption[]>([]);
-  const [modelOptions, setModelOptions] = useState<SearchOption[]>([]);
-  const [cityOptions, setCityOptions] = useState<SearchOption[]>([]);
-  const [modelOptionsBrand, setModelOptionsBrand] = useState("");
-  const [cityOptionsState, setCityOptionsState] = useState("");
-  const [catalogNotice, setCatalogNotice] = useState("");
-  const [brandStatus, setBrandStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [modelStatus, setModelStatus] = useState<"loading" | "ready" | "error">("ready");
-  const [cityStatus, setCityStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [brandRetry, setBrandRetry] = useState(0);
-  const [modelRetry, setModelRetry] = useState(0);
-  const [cityRetry, setCityRetry] = useState(0);
-  const refresh = useCallback(async () => {
-    const res = await fetch("/api/searches", { cache: "no-store" });
-    if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
-    const data = await res.json();
-    setSaved(data.searches);
-    setIntegrations(data.integrations);
-  }, []);
+  const { brand, model, version, city, state } = draft;
+  const brandCatalog = useCatalog("/api/search-options?type=brands");
+  // Only a committed catalog choice requests models; typing never does.
+  const modelCatalog = useCatalog(
+    brandChoice
+      ? `/api/search-options?type=models&brand=${encodeURIComponent(brandChoice.code)}`
+      : null,
+  );
+  const cityCatalog = useCatalog(
+    `/api/search-options?type=cities&state=${encodeURIComponent(state)}`,
+  );
+  function change<K extends keyof Draft>(key: K, value: Draft[K]) {
+    setDraft((current) => ({ ...current, [key]: value }));
+  }
+  function loadSaved(row?: Saved) {
+    setSelected(row?.id ?? "");
+    setLoadedCriteria(row?.criteria ?? null);
+    setDraft(row ? draftFrom(row.criteria) : emptyDraft());
+    const catalog = row?.criteria.catalog;
+    setBrandChoice(
+      catalog
+        ? {
+            code: catalog.brandCode,
+            name: catalog.brandName,
+            searchName: row!.criteria.brand,
+          }
+        : null,
+    );
+    setModelChoice(
+      catalog?.modelGroup
+        ? {
+            code: catalog.modelGroup,
+            name: row!.criteria.model,
+            searchName: row!.criteria.model,
+          }
+        : null,
+    );
+    setManualBrand(!!row && !catalog);
+    setManualModel(!!row && !catalog?.modelGroup);
+    setAdvancedOpen(
+      Boolean(
+        row?.criteria.yearMin ||
+        row?.criteria.yearMax ||
+        row?.criteria.mileageMax ||
+        row?.criteria.priceMax ||
+        row?.criteria.privateOnly,
+      ),
+    );
+    const run = hasSuccess(row?.latest) ? row!.latest : row?.lastSuccessful;
+    setDisplay(
+      row && run ? { searchId: row.id, criteria: row.criteria, run } : null,
+    );
+    setHistorical(
+      row
+        ? (
+            row.previousSourceRuns ??
+            (row.lastSuccessful ? [row.lastSuccessful] : [])
+          ).map((run) => ({ searchId: row.id, criteria: row.criteria, run }))
+        : [],
+    );
+    setAttempt(row?.latest ?? null);
+    setError("");
+    setNotice("");
+  }
   useEffect(() => {
     let cancelled = false;
-    Promise.resolve()
-      .then(() => refresh())
+    readSearches()
+      .then((data) => {
+        if (cancelled) return;
+        setSaved(data.searches);
+        setIntegrations(data.integrations);
+        const row = data.searches.find((item) => item.id === initialSearchId);
+        if (row) loadSaved(row);
+        else if (initialSearchId) setError("Busca salva não encontrada.");
+        else {
+          const configured = data.integrations
+            .filter((item) => item.configured)
+            .map((item) => item.source);
+          if (configured.length)
+            setDraft((current) => ({ ...current, sources: configured }));
+        }
+      })
       .catch((e) => {
         if (!cancelled) setError(e.message);
       })
@@ -84,187 +235,127 @@ export function SearchWorkspace({
     return () => {
       cancelled = true;
     };
-  }, [refresh]);
-  useEffect(() => {
-    let cancelled = false;
-    // Fetch lifecycle intentionally updates the catalog status.
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setBrandStatus("loading");
-    /* eslint-enable react-hooks/set-state-in-effect */
-    fetch("/api/search-options?type=brands")
-      .then((response) => {
-        if (!response.ok) throw new Error();
-        return response.json() as Promise<SearchOption[]>;
-      })
-      .then((options) => {
-        if (!cancelled) { setBrandOptions(options); setBrandStatus("ready"); }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setBrandStatus("error");
-          setCatalogNotice("Catálogo FIPE indisponível; digitação manual liberada.");
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [brandRetry]);
-  useEffect(() => {
-    let cancelled = false;
-    /* eslint-disable react-hooks/set-state-in-effect */
-    setCityStatus("loading");
-    /* eslint-enable react-hooks/set-state-in-effect */
-    fetch(`/api/search-options?type=cities&state=${encodeURIComponent(state)}`)
-      .then((response) => {
-        if (!response.ok) throw new Error();
-        return response.json() as Promise<SearchOption[]>;
-      })
-      .then((options) => {
-        if (!cancelled) { setCityOptions(options); setCityOptionsState(state); setCityStatus("ready"); }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setCityStatus("error");
-          setCatalogNotice("Catálogo de municípios indisponível; digitação manual liberada.");
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [state, cityRetry]);
-  useEffect(() => {
-    let cancelled = false;
-    const selectedBrand = brandOptions.find(
-      (option) =>
-        canonicalBrand(option.name) === canonicalBrand(brand),
-    );
-    /* eslint-disable react-hooks/set-state-in-effect */
-    if (!selectedBrand) {
-      setModelOptions([]);
-      setModelOptionsBrand("");
-      setModelStatus("ready");
-      return;
-    }
-    setModelStatus("loading");
-    /* eslint-enable react-hooks/set-state-in-effect */
-    fetch(
-      `/api/search-options?type=models&brand=${encodeURIComponent(selectedBrand.code)}`,
-    )
-      .then((response) => {
-        if (!response.ok) throw new Error();
-        return response.json() as Promise<SearchOption[]>;
-      })
-      .then((options) => {
-        if (!cancelled) { setModelOptions(options); setModelOptionsBrand(selectedBrand.code); setModelStatus("ready"); }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setModelStatus("error");
-          setCatalogNotice("Modelos FIPE indisponíveis; digitação manual liberada.");
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [brand, brandOptions, modelRetry]);
-  const active = saved.find((s) => s.id === selected),
-    criteria = active?.criteria,
-    run = active?.latest;
-  /* The selected saved search is an external record loaded from the API. */
-  /* eslint-disable react-hooks/set-state-in-effect */
-  useEffect(() => {
-    setBrand(criteria?.brand ?? "");
-    setModel(criteria?.model ?? "");
-    setVersion(criteria?.version ?? "");
-    setCity(criteria?.city ?? "");
-    setState(criteria?.state ?? "PR");
-    setAdvancedOpen(
-      Boolean(
-        criteria?.yearMin ||
-          criteria?.yearMax ||
-          criteria?.mileageMax ||
-          criteria?.priceMax ||
-          criteria?.privateOnly,
-      ),
-    );
-  }, [criteria]);
-  /* eslint-enable react-hooks/set-state-in-effect */
+  }, [initialSearchId]);
   const suggestions = useMemo(() => {
     const rows = [
-      ...vehicles.map((v) => ({
-        brand: v.brand,
-        model: v.model,
-        version: v.version,
-        city: v.city,
-        state: v.state,
-      })),
-      ...saved.map((s) => s.criteria),
-      ...saved.flatMap((s) =>
-        s.latest?.sources.flatMap((source) => source.listings) ?? [],
+      ...vehicles,
+      ...saved.map((item) => item.criteria),
+      ...saved.flatMap(
+        (item) =>
+          item.latest?.sources.flatMap((source) => source.listings) ?? [],
       ),
     ];
-    const unique = (values: (string | null | undefined)[]) =>
-      [...new Set(values.filter((x): x is string => Boolean(x?.trim())))].sort(
-        (a, b) => a.localeCompare(b, "pt-BR"),
-      );
-    const same = (a: string | null | undefined, b: string) =>
-      !b || a?.localeCompare(b, "pt-BR", { sensitivity: "base" }) === 0;
-    return {
-      versions: unique(
+    return [
+      ...new Set(
         rows
-          .filter((r) => same(r.brand, brand) && same(r.model, model))
-          .map((r) => r.version),
+          .filter(
+            (row) =>
+              canonicalBrand(row.brand ?? "") === canonicalBrand(brand) &&
+              row.model?.toLocaleLowerCase("pt-BR") ===
+                model.toLocaleLowerCase("pt-BR"),
+          )
+          .map((row) => row.version)
+          .filter((value): value is string => !!value?.trim()),
       ),
-    };
+    ].sort((a, b) => a.localeCompare(b, "pt-BR"));
   }, [brand, model, saved, vehicles]);
-  const resultRows = run?.sources
-      .filter((s) => s.status === "ok")
-      .flatMap((s) => s.listings)
+  const active = saved.find((item) => item.id === selected);
+  const run = display?.run;
+  const sourceRun = attempt ?? run;
+  const previousShown = !!display && !!attempt && display.run.id !== attempt.id;
+  const previousSources = historical.flatMap((previous) =>
+    previous.run.sources
+      .filter(
+        (source) =>
+          source.status === "ok" &&
+          (sourceRun?.interrupted ||
+            sourceRun?.sources.some(
+              (latest) =>
+                latest.source === source.source && latest.status !== "ok",
+            )) &&
+          !(
+            display?.searchId === previous.searchId &&
+            display.run.sources.some(
+              (shown) =>
+                shown.source === source.source && shown.status === "ok",
+            )
+          ),
+      )
+      .map((source) => ({ previous, source })),
+  );
+  const resultRows =
+    run?.sources
+      .filter((source) => source.status === "ok")
+      .flatMap((source) => source.listings)
       .filter((row) => !row.reasons.length) ?? [];
-  const hasValidComparison = resultRows.some((row) => row.comparison?.status === "valid");
-  const selectedBrandCode = brandOptions.find((option) => canonicalBrand(option.name) === canonicalBrand(brand))?.code;
-  const effectiveSort = sort === "discount" && !hasValidComparison ? "recent" : sort;
+  const hasValidComparison = resultRows.some(
+    (row) => row.comparison?.status === "valid",
+  );
+  const effectiveSort =
+    sort === "discount" && !hasValidComparison ? "recent" : sort;
   const candidates = sortListings(resultRows, effectiveSort);
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending.current) return;
     setError("");
     setNotice("");
-    const form = new FormData(event.currentTarget),
-      optional = (key: string) =>
-        form.get(key) === "" ? null : Number(form.get(key));
+    if ((!brandChoice && !manualBrand) || (!modelChoice && !manualModel)) {
+      setError(
+        "Selecione marca e modelo nas opções ou confirme Usar texto digitado no campo correspondente.",
+      );
+      return;
+    }
+    const optional = (value: string) => (value === "" ? null : Number(value));
+    const queryBrand = brandChoice?.searchName ?? brand;
+    const queryModel = modelChoice?.searchName ?? model;
+    const sameLegacyQuery =
+      loadedCriteria &&
+      queryBrand === loadedCriteria.brand &&
+      queryModel === loadedCriteria.model &&
+      city === loadedCriteria.city &&
+      state === loadedCriteria.state &&
+      optional(draft.yearMin) === loadedCriteria.yearMin &&
+      optional(draft.yearMax) === loadedCriteria.yearMax;
     const parsed = searchSchema.safeParse({
-      name: `${form.get("brand")} ${form.get("model")} · ${form.get("city")}`.slice(
-        0,
-        100,
-      ),
-      brand: form.get("brand"),
-      model: form.get("model"),
-      version: form.get("version"),
-      city: form.get("city"),
-      state: form.get("state"),
-      yearMin: optional("yearMin"),
-      yearMax: optional("yearMax"),
-      mileageMax: optional("mileageMax"),
-      priceMax: optional("priceMax"),
-      privateOnly: form.get("privateOnly") === "on",
-      sources: form.getAll("sources"),
-      olxUrl: criteria?.olxUrl ?? "",
+      ...draft,
+      name: `${queryBrand} ${queryModel} · ${city}`.slice(0, 100),
+      brand: queryBrand,
+      model: queryModel,
+      catalog: brandChoice
+        ? {
+            provider: "fipe",
+            brandCode: brandChoice.code,
+            brandName: brandChoice.name,
+            modelGroup: modelChoice?.code.startsWith("family:")
+              ? modelChoice.code
+              : undefined,
+          }
+        : undefined,
+      yearMin: optional(draft.yearMin),
+      yearMax: optional(draft.yearMax),
+      mileageMax: optional(draft.mileageMax),
+      priceMax: optional(draft.priceMax),
+      olxUrl: sameLegacyQuery ? loadedCriteria.olxUrl : "",
     });
     if (!parsed.success) {
       setError(
         "Revise os critérios: " +
-          parsed.error.issues.map((i) => i.message).join(" "),
+          parsed.error.issues.map((issue) => issue.message).join(" "),
       );
       return;
     }
     const saveOnly =
       (event.nativeEvent as SubmitEvent).submitter?.getAttribute("value") ===
       "save";
-    if (!saveOnly && !parsed.data.sources.some((source) =>
-      integrations.some((integration) => integration.source === source && integration.configured),
-    )) {
-      setError("Nenhuma fonte selecionada está configurada. Salve os critérios sem consultar ou conecte uma fonte em Configurações.");
+    if (
+      !saveOnly &&
+      !parsed.data.sources.some((source) =>
+        integrations.some((item) => item.source === source && item.configured),
+      )
+    ) {
+      setError(
+        "Nenhuma fonte selecionada está configurada. Salve os critérios sem consultar ou conecte uma fonte em Configurações.",
+      );
       return;
     }
     pending.current = true;
@@ -276,27 +367,86 @@ export function SearchWorkspace({
         body: JSON.stringify(parsed.data),
       });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error);
-      setSelected(result.id);
-      if (saveOnly) setNotice("Critérios salvos. Nenhuma consulta realizada.");
-      else {
-        const response = await fetch(`/api/searches/${result.id}/run`, {
+      if (!response.ok)
+        throw new Error(
+          result.error || "Não foi possível salvar os critérios.",
+        );
+      let currentRun: Run | null = null;
+      if (saveOnly) {
+        setSelected(result.id);
+        setNotice(
+          "Critérios salvos. Nenhuma consulta realizada." +
+            (display
+              ? " Os resultados abaixo pertencem à consulta indicada."
+              : ""),
+        );
+      } else {
+        const execution = await fetch(`/api/searches/${result.id}/run`, {
           method: "POST",
         });
-        const resultRun = await response.json();
-        if (!response.ok) throw new Error(resultRun.error);
+        const resultRun = await execution.json();
+        if (!execution.ok)
+          throw new Error(
+            resultRun.error || "Não foi possível concluir a consulta.",
+          );
+        currentRun = resultRun;
+        setAttempt(currentRun);
+        if (hasSuccess(currentRun)) {
+          setHistorical((previous) =>
+            currentRun!.sources.some((source) => source.status !== "ok")
+              ? display
+                ? [display, ...previous]
+                : previous
+              : [],
+          );
+          setDisplay({
+            searchId: result.id,
+            criteria: parsed.data,
+            run: currentRun!,
+          });
+          setSelected(result.id);
+          setNotice(
+            resultRun.cached
+              ? "Consulta recente reutilizada, sem novo consumo de créditos."
+              : "Consulta encerrada. Confira o estado de cada fonte abaixo.",
+          );
+        } else
+          setError(
+            "Nenhuma fonte concluiu a consulta. Seus filtros e resultados anteriores foram preservados.",
+          );
+      }
+      try {
+        const data = await readSearches();
+        setSaved(data.searches);
+        setIntegrations(data.integrations);
+        const row = data.searches.find((item) => item.id === result.id);
+        if (currentRun && row?.latest) {
+          setAttempt(row.latest);
+          if (hasSuccess(currentRun))
+            setDisplay({
+              searchId: row.id,
+              criteria: row.criteria,
+              run: row.latest,
+            });
+          setHistorical(
+            (
+              row.previousSourceRuns ??
+              (row.lastSuccessful ? [row.lastSuccessful] : [])
+            ).map((run) => ({ searchId: row.id, criteria: row.criteria, run })),
+          );
+        }
+      } catch {
         setNotice(
-          resultRun.cached
-            ? "Consulta recente reutilizada, sem novo consumo de créditos."
-            : "Consulta encerrada. Confira o estado de cada fonte abaixo.",
+          "Critérios salvos, mas a lista de buscas não pôde ser atualizada. Seus filtros e resultados continuam aqui.",
         );
       }
-      await refresh();
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "Não foi possível concluir a busca.",
+        (e instanceof Error
+          ? e.message
+          : "Não foi possível concluir a busca.") +
+          " Seus filtros e resultados anteriores foram preservados.",
       );
-      await refresh().catch(() => {});
     } finally {
       pending.current = false;
       setBusy(false);
@@ -347,143 +497,231 @@ export function SearchWorkspace({
           <h2>
             <SlidersHorizontal size={17} /> O que você procura?
           </h2>
-          <form
-            key={`${selected}:${active ? "loaded" : "new"}:${integrations.map((item) => `${item.source}-${item.configured}`).join(",")}`}
-            onSubmit={submit}
-            className="discovery-form"
-          >
-            <div className="form-grid two">
-              <SearchCombobox label="Marca" name="brand" required maxLength={80} placeholder="Toyota" value={brand} options={brandOptions} loading={brandStatus === "loading"} error={brandStatus === "error"} onRetry={() => setBrandRetry((n) => n + 1)} onChange={(value) => { setBrand(value); setModel(""); setVersion(""); setModelOptions([]); setModelOptionsBrand(""); setModelStatus("ready"); }} />
-              <SearchCombobox label="Modelo/versão FIPE" name="model" required maxLength={200} placeholder="Digite o modelo ou selecione a descrição FIPE" value={model} options={selectedBrandCode === modelOptionsBrand ? modelOptions : []} loading={modelStatus === "loading"} error={modelStatus === "error"} onRetry={() => setModelRetry((n) => n + 1)} onChange={(value) => { setModel(value); setVersion(""); }} />
-            </div>
-            <p className="discovery-help muted">
-              A FIPE fornece descrições completas de modelo e versão. Selecione uma descrição ou digite o modelo manualmente; a correspondência com anúncios pode variar entre fontes. Se usar a descrição completa, deixe a versão opcional em branco.
-            </p>
-            <label>
-              Versão{" "}
-              <small>
-                Opcional · correspondência com a identificação da fonte
-              </small>
-              <input
-                name="version"
-                list="known-versions"
-                maxLength={120}
-                placeholder="Ex.: XEi 2.0"
-                value={version}
-                autoComplete="off"
-                onChange={(event) => setVersion(event.target.value)}
-              />
-              <datalist id="known-versions">
-                {suggestions.versions.map((x) => (
-                  <option key={x} value={x} />
-                ))}
-              </datalist>
-            </label>
-            <div className="form-grid two">
-              <label>
-                UF
-                <select
-                  name="state"
-                  value={state}
-                  onChange={(event) => {
-                    setState(event.target.value);
-                    setCity("");
-                    setCityOptions([]);
-                    setCityOptionsState("");
+          <form onSubmit={submit} className="discovery-form">
+            <fieldset className="search-fields" disabled={busy}>
+              <legend className="sr-only">Critérios da busca</legend>
+              <div className="form-grid two">
+                <SearchCombobox
+                  label="Marca"
+                  name="brand"
+                  required
+                  maxLength={80}
+                  placeholder="Toyota"
+                  value={brand}
+                  {...brandCatalog}
+                  selectedCode={brandChoice?.code}
+                  onChange={(value) => {
+                    change("brand", value);
+                    change("model", "");
+                    change("version", "");
+                    setBrandChoice(null);
+                    setModelChoice(null);
+                    setManualBrand(false);
+                    setManualModel(false);
                   }}
-                >
-                  {states.map((x) => (
-                    <option key={x}>{x}</option>
-                  ))}
-                </select>
-              </label>
-              <SearchCombobox label="Cidade" name="city" required maxLength={120} placeholder={`Cidade em ${state}`} value={city} options={cityOptionsState === state ? cityOptions : []} loading={cityStatus === "loading"} error={cityStatus === "error"} onRetry={() => setCityRetry((n) => n + 1)} onChange={setCity} />
-            </div>
-            {catalogNotice && (
-              <p className="discovery-warning" role="status">
-                {catalogNotice}
+                  onSelect={(option) => {
+                    change("brand", option.searchName ?? option.name);
+                    change("model", "");
+                    change("version", "");
+                    setBrandChoice(option);
+                    setModelChoice(null);
+                    setManualBrand(false);
+                    setManualModel(false);
+                  }}
+                  onManual={() => {
+                    setManualBrand(true);
+                    setBrandChoice(null);
+                  }}
+                />
+                <SearchCombobox
+                  label="Modelo"
+                  name="model"
+                  required
+                  maxLength={200}
+                  placeholder={
+                    brandChoice || manualBrand
+                      ? "Buscar modelo"
+                      : "Escolha marca"
+                  }
+                  value={model}
+                  {...modelCatalog}
+                  selectedCode={modelChoice?.code}
+                  disabled={!brandChoice && !manualBrand}
+                  onChange={(value) => {
+                    change("model", value);
+                    change("version", "");
+                    setModelChoice(null);
+                    setManualModel(false);
+                  }}
+                  onSelect={(option) => {
+                    change("model", option.searchName ?? option.name);
+                    change("version", "");
+                    setModelChoice(option);
+                    setManualModel(false);
+                  }}
+                  onManual={() => {
+                    setManualModel(true);
+                    setModelChoice(null);
+                  }}
+                />
+              </div>
+              <p className="discovery-help muted">
+                {manualBrand || manualModel
+                  ? "Entrada manual confirmada. Use o modelo sem versão; a correspondência depende dos atributos informados pela fonte."
+                  : "Modelos agrupados a partir das descrições FIPE. A consulta usa o nome do modelo, sem exigir a descrição completa da versão."}
               </p>
-            )}
-            <details
-              className="advanced-filters"
-              open={advancedOpen}
-              onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
-            >
-              <summary>Mais filtros</summary>
+              <label>
+                Versão{" "}
+                <small>Opcional · contém este texto na versão da fonte</small>
+                <input
+                  name="version"
+                  list="known-versions"
+                  maxLength={120}
+                  placeholder="Ex.: XEi"
+                  value={version}
+                  autoComplete="off"
+                  onChange={(event) => change("version", event.target.value)}
+                />
+                <datalist id="known-versions">
+                  {suggestions.map((x) => (
+                    <option key={x} value={x} />
+                  ))}
+                </datalist>
+              </label>
               <div className="form-grid two">
                 <label>
-                Ano-modelo de
-                <input
-                  name="yearMin"
-                  type="number"
-                  min="1900"
-                  max="2100"
-                  defaultValue={criteria?.yearMin ?? ""}
-                />
+                  UF
+                  <select
+                    name="state"
+                    value={state}
+                    onChange={(event) => {
+                      change("state", event.target.value);
+                      change("city", "");
+                    }}
+                  >
+                    {states.map((x) => (
+                      <option key={x}>{x}</option>
+                    ))}
+                  </select>
                 </label>
-                <label>
-                Ano-modelo até
-                <input
-                  name="yearMax"
-                  type="number"
-                  min="1900"
-                  max="2100"
-                  defaultValue={criteria?.yearMax ?? ""}
+                <SearchCombobox
+                  label="Cidade"
+                  name="city"
+                  required
+                  maxLength={120}
+                  placeholder={`Cidade em ${state}`}
+                  value={city}
+                  {...cityCatalog}
+                  onChange={(value) => change("city", value)}
                 />
-                </label>
               </div>
-              <label>
-                Quilometragem máxima
-                <input
-                  name="mileageMax"
-                  type="number"
-                  min="0"
-                  max="10000000"
-                  placeholder="Sem limite"
-                  defaultValue={criteria?.mileageMax ?? ""}
-                />
-              </label>
-              <label>
-                Orçamento máximo (R$)
-                <input
-                  name="priceMax"
-                  type="number"
-                  min="1"
-                  max="10000000"
-                  placeholder="Opcional"
-                  defaultValue={criteria?.priceMax ?? ""}
-                />
-              </label>
-              <p className="discovery-help muted">
-                O orçamento filtra os resultados. Os semelhantes mais caros
-                continuam na referência.
-              </p>
-              <label className="discovery-check">
-                <input
-                  type="checkbox"
-                  name="privateOnly"
-                  defaultChecked={criteria?.privateOnly}
-                />{" "}
-                Somente particulares confirmados
-              </label>
-            </details>
-            <fieldset>
-              <legend>Consultar em</legend>
-              {(["olx", "webmotors"] as Source[]).map((source) => (
-                <label className="discovery-check" key={source}>
+              <details
+                className="advanced-filters"
+                open={advancedOpen}
+                onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
+              >
+                <summary>Mais filtros</summary>
+                <div className="form-grid two">
+                  <label>
+                    Ano-modelo de
+                    <input
+                      name="yearMin"
+                      type="number"
+                      min="1900"
+                      max="2100"
+                      value={draft.yearMin}
+                      onChange={(event) =>
+                        change("yearMin", event.target.value)
+                      }
+                    />
+                  </label>
+                  <label>
+                    Ano-modelo até
+                    <input
+                      name="yearMax"
+                      type="number"
+                      min="1900"
+                      max="2100"
+                      value={draft.yearMax}
+                      onChange={(event) =>
+                        change("yearMax", event.target.value)
+                      }
+                    />
+                  </label>
+                </div>
+                <label>
+                  Quilometragem máxima
                   <input
-                    name="sources"
-                    value={source}
-                    type="checkbox"
-                    defaultChecked={
-                      criteria ? criteria.sources.includes(source) : !integrations.some((item) => item.configured) || !!integrations.find((item) => item.source === source)?.configured
+                    name="mileageMax"
+                    type="number"
+                    min="0"
+                    max="10000000"
+                    placeholder="Sem limite"
+                    value={draft.mileageMax}
+                    onChange={(event) =>
+                      change("mileageMax", event.target.value)
                     }
                   />
-                  {sourceNames[source]}{!integrations.find((item) => item.source === source)?.configured ? " · configuração pendente" : ""}
                 </label>
-              ))}
+                <label>
+                  Orçamento máximo (R$)
+                  <input
+                    name="priceMax"
+                    type="number"
+                    min="1"
+                    max="10000000"
+                    placeholder="Opcional"
+                    value={draft.priceMax}
+                    onChange={(event) => change("priceMax", event.target.value)}
+                  />
+                </label>
+                <p className="discovery-help muted">
+                  O orçamento filtra os resultados. Os semelhantes mais caros
+                  continuam na referência.
+                </p>
+                <label className="discovery-check">
+                  <input
+                    type="checkbox"
+                    name="privateOnly"
+                    checked={draft.privateOnly}
+                    onChange={(event) =>
+                      change("privateOnly", event.target.checked)
+                    }
+                  />{" "}
+                  Somente particulares confirmados
+                </label>
+              </details>
+              <fieldset>
+                <legend>Consultar em</legend>
+                {(["olx", "webmotors"] as Source[]).map((source) => (
+                  <label className="discovery-check" key={source}>
+                    <input
+                      name="sources"
+                      value={source}
+                      type="checkbox"
+                      checked={draft.sources.includes(source)}
+                      onChange={(event) =>
+                        change(
+                          "sources",
+                          event.target.checked
+                            ? [...draft.sources, source]
+                            : draft.sources.filter((item) => item !== source),
+                        )
+                      }
+                    />
+                    {sourceNames[source]}
+                    {!integrations.find((item) => item.source === source)
+                      ?.configured
+                      ? " · configuração pendente"
+                      : ""}
+                  </label>
+                ))}
+              </fieldset>
+              <p className="discovery-help muted">
+                Fontes sem conexão podem ser salvas nos critérios para consultar
+                depois de configuradas.
+              </p>
             </fieldset>
-            <p className="discovery-help muted">Fontes sem conexão podem ser salvas nos critérios para consultar depois de configuradas.</p>
             <div className="discovery-actions">
               <button
                 className="button primary"
@@ -531,9 +769,7 @@ export function SearchWorkspace({
                 disabled={busy}
                 value={selected}
                 onChange={(e) => {
-                  setSelected(e.target.value);
-                  setError("");
-                  setNotice("");
+                  loadSaved(saved.find((row) => row.id === e.target.value));
                 }}
               >
                 <option value="">Nova busca</option>
@@ -544,16 +780,16 @@ export function SearchWorkspace({
                 ))}
               </select>
             </label>
-            {active && (
+            {(display || active) && (
               <Link
                 className="button"
-                href={`/radares?busca=${encodeURIComponent(active.id)}`}
+                href={`/radares?busca=${encodeURIComponent(display?.searchId ?? active!.id)}`}
               >
                 <Radio size={16} /> Criar alerta desta busca
               </Link>
             )}
           </div>
-          {busy ? (
+          {busy && (
             <div className="empty-state" role="status">
               <Search size={26} />
               <h2>Consultando os anúncios</h2>
@@ -562,57 +798,68 @@ export function SearchWorkspace({
                 bloqueados.
               </p>
             </div>
-          ) : loading ? (
+          )}
+          {sourceRun?.interrupted && (
+            <p className="error-box" role="alert">
+              Consulta interrompida. Nenhum resultado completo foi confirmado.
+            </p>
+          )}
+          <div className="source-results">
+            {sourceRun?.sources.map((s) => (
+              <details key={s.source} open={s.status !== "ok"}>
+                <summary>
+                  {sourceNames[s.source]} ·{" "}
+                  {s.status === "ok"
+                    ? s.partial
+                      ? "Cobertura parcial"
+                      : "Consultada"
+                    : s.status === "unconfigured"
+                      ? "Não conectada"
+                      : "Falhou"}
+                  {s.status === "ok"
+                    ? ` · ${s.listings.filter((r) => !r.reasons.length).length} candidatos`
+                    : ""}
+                </summary>
+                <p>{s.message}</p>
+                <small>
+                  {observedWhen(s.observedAt)} · {s.listings.length} anúncios
+                  recebidos para candidatos e referência.
+                </small>
+              </details>
+            ))}
+          </div>
+          {loading ? (
             <p role="status">Carregando buscas…</p>
           ) : !run ? (
             <div className="empty-state">
               <Search size={28} />
               <h2>
-                {active
-                  ? "Critérios prontos para consultar"
-                  : "Comece pelo carro que procura"}
+                {attempt
+                  ? "Busca indisponível"
+                  : active
+                    ? "Critérios prontos para consultar"
+                    : "Comece pelo carro que procura"}
               </h2>
               <p>
-                Preencha os filtros e clique em Buscar agora. A comparação
-                aparece aqui, sem cadastrar cada anúncio.
+                {attempt
+                  ? "Nenhuma fonte concluiu a consulta. Confira a configuração e tente novamente."
+                  : "Preencha os filtros e clique em Buscar agora. A comparação aparece aqui, sem cadastrar cada anúncio."}
               </p>
             </div>
           ) : (
             <>
               <p className="muted">
-                Consulta de {observedWhen(run.createdAt)}. A referência é
-                recalculada com as observações disponíveis dos últimos 7 dias.
+                {display?.criteria.brand} {display?.criteria.model} ·{" "}
+                {display?.criteria.city}/{display?.criteria.state}. Consulta de{" "}
+                {observedWhen(run.createdAt)}. A referência é recalculada com as
+                observações disponíveis dos últimos 7 dias.
               </p>
-              {run.interrupted && (
-                <p className="error-box" role="alert">
-                  Consulta interrompida. Nenhum resultado completo foi
-                  confirmado.
+              {previousShown && (
+                <p className="discovery-warning" role="status">
+                  A última tentativa falhou. Exibindo os resultados anteriores
+                  de {observedWhen(run.createdAt)}.
                 </p>
               )}
-              <div className="source-results">
-                {run.sources.map((s) => (
-                  <details key={s.source} open={s.status !== "ok"}>
-                    <summary>
-                      {sourceNames[s.source]} ·{" "}
-                      {s.status === "ok"
-                        ? s.partial
-                          ? "Cobertura parcial"
-                          : "Consultada"
-                        : s.status === "unconfigured"
-                          ? "Não conectada"
-                          : "Falhou"}
-                      {s.status === "ok"
-                        ? ` · ${s.listings.filter((r) => !r.reasons.length).length} candidatos`
-                        : ""}
-                    </summary>
-                    <p>{s.message}</p>
-                    <small>
-                      {observedWhen(s.observedAt)} · {s.listings.length}{" "}
-                      anúncios recebidos para candidatos e referência.
-                    </small>
-                  </details>
-                ))}
-              </div>
               <div className="results-controls">
                 <h2>
                   {candidates.length}{" "}
@@ -624,7 +871,11 @@ export function SearchWorkspace({
                     value={effectiveSort}
                     onChange={(e) => setSort(e.target.value as typeof sort)}
                   >
-                    {hasValidComparison && <option value="discount">Maior percentual abaixo da média</option>}
+                    {hasValidComparison && (
+                      <option value="discount">
+                        Maior percentual abaixo da média
+                      </option>
+                    )}
                     <option value="price">Menor preço</option>
                     <option value="recent">Observados mais recentemente</option>
                   </select>
@@ -648,7 +899,7 @@ export function SearchWorkspace({
                 <ListingCard
                   key={`${row.source}:${row.externalId}`}
                   listing={row}
-                  searchId={active?.id}
+                  searchId={display?.searchId}
                 />
               ))}
               {candidates.length > 0 && (
@@ -660,6 +911,32 @@ export function SearchWorkspace({
               )}
             </>
           )}
+          {previousSources.map(({ previous, source }) => (
+            <details
+              className="previous-results"
+              key={`${previous.run.id}:${source.source}`}
+            >
+              <summary>
+                Resultados anteriores de {sourceNames[source.source]} ·{" "}
+                {observedWhen(source.observedAt)}
+              </summary>
+              <p>
+                Consulta anterior de {previous.criteria.brand}{" "}
+                {previous.criteria.model}, em {previous.criteria.city}/
+                {previous.criteria.state}. A fonte falhou agora; estes anúncios
+                não entram na contagem atual.
+              </p>
+              {source.listings
+                .filter((row) => !row.reasons.length)
+                .map((row) => (
+                  <ListingCard
+                    key={`${row.source}:${row.externalId}`}
+                    listing={row}
+                    searchId={previous.searchId}
+                  />
+                ))}
+            </details>
+          ))}
         </section>
       </div>
     </div>
