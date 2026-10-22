@@ -228,6 +228,10 @@ input[type="checkbox"] {
   min-height: 44px;
   justify-content: center;
 }
+.discovery-actions {
+  display: grid;
+  gap: 10px;
+}
 .focus-workspace .discovery-form input,
 .focus-workspace .discovery-form select {
   min-height: 42px;
@@ -647,13 +651,24 @@ summary {
   .discovery-form > .search-costs {
     grid-column: 1/-1;
   }
+  .discovery-form > .discovery-actions {
+    grid-column: 1/-1;
+  }
 }
 @media (max-width: 600px) {
   .focus-workspace .discovery-form {
     grid-template-columns: 1fr;
   }
   .focus-workspace .form-grid.two {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+  .discovery-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
   }
   .listing-card.with-photo {
     grid-template-columns: 1fr;

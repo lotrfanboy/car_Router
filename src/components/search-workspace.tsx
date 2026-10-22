@@ -473,22 +473,24 @@ export function SearchWorkspace({
                 </label>
               ))}
             </fieldset>
-            <button
-              className="button primary"
-              type="submit"
-              disabled={busy || loading}
-            >
-              <Search size={17} />
-              {busy ? "Consultando fontes…" : "Buscar agora"}
-            </button>
-            <button
-              className="text-button"
-              type="submit"
-              value="save"
-              disabled={busy || loading}
-            >
-              Salvar critérios sem consultar
-            </button>
+            <div className="discovery-actions">
+              <button
+                className="button primary"
+                type="submit"
+                disabled={busy || loading}
+              >
+                <Search size={17} />
+                {busy ? "Consultando fontes…" : "Buscar agora"}
+              </button>
+              <button
+                className="text-button"
+                type="submit"
+                value="save"
+                disabled={busy || loading}
+              >
+                Salvar critérios sem consultar
+              </button>
+            </div>
             <details className="search-costs">
               <summary>Consumo desta busca</summary>
               <p>
