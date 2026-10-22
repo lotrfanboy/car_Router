@@ -49,7 +49,7 @@ export function SavedListingCharts({ rows }: { rows: Listing[] }) {
             {distribution.map(([start, listings]) => (
               <details className="saved-price-band" key={start}>
                 <summary><span>{money(start)} a {money(start + bandSize - 1)}</span><span className="saved-price-bar" style={{ width: `${Math.max(8, listings.length / priced.length * 100)}%` }} /><strong>{listings.length}</strong></summary>
-                <ul>{listings.map((row) => <li key={`${row.source}:${row.externalId}`}><Link href={listingPath(row)}>{row.title} · {money(row.priceCents!)}</Link></li>)}</ul>
+                <ul>{listings.map((row) => <li key={`${row.source}:${row.externalId}`}><Link href={listingPath(row, "salvos")}>{row.title} · {money(row.priceCents!)}</Link></li>)}</ul>
               </details>
             ))}
           </div>
@@ -59,7 +59,7 @@ export function SavedListingCharts({ rows }: { rows: Listing[] }) {
             {scatter.length < 2 ? <p role="status">Amostra insuficiente: {scatter.length} anúncio com preço e {axis === "year" ? "ano" : "quilometragem"}.</p> : (
               <>
                 <div className="saved-scatter" role="group" aria-label={`Preço por ${axis === "year" ? "ano-modelo" : "quilometragem"}`}>
-                  {scatter.map((row) => <Link key={`${row.source}:${row.externalId}`} href={listingPath(row)} className="saved-scatter-point" style={{ left: `${8 + (maxX === minX ? 50 : (x(row) - minX) / (maxX - minX) * 84)}%`, bottom: `${8 + (maxPrice === minPrice ? 50 : (row.priceCents! - minPrice) / (maxPrice - minPrice) * 84)}%` }} aria-label={`${row.title}: ${money(row.priceCents!)}, ${axis === "year" ? row.modelYear : `${number(row.mileage!)} km`}`} title={row.title} />)}
+                  {scatter.map((row) => <Link key={`${row.source}:${row.externalId}`} href={listingPath(row, "salvos")} className="saved-scatter-point" style={{ left: `${8 + (maxX === minX ? 50 : (x(row) - minX) / (maxX - minX) * 84)}%`, bottom: `${8 + (maxPrice === minPrice ? 50 : (row.priceCents! - minPrice) / (maxPrice - minPrice) * 84)}%` }} aria-label={`${row.title}: ${money(row.priceCents!)}, ${axis === "year" ? row.modelYear : `${number(row.mileage!)} km`}`} title={row.title} />)}
                 </div>
                 <p className="muted">{axis === "year" ? `${minX} a ${maxX}` : `${number(minX)} a ${number(maxX)} km`} · {scatter.length} anúncios · {filtered.length - scatter.length} sem os dois campos. Cada ponto abre o anúncio.</p>
               </>

@@ -6,7 +6,7 @@ import { ListingCard } from "@/components/listing-card";
 import { useWorkspace } from "@/components/workspace";
 import { money } from "@/lib/vehicle";
 import { listingKey } from "@/lib/listing-comparison";
-import { readListingSelection, toggleListingSelection, writeListingSelection } from "@/lib/listing-selection";
+import { readListingSelection, reconcileListingSelection, toggleListingSelection, writeListingSelection } from "@/lib/listing-selection";
 import { SavedListingCharts } from "@/components/saved-listing-charts";
 export default function Page() {
   const [rows, setRows] = useState<Listing[] | null>(null),
@@ -19,10 +19,15 @@ export default function Page() {
     fetch("/api/listings", { cache: "no-store" })
       .then(async (r) => {
         if (!r.ok) throw new Error();
-        return r.json();
+        return r.json() as Promise<Listing[]>;
       })
       .then((data) => {
-        if (!cancelled) setRows(data);
+        if (!cancelled) {
+          const next = reconcileListingSelection(readListingSelection(), data);
+          setRows(data);
+          setComparison(next);
+          writeListingSelection(next);
+        }
       })
       .catch(() => {
         if (!cancelled)
@@ -67,6 +72,7 @@ export default function Page() {
             <label className="saved-compare-toggle"><input type="checkbox" checked={comparison.includes(listingKey(row))} disabled={comparison.length >= 4 && !comparison.includes(listingKey(row))} onChange={() => { const next = toggleListingSelection(comparison, row); setComparison(next); writeListingSelection(next); }} /> Comparar este anúncio</label>
             <ListingCard
               listing={row}
+              origin="salvos"
               onSavedChange={(saved) => {
                 if (!saved) {
                   setRows((previous) => previous?.filter((x) => listingKey(x) !== listingKey(row)) ?? []);

@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Listing } from "@/lib/discovery";
 import { sourceNames } from "@/lib/discovery";
 import { listingKey } from "@/lib/listing-comparison";
-import { readListingSelection, toggleListingSelection, writeListingSelection } from "@/lib/listing-selection";
+import { readListingSelection, reconcileListingSelection, toggleListingSelection, writeListingSelection } from "@/lib/listing-selection";
 import { money, number } from "@/lib/vehicle";
 import { listingPath } from "@/components/listing-card";
 
@@ -20,7 +20,14 @@ export default function CompareSavedListings() {
         if (!response.ok) throw new Error();
         return response.json() as Promise<Listing[]>;
       })
-      .then((listings) => { if (!cancelled) setRows(listings); })
+      .then((listings) => {
+        if (!cancelled) {
+          const next = reconcileListingSelection(readListingSelection(), listings);
+          setRows(listings);
+          setSelected(next);
+          writeListingSelection(next);
+        }
+      })
       .catch(() => { if (!cancelled) setError("Não foi possível carregar os anúncios salvos."); });
     return () => { cancelled = true; };
   }, []);
@@ -52,7 +59,7 @@ export default function CompareSavedListings() {
         {chosen.map((row) => (
           <section className="panel saved-compare-card" key={listingKey(row)}>
             <div className="listing-topline"><span>{sourceNames[row.source]}</span><button type="button" className="text-button" onClick={() => choose(row)}>Remover</button></div>
-            <h2><Link href={listingPath(row)}>{row.title}</Link></h2>
+            <h2><Link href={listingPath(row, "comparar-anuncios")}>{row.title}</Link></h2>
             <dl>
               <dt>Preço anunciado</dt><dd>{row.priceCents === null ? "Não informado" : money(row.priceCents)}</dd>
               <dt>Ano-modelo</dt><dd>{row.modelYear ?? "Não informado"}</dd>

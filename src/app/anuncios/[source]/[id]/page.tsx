@@ -4,9 +4,11 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ source: string; id: string }>;
-  searchParams: Promise<{ busca?: string }>;
+  searchParams: Promise<{ busca?: string | string[]; origem?: string | string[] }>;
 }) {
+  const query = await searchParams;
+  const origin = query.origem === "salvos" || query.origem === "comparar-anuncios" ? query.origem : undefined;
   return (
-    <ListingDetail {...await params} searchId={(await searchParams).busca} />
+    <ListingDetail {...await params} searchId={typeof query.busca === "string" ? query.busca : undefined} origin={origin} />
   );
 }

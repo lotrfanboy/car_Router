@@ -138,8 +138,13 @@ export function SearchWorkspace({
       (option) =>
         canonicalBrand(option.name) === canonicalBrand(brand),
     );
-    if (!selectedBrand) return;
     /* eslint-disable react-hooks/set-state-in-effect */
+    if (!selectedBrand) {
+      setModelOptions([]);
+      setModelOptionsBrand("");
+      setModelStatus("ready");
+      return;
+    }
     setModelStatus("loading");
     /* eslint-enable react-hooks/set-state-in-effect */
     fetch(
@@ -256,6 +261,12 @@ export function SearchWorkspace({
     const saveOnly =
       (event.nativeEvent as SubmitEvent).submitter?.getAttribute("value") ===
       "save";
+    if (!saveOnly && !parsed.data.sources.some((source) =>
+      integrations.some((integration) => integration.source === source && integration.configured),
+    )) {
+      setError("Nenhuma fonte selecionada está configurada. Salve os critérios sem consultar ou conecte uma fonte em Configurações.");
+      return;
+    }
     pending.current = true;
     setBusy(true);
     try {
@@ -464,15 +475,15 @@ export function SearchWorkspace({
                     name="sources"
                     value={source}
                     type="checkbox"
-                    disabled={!integrations.find((item) => item.source === source)?.configured}
                     defaultChecked={
-                      criteria ? criteria.sources.includes(source) && !!integrations.find((item) => item.source === source)?.configured : !!integrations.find((item) => item.source === source)?.configured
+                      criteria ? criteria.sources.includes(source) : !integrations.some((item) => item.configured) || !!integrations.find((item) => item.source === source)?.configured
                     }
                   />
-                  {sourceNames[source]}{!integrations.find((item) => item.source === source)?.configured ? " · indisponível" : ""}
+                  {sourceNames[source]}{!integrations.find((item) => item.source === source)?.configured ? " · configuração pendente" : ""}
                 </label>
               ))}
             </fieldset>
+            <p className="discovery-help muted">Fontes sem conexão podem ser salvas nos critérios para consultar depois de configuradas.</p>
             <div className="discovery-actions">
               <button
                 className="button primary"

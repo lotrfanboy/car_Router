@@ -224,7 +224,7 @@ it("runs server-side, records the real send contract, avoids repeats and notifie
   const row = await createRadar();
   expect((await radar.listRadars()).radars[0].state).toBe("pending");
   expect(await radar.tickRadars()).toEqual({ processed: 1 });
-  expect((await radar.listRadars()).radars[0].state).toBe("active");
+  expect((await radar.listRadars()).radars[0].state).toBe("success");
   expect(state.calls).toHaveLength(1);
   expect(deliveries).toHaveLength(1);
   expect(JSON.stringify(deliveries[0])).toContain("média dos semelhantes");
@@ -243,6 +243,36 @@ it("runs server-side, records the real send contract, avoids repeats and notifie
       await db.radar.findUnique({ where: { id: row.id } })
     )?.nextRunAt!.getTime(),
   ).toBeGreaterThan(Date.now());
+});
+it("reports scheduled and running from persisted scheduler and execution records", async () => {
+  const row = await createRadar();
+  await db.searchLock.create({
+    data: { id: "radar-heartbeat", expiresAt: new Date(Date.now() + 3600000) },
+  });
+  expect((await radar.listRadars()).radars[0]).toMatchObject({
+    state: "scheduled",
+    nextRunAt: expect.any(Date),
+  });
+  const run = await db.radarRun.create({
+    data: { radarId: row.id, status: "running", message: "Consultando fontes." },
+  });
+  expect((await radar.listRadars()).radars[0].state).toBe("running");
+  await db.radarRun.update({
+    where: { id: run.id },
+    data: { status: "ok", finishedAt: new Date(), message: "Consulta concluída." },
+  });
+  await db.$disconnect();
+  expect((await radar.listRadars()).radars[0].state).toBe("success");
+  await db.searchLock.update({
+    where: { id: "radar-heartbeat" },
+    data: { expiresAt: new Date(0) },
+  });
+  expect((await radar.listRadars()).radars[0]).toMatchObject({
+    state: "pending",
+    nextRunAt: null,
+  });
+  expect(state.calls).toHaveLength(0);
+  expect(deliveries).toHaveLength(0);
 });
 it("preserves paused state, logs failed sources, and rejects concurrent ticks and bad authorization", async () => {
   const row = await createRadar(false);

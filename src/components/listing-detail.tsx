@@ -3,15 +3,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { type Listing, sourceNames } from "@/lib/discovery";
 import { money, number } from "@/lib/vehicle";
-import { RelativePrice, SaveListing, observedWhen } from "./listing-card";
+import { RelativePrice, SaveListing, observedWhen, type ListingOrigin } from "./listing-card";
 export function ListingDetail({
   source,
   id,
   searchId,
+  origin,
 }: {
   source: string;
   id: string;
   searchId?: string;
+  origin?: ListingOrigin;
 }) {
   const [row, setRow] = useState<Listing | null>(null),
     [error, setError] = useState(""),
@@ -64,11 +66,14 @@ export function ListingDetail({
   }
   const back = searchId
     ? `/buscar?busca=${encodeURIComponent(searchId)}`
-    : "/buscar";
+    : origin === "salvos" ? "/salvos" : origin === "comparar-anuncios" ? "/comparar-anuncios" : "/buscar";
+  const backLabel = !searchId && origin === "salvos"
+    ? "Voltar aos salvos"
+    : !searchId && origin === "comparar-anuncios" ? "Voltar à comparação" : "Voltar aos resultados";
   if (error)
     return (
       <div role="alert" className="error-box">
-        {error} <Link href={back}>Voltar à busca</Link>
+        {error} <Link href={back}>{backLabel}</Link>
       </div>
     );
   if (!row) return <p role="status">Carregando anúncio e semelhantes…</p>;
@@ -76,7 +81,7 @@ export function ListingDetail({
   return (
     <div className="focus-workspace listing-detail">
       <Link className="back-link" href={back}>
-        ← Voltar aos resultados
+        ← {backLabel}
       </Link>
       <div className="page-heading">
         <div>

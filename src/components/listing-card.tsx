@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Bookmark, ExternalLink, ArrowUpRight } from "lucide-react";
 import { type Listing, sourceNames } from "@/lib/discovery";
 import { money, number } from "@/lib/vehicle";
-export const listingPath = (row: Pick<Listing, "source" | "externalId">) =>
-  `/anuncios/${row.source}/${encodeURIComponent(row.externalId)}`;
+export type ListingOrigin = "salvos" | "comparar-anuncios";
+export const listingPath = (row: Pick<Listing, "source" | "externalId">, origin?: ListingOrigin) =>
+  `/anuncios/${row.source}/${encodeURIComponent(row.externalId)}${origin ? `?origem=${origin}` : ""}`;
 export const observedWhen = (value: string) =>
   new Date(value).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 export function RelativePrice({ listing }: { listing: Listing }) {
@@ -96,16 +97,18 @@ export function SaveListing({
 export function ListingCard({
   listing,
   searchId,
+  origin,
   onSavedChange,
 }: {
   listing: Listing;
   searchId?: string;
+  origin?: ListingOrigin;
   onSavedChange?: (saved: boolean) => void;
 }) {
   const [imageFailed, setImageFailed] = useState(false);
-  const path =
-    listingPath(listing) +
-    (searchId ? `?busca=${encodeURIComponent(searchId)}` : "");
+  const path = searchId
+    ? `${listingPath(listing)}?busca=${encodeURIComponent(searchId)}`
+    : listingPath(listing, origin);
   return (
     <article
       className="listing-card with-photo"

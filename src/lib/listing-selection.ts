@@ -6,11 +6,18 @@ export function readListingSelection(): string[] {
   try {
     const value = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
     return Array.isArray(value)
-      ? value.filter((key): key is string => typeof key === "string").slice(0, 4)
+      ? [...new Set(value.filter((key): key is string => typeof key === "string"))].slice(0, 4)
       : [];
   } catch {
     return [];
   }
+}
+export function reconcileListingSelection(
+  keys: string[],
+  listings: Pick<Listing, "source" | "externalId">[],
+) {
+  const available = new Set(listings.map(listingKey));
+  return [...new Set(keys)].filter((key) => available.has(key)).slice(0, 4);
 }
 export function writeListingSelection(keys: string[]) {
   try {
