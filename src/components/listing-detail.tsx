@@ -97,7 +97,7 @@ export function ListingDetail({
         </div>
       </div>
       <section className="panel listing-detail-summary">
-        {row.imageUrl && !photoFailed && (
+        {row.imageUrl && !photoFailed ? (
           <div className="detail-photo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -106,6 +106,10 @@ export function ListingDetail({
               referrerPolicy="no-referrer"
               onError={() => setPhotoFailed(true)}
             />
+          </div>
+        ) : (
+          <div className="detail-photo listing-photo-unavailable" role="img" aria-label="Foto indisponível para este anúncio">
+            Foto indisponível
           </div>
         )}
         <div>

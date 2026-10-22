@@ -108,9 +108,9 @@ export function ListingCard({
     (searchId ? `?busca=${encodeURIComponent(searchId)}` : "");
   return (
     <article
-      className={`listing-card ${listing.imageUrl && !imageFailed ? "with-photo" : ""}`}
+      className="listing-card with-photo"
     >
-      {listing.imageUrl && !imageFailed && (
+      {listing.imageUrl && !imageFailed ? (
         <Link className="listing-photo" href={path}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -121,6 +121,10 @@ export function ListingCard({
             onError={() => setImageFailed(true)}
           />
         </Link>
+      ) : (
+        <div className="listing-photo listing-photo-unavailable" role="img" aria-label="Foto indisponível para este anúncio">
+          Foto indisponível
+        </div>
       )}
       <div className="listing-body">
         <div className="listing-topline">
