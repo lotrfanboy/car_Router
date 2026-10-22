@@ -71,7 +71,16 @@ export const searchSchema = z
         },
       )
       .optional(),
-    city: z.string().trim().min(1).max(120),
+    locationMode: z.enum(["cities", "state"]).default("cities"),
+    // `city` remains as the primary city for saved-search compatibility.
+    city: z.string().trim().max(120).default(""),
+    cities: z
+      .array(z.string().trim().min(1).max(120))
+      .max(12)
+      .refine((items) => new Set(items.map(normalized)).size === items.length, {
+        message: "Não repita cidades na mesma busca.",
+      })
+      .default([]),
     state: z.enum(states as [string, ...string[]]),
     yearMin: z.number().int().min(1900).max(2100).nullable(),
     yearMax: z.number().int().min(1900).max(2100).nullable(),
@@ -86,6 +95,13 @@ export const searchSchema = z
     olxUrl: z.string().trim().max(2000).default(""),
   })
   .superRefine((s, ctx) => {
+    const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
+    if (s.locationMode === "cities" && !selectedCities.length)
+      ctx.addIssue({
+        code: "custom",
+        message: "Selecione ao menos uma cidade ou escolha o estado inteiro.",
+        path: ["cities"],
+      });
     if (s.yearMin && s.yearMax && s.yearMin > s.yearMax)
       ctx.addIssue({
         code: "custom",
@@ -115,6 +131,16 @@ export const searchSchema = z
     }
   });
 export type SearchCriteria = z.infer<typeof searchSchema>;
+export function criteriaLocation(criteria: SearchCriteria) {
+  if (criteria.locationMode === "state")
+    return `todo o estado de ${criteria.state}`;
+  const cities = criteria.cities.length
+    ? criteria.cities
+    : criteria.city
+      ? [criteria.city]
+      : [];
+  return `${cities.join(", ")}/${criteria.state}`;
+}
 export type Listing = {
   source: Source;
   externalId: string;
@@ -169,12 +195,16 @@ export function eligibility(row: Listing, s: SearchCriteria) {
       !` ${normalized(row.version)} `.includes(` ${normalized(s.version)} `))
   )
     reasons.push("Versão diferente ou desconhecida");
+  const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
   if (
-    !row.city ||
-    normalized(row.city) !== normalized(s.city) ||
-    row.state !== s.state
+    row.state !== s.state ||
+    (s.locationMode === "cities" &&
+      (!row.city ||
+        !selectedCities.some(
+          (city) => normalized(city) === normalized(row.city!),
+        )))
   )
-    reasons.push("Fora da cidade/UF ou localização desconhecida");
+    reasons.push("Fora da abrangência selecionada ou localização desconhecida");
   if (
     (s.yearMin !== null || s.yearMax !== null) &&
     (row.modelYear === null ||

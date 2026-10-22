@@ -1,5 +1,14 @@
 # Estado da implementação
 
+## Continuação em 22/10/2026
+
+- A busca principal agora segue Marca → Modelo → Ano-modelo → Versão. Os anos são seletores e, para modelos FIPE agrupados, mostram apenas anos retornados para as versões reais da família; a versão é filtrada pelo ano ou intervalo escolhido.
+- A localização possui os modos “Cidades selecionadas” (até 12 municípios da mesma UF) e “Estado inteiro”. Consultas municipais são executadas uma vez por cidade, com custo explicado antes da busca e deduplicação por fonte; buscas estaduais usam uma URL estadual na OLX e o recorte estadual da Reef.
+- Buscas antigas com uma única `city`, histórico e URL OLX continuam legíveis. A chave anterior é reconhecida sem duplicar a busca; a URL antiga só é removida quando marca, modelo, ano ou abrangência realmente mudam.
+- UF e cidade compartilham a mesma linha, altura e estrutura visual. As cidades escolhidas aparecem como itens removíveis.
+- O parser Webmotors/Reef preserva imagens HTTPS fornecidas em `image_url`, `imageUrl`, `thumbnail_url`, objeto `image`, `images`, `photos` ou `media.images`, sem fabricar endereços de CDN.
+- Validação: Prisma Client 6.19.0 gerado; 199 testes passaram em 14 arquivos; lint, typecheck e build de produção passaram. O roteiro Playwright passou em desktop, reflow e toque de 390 px, sem exceções JavaScript e sem extrações pagas. A resposta real da Reef ainda precisa ser conferida em uma consulta autorizada para confirmar qual variante de mídia e o recorte estadual ela entrega hoje.
+
 Base consultada: `origin/main` em `80b5213a79b68414dd028aed920b35ac234ec73d`.
 
 Retomada da validação em 21/10/2026 (America/Sao_Paulo), a partir de `69e239e` da branch `fix/car-router-search-media-radar`.

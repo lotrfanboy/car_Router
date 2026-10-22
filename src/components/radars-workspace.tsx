@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { type SearchCriteria } from "@/lib/discovery";
+import { criteriaLocation, type SearchCriteria } from "@/lib/discovery";
 import { observedWhen } from "./listing-card";
 type Radar = {
   id: string;
@@ -15,7 +15,13 @@ type Radar = {
   lastRunAt: string | null;
   nextRunAt: string | null;
   criteria: SearchCriteria;
-  runs: { id: string; status: string; message: string; startedAt: string; finishedAt: string | null }[];
+  runs: {
+    id: string;
+    status: string;
+    message: string;
+    startedAt: string;
+    finishedAt: string | null;
+  }[];
 };
 export function RadarsWorkspace({
   initialSearchId = "",
@@ -264,9 +270,10 @@ export function RadarsWorkspace({
                 </strong>
               </div>
               <p>
-                {row.criteria.brand} {row.criteria.model} · {row.criteria.city}/
-                {row.criteria.state} · a partir de {row.minPercent}% abaixo da
-                média · {row.intervalHours === 24 ? "diário" : "semanal"}
+                {row.criteria.brand} {row.criteria.model} ·{" "}
+                {criteriaLocation(row.criteria)} · a partir de {row.minPercent}%
+                abaixo da média ·{" "}
+                {row.intervalHours === 24 ? "diário" : "semanal"}
               </p>
               <p className="muted">
                 Última execução:{" "}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
   searchSchema,
+  criteriaLocation,
   canonicalBrand,
   sourceNames,
   type SearchCriteria,
@@ -43,6 +44,8 @@ type Draft = {
   model: string;
   version: string;
   city: string;
+  cities: string[];
+  locationMode: "cities" | "state";
   state: string;
   yearMin: string;
   yearMax: string;
@@ -56,6 +59,8 @@ const emptyDraft = (): Draft => ({
   model: "",
   version: "",
   city: "",
+  cities: [],
+  locationMode: "cities",
   state: "PR",
   yearMin: "",
   yearMax: "",
@@ -66,6 +71,11 @@ const emptyDraft = (): Draft => ({
 });
 const draftFrom = (criteria: SearchCriteria): Draft => ({
   ...criteria,
+  cities: criteria.cities?.length
+    ? criteria.cities
+    : criteria.city
+      ? [criteria.city]
+      : [],
   version: criteria.version ?? "",
   yearMin: String(criteria.yearMin ?? ""),
   yearMax: String(criteria.yearMax ?? ""),
@@ -144,13 +154,65 @@ export function SearchWorkspace({
   const [sort, setSort] = useState<"discount" | "price" | "recent">("recent");
   const pending = useRef(false);
   const { vehicles } = useWorkspace();
-  const { brand, model, version, city, state } = draft;
+  const { brand, model, version, city, cities, locationMode, state } = draft;
   const brandCatalog = useCatalog("/api/search-options?type=brands");
   // Only a committed catalog choice requests models; typing never does.
   const modelCatalog = useCatalog(
     brandChoice
       ? `/api/search-options?type=models&brand=${encodeURIComponent(brandChoice.code)}`
       : null,
+  );
+  const resolvedModelChoice = (
+    modelChoice as (SearchOption & { versions?: SearchOption[] }) | null
+  )?.versions?.length
+    ? (modelChoice as SearchOption & { versions?: SearchOption[] })
+    : (modelCatalog.options.find(
+        (option) => option.code === modelChoice?.code,
+      ) as (SearchOption & { versions?: SearchOption[] }) | undefined);
+  const catalogVersions = resolvedModelChoice?.versions ?? [];
+  const yearCatalog = useCatalog(
+    brandChoice && catalogVersions.length
+      ? `/api/search-options?type=years&brand=${encodeURIComponent(brandChoice.code)}&models=${encodeURIComponent(catalogVersions.map((item) => item.code).join(","))}`
+      : null,
+  );
+  const fallbackYears = useMemo(
+    () =>
+      Array.from({ length: new Date().getFullYear() - 1898 }, (_, index) => {
+        const year = String(new Date().getFullYear() + 1 - index);
+        return { code: year, name: year };
+      }),
+    [],
+  );
+  const selectedYears = yearCatalog.options.filter((option) => {
+    const year = Number(option.code);
+    const min = draft.yearMin ? Number(draft.yearMin) : null;
+    const max = draft.yearMax ? Number(draft.yearMax) : min;
+    return min !== null && year >= min && year <= (max ?? min);
+  });
+  const compatibleVersions = [
+    ...new Map(
+      selectedYears
+        .flatMap(
+          (year) =>
+            (year as SearchOption & { versions?: SearchOption[] }).versions ??
+            [],
+        )
+        .map((item) => [item.code, item]),
+    ).values(),
+  ].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  const versionLabel = (item: SearchOption) => {
+    const family = modelChoice?.name.trim() ?? "";
+    const rest = item.name.slice(family.length).trim();
+    return family &&
+      item.name
+        .toLocaleLowerCase("pt-BR")
+        .startsWith(family.toLocaleLowerCase("pt-BR")) &&
+      rest
+      ? rest
+      : item.name;
+  };
+  const selectedVersion = compatibleVersions.find(
+    (item) => versionLabel(item) === version,
   );
   const cityCatalog = useCatalog(
     `/api/search-options?type=cities&state=${encodeURIComponent(state)}`,
@@ -308,19 +370,32 @@ export function SearchWorkspace({
     const optional = (value: string) => (value === "" ? null : Number(value));
     const queryBrand = brandChoice?.searchName ?? brand;
     const queryModel = modelChoice?.searchName ?? model;
+    const loadedCities = loadedCriteria
+      ? loadedCriteria.cities.length
+        ? loadedCriteria.cities
+        : loadedCriteria.city
+          ? [loadedCriteria.city]
+          : []
+      : [];
     const sameLegacyQuery =
       loadedCriteria &&
       queryBrand === loadedCriteria.brand &&
       queryModel === loadedCriteria.model &&
-      city === loadedCriteria.city &&
+      locationMode === loadedCriteria.locationMode &&
+      JSON.stringify(cities) === JSON.stringify(loadedCities) &&
       state === loadedCriteria.state &&
       optional(draft.yearMin) === loadedCriteria.yearMin &&
       optional(draft.yearMax) === loadedCriteria.yearMax;
     const parsed = searchSchema.safeParse({
       ...draft,
-      name: `${queryBrand} ${queryModel} · ${city}`.slice(0, 100),
+      name: `${queryBrand} ${queryModel} · ${locationMode === "state" ? state : cities.join(", ")}`.slice(
+        0,
+        100,
+      ),
       brand: queryBrand,
       model: queryModel,
+      city: locationMode === "cities" ? (cities[0] ?? "") : "",
+      cities: locationMode === "cities" ? cities : [],
       catalog: brandChoice
         ? {
             provider: "fipe",
@@ -329,6 +404,8 @@ export function SearchWorkspace({
             modelGroup: modelChoice?.code.startsWith("family:")
               ? modelChoice.code
               : undefined,
+            modelCode: selectedVersion?.code,
+            modelName: selectedVersion?.name,
           }
         : undefined,
       yearMin: optional(draft.yearMin),
@@ -514,6 +591,8 @@ export function SearchWorkspace({
                     change("brand", value);
                     change("model", "");
                     change("version", "");
+                    change("yearMin", "");
+                    change("yearMax", "");
                     setBrandChoice(null);
                     setModelChoice(null);
                     setManualBrand(false);
@@ -523,6 +602,8 @@ export function SearchWorkspace({
                     change("brand", option.searchName ?? option.name);
                     change("model", "");
                     change("version", "");
+                    change("yearMin", "");
+                    change("yearMax", "");
                     setBrandChoice(option);
                     setModelChoice(null);
                     setManualBrand(false);
@@ -550,12 +631,16 @@ export function SearchWorkspace({
                   onChange={(value) => {
                     change("model", value);
                     change("version", "");
+                    change("yearMin", "");
+                    change("yearMax", "");
                     setModelChoice(null);
                     setManualModel(false);
                   }}
                   onSelect={(option) => {
                     change("model", option.searchName ?? option.name);
                     change("version", "");
+                    change("yearMin", "");
+                    change("yearMax", "");
                     setModelChoice(option);
                     setManualModel(false);
                   }}
@@ -570,85 +655,192 @@ export function SearchWorkspace({
                   ? "Entrada manual confirmada. Use o modelo sem versão; a correspondência depende dos atributos informados pela fonte."
                   : "Modelos agrupados a partir das descrições FIPE. A consulta usa o nome do modelo, sem exigir a descrição completa da versão."}
               </p>
+              <div className="form-grid two vehicle-year-row">
+                <label>
+                  Ano-modelo de
+                  <select
+                    name="yearMin"
+                    value={draft.yearMin}
+                    disabled={!!modelChoice && yearCatalog.loading}
+                    onChange={(event) => {
+                      change("yearMin", event.target.value);
+                      if (
+                        !draft.yearMax ||
+                        Number(draft.yearMax) < Number(event.target.value)
+                      )
+                        change("yearMax", event.target.value);
+                      change("version", "");
+                    }}
+                  >
+                    <option value="">Qualquer ano</option>
+                    {(modelChoice ? yearCatalog.options : fallbackYears).map(
+                      (x) => (
+                        <option key={x.code} value={x.code}>
+                          {x.name}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+                <label>
+                  Ano-modelo até
+                  <select
+                    name="yearMax"
+                    value={draft.yearMax}
+                    disabled={!draft.yearMin}
+                    onChange={(event) => {
+                      change("yearMax", event.target.value);
+                      change("version", "");
+                    }}
+                  >
+                    <option value="">Mesmo ano</option>
+                    {(modelChoice ? yearCatalog.options : fallbackYears)
+                      .filter((x) => Number(x.code) >= Number(draft.yearMin))
+                      .map((x) => (
+                        <option key={x.code} value={x.code}>
+                          {x.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+              </div>
+              {yearCatalog.error && (
+                <p className="field-error">
+                  Não foi possível carregar os anos disponíveis.
+                </p>
+              )}
               <label>
-                Versão{" "}
-                <small>Opcional · contém este texto na versão da fonte</small>
-                <input
-                  name="version"
-                  list="known-versions"
-                  maxLength={120}
-                  placeholder="Ex.: XEi"
-                  value={version}
-                  autoComplete="off"
-                  onChange={(event) => change("version", event.target.value)}
-                />
+                Versão <small>Opcional · depende do modelo e do ano</small>
+                {modelChoice && draft.yearMin ? (
+                  <select
+                    name="version"
+                    value={version}
+                    onChange={(event) => change("version", event.target.value)}
+                  >
+                    <option value="">Todas as versões compatíveis</option>
+                    {compatibleVersions.map((item) => (
+                      <option key={item.code} value={versionLabel(item)}>
+                        {versionLabel(item)}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name="version"
+                    list="known-versions"
+                    maxLength={120}
+                    placeholder={
+                      modelChoice ? "Escolha primeiro o ano" : "Ex.: XEi"
+                    }
+                    value={version}
+                    autoComplete="off"
+                    disabled={!!modelChoice}
+                    onChange={(event) => change("version", event.target.value)}
+                  />
+                )}
                 <datalist id="known-versions">
                   {suggestions.map((x) => (
                     <option key={x} value={x} />
                   ))}
                 </datalist>
               </label>
-              <div className="form-grid two">
-                <label>
-                  UF
-                  <select
-                    name="state"
-                    value={state}
-                    onChange={(event) => {
-                      change("state", event.target.value);
+              <fieldset className="location-scope">
+                <legend>Abrangência</legend>
+                <div className="scope-options">
+                  <label className="discovery-check">
+                    <input
+                      type="radio"
+                      name="locationMode"
+                      checked={locationMode === "cities"}
+                      onChange={() => change("locationMode", "cities")}
+                    />
+                    Cidades selecionadas
+                  </label>
+                  <label className="discovery-check">
+                    <input
+                      type="radio"
+                      name="locationMode"
+                      checked={locationMode === "state"}
+                      onChange={() => {
+                        change("locationMode", "state");
+                        change("city", "");
+                      }}
+                    />
+                    Estado inteiro
+                  </label>
+                </div>
+                <div className="form-grid two location-row">
+                  <label>
+                    UF
+                    <select
+                      name="state"
+                      value={state}
+                      onChange={(event) => {
+                        change("state", event.target.value);
+                        change("city", "");
+                        change("cities", []);
+                      }}
+                    >
+                      {states.map((x) => (
+                        <option key={x}>{x}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <SearchCombobox
+                    label="Adicionar cidade"
+                    name="city"
+                    maxLength={120}
+                    placeholder={
+                      locationMode === "state"
+                        ? `Todo o estado de ${state}`
+                        : `Cidade em ${state}`
+                    }
+                    value={city}
+                    {...cityCatalog}
+                    disabled={locationMode === "state"}
+                    onChange={(value) => change("city", value)}
+                    onSelect={(option) => {
+                      if (
+                        !cities.some(
+                          (item) =>
+                            item.localeCompare(option.name, "pt-BR", {
+                              sensitivity: "base",
+                            }) === 0,
+                        )
+                      )
+                        change("cities", [...cities, option.name]);
                       change("city", "");
                     }}
-                  >
-                    {states.map((x) => (
-                      <option key={x}>{x}</option>
+                  />
+                </div>
+                {locationMode === "cities" && (
+                  <div className="city-chips" aria-label="Cidades selecionadas">
+                    {cities.map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() =>
+                          change(
+                            "cities",
+                            cities.filter((cityName) => cityName !== item),
+                          )
+                        }
+                      >
+                        {item} <span aria-hidden="true">×</span>
+                      </button>
                     ))}
-                  </select>
-                </label>
-                <SearchCombobox
-                  label="Cidade"
-                  name="city"
-                  required
-                  maxLength={120}
-                  placeholder={`Cidade em ${state}`}
-                  value={city}
-                  {...cityCatalog}
-                  onChange={(value) => change("city", value)}
-                />
-              </div>
+                    {!cities.length && (
+                      <small>Selecione ao menos uma cidade.</small>
+                    )}
+                  </div>
+                )}
+              </fieldset>
               <details
                 className="advanced-filters"
                 open={advancedOpen}
                 onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
               >
                 <summary>Mais filtros</summary>
-                <div className="form-grid two">
-                  <label>
-                    Ano-modelo de
-                    <input
-                      name="yearMin"
-                      type="number"
-                      min="1900"
-                      max="2100"
-                      value={draft.yearMin}
-                      onChange={(event) =>
-                        change("yearMin", event.target.value)
-                      }
-                    />
-                  </label>
-                  <label>
-                    Ano-modelo até
-                    <input
-                      name="yearMax"
-                      type="number"
-                      min="1900"
-                      max="2100"
-                      value={draft.yearMax}
-                      onChange={(event) =>
-                        change("yearMax", event.target.value)
-                      }
-                    />
-                  </label>
-                </div>
                 <label>
                   Quilometragem máxima
                   <input
@@ -743,9 +935,13 @@ export function SearchWorkspace({
             <details className="search-costs">
               <summary>Consumo desta busca</summary>
               <p>
-                Uma página por fonte. OLX: 1 crédito Gecko; Webmotors: 2
-                créditos Reef. Uma cidade nova na OLX pode exigir 1 crédito Reef
-                adicional. Limites e saldo gratuito são verificados antes da
+                {locationMode === "cities" && cities.length > 1
+                  ? `${cities.length} consultas por fonte, uma para cada cidade. `
+                  : "Uma consulta por fonte. "}
+                OLX: 1 crédito Gecko por consulta; Webmotors: 2 créditos Reef
+                por consulta. Uma cidade nova na OLX pode exigir 1 crédito Reef
+                adicional. No modo Estado inteiro é feita uma consulta estadual
+                por fonte. Limites e saldo gratuito são verificados antes da
                 coleta.
               </p>
               {integrations.map((i) => (
@@ -850,7 +1046,7 @@ export function SearchWorkspace({
             <>
               <p className="muted">
                 {display?.criteria.brand} {display?.criteria.model} ·{" "}
-                {display?.criteria.city}/{display?.criteria.state}. Consulta de{" "}
+                {display ? criteriaLocation(display.criteria) : ""}. Consulta de{" "}
                 {observedWhen(run.createdAt)}. A referência é recalculada com as
                 observações disponíveis dos últimos 7 dias.
               </p>
@@ -922,9 +1118,9 @@ export function SearchWorkspace({
               </summary>
               <p>
                 Consulta anterior de {previous.criteria.brand}{" "}
-                {previous.criteria.model}, em {previous.criteria.city}/
-                {previous.criteria.state}. A fonte falhou agora; estes anúncios
-                não entram na contagem atual.
+                {previous.criteria.model}, em{" "}
+                {criteriaLocation(previous.criteria)}. A fonte falhou agora;
+                estes anúncios não entram na contagem atual.
               </p>
               {source.listings
                 .filter((row) => !row.reasons.length)

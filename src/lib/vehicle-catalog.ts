@@ -5,6 +5,7 @@ export type CatalogModelOption = CatalogOption & {
   searchName: string;
   versions: CatalogOption[];
 };
+export type CatalogYearOption = CatalogOption & { versions: CatalogOption[] };
 
 const clean = (value: string) => value.trim().replace(/\s+/g, " ");
 const key = (value: string) =>
@@ -137,4 +138,32 @@ export function parseCatalogCities(value: unknown): CatalogOption[] {
   return uniqueOptions(
     rows(value).map((row) => option(row, "id", "nome")),
   ).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+}
+
+export function parseCatalogYears(
+  values: { model: CatalogOption; value: unknown }[],
+): CatalogYearOption[] {
+  const years = new Map<string, CatalogYearOption>();
+  for (const { model, value } of values) {
+    for (const row of rows(value)) {
+      const code = String(row.codigo ?? "");
+      const name = typeof row.nome === "string" ? clean(row.nome) : "";
+      const year = name.match(/^(\d{4})\b/)?.[1];
+      if (!/^\d{4}-\d+$/.test(code) || !year) continue;
+      const existing = years.get(year);
+      if (existing) {
+        if (!existing.versions.some((version) => version.code === model.code))
+          existing.versions.push(model);
+      } else years.set(year, { code: year, name: year, versions: [model] });
+    }
+  }
+  if (!years.size) throw new Error("O catálogo não retornou anos válidos.");
+  return [...years.values()]
+    .map((year) => ({
+      ...year,
+      versions: year.versions.sort((a, b) =>
+        a.name.localeCompare(b.name, "pt-BR"),
+      ),
+    }))
+    .sort((a, b) => Number(b.code) - Number(a.code));
 }

@@ -7,6 +7,7 @@ import {
   parseCatalogBrands,
   parseCatalogModels,
   parseCatalogCities,
+  parseCatalogYears,
 } from "../src/lib/vehicle-catalog";
 
 afterEach(() => vi.unstubAllGlobals());
@@ -66,6 +67,38 @@ describe("catalog identity and query families", () => {
         name: "New Beetle",
         searchName: "New Beetle",
         versions: [{ code: "2472", name: volkswagen.modelos[3].nome }],
+      },
+    ]);
+  });
+
+  it("derives selectable years and the versions available in each year", () => {
+    expect(
+      parseCatalogYears([
+        {
+          model: { code: "1", name: "C 180 CGI Avantgarde" },
+          value: [
+            { codigo: "2020-1", nome: "2020 Gasolina" },
+            { codigo: "2019-1", nome: "2019 Gasolina" },
+          ],
+        },
+        {
+          model: { code: "2", name: "C 180 Exclusive" },
+          value: [{ codigo: "2020-1", nome: "2020 Gasolina" }],
+        },
+      ]),
+    ).toEqual([
+      {
+        code: "2020",
+        name: "2020",
+        versions: [
+          { code: "1", name: "C 180 CGI Avantgarde" },
+          { code: "2", name: "C 180 Exclusive" },
+        ],
+      },
+      {
+        code: "2019",
+        name: "2019",
+        versions: [{ code: "1", name: "C 180 CGI Avantgarde" }],
       },
     ]);
   });

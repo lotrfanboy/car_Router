@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { catalogBrandSearchName, catalogModelFamily } from "./vehicle-catalog";
 import {
   buildOlxUrl,
+  buildOlxStateUrl,
   locationKey,
   regionCandidates,
   verifiedRegions,
@@ -42,6 +43,32 @@ const listingPhoto = (row: Row) => {
       .map((value) => {
         const image = obj(value);
         return photoUrl(image.url) ?? photoUrl(image.webpUrl);
+      })
+      .find((value) => value !== null) ??
+    null
+  );
+};
+// Reef responses have used both a primary image field and media collections.
+// Read only URLs attached to the listing; never synthesize a Webmotors CDN URL.
+const reefListingPhoto = (row: Row) => {
+  const media = [row.images, row.photos, obj(row.media).images]
+    .filter(Array.isArray)
+    .flat() as unknown[];
+  return (
+    photoUrl(row.image_url) ??
+    photoUrl(row.imageUrl) ??
+    photoUrl(row.thumbnail_url) ??
+    photoUrl(obj(row.image).url) ??
+    media
+      .map((value) => {
+        if (typeof value === "string") return photoUrl(value);
+        const image = obj(value);
+        return (
+          photoUrl(image.url) ??
+          photoUrl(image.webpUrl) ??
+          photoUrl(image.image_url) ??
+          photoUrl(image.original)
+        );
       })
       .find((value) => value !== null) ??
     null
@@ -240,7 +267,7 @@ export function normalizeReef(value: unknown, observedAt: string): Listing[] {
         fuel: str(r.fuel),
         transmission: str(r.transmission),
         engine: str(r.engine),
-        imageUrl: photoUrl(r.image_url),
+        imageUrl: reefListingPhoto(r),
         modelYear: integer(r.year_model),
         priceCents: price(r.price),
         mileage: integer(r.mileage_km),
@@ -283,13 +310,58 @@ export async function fetchSource(
       status: "unconfigured",
       message: config.configurationMessage,
     };
+  const selectedCities = criteria.cities.length
+    ? criteria.cities
+    : criteria.city
+      ? [criteria.city]
+      : [];
+  if (criteria.locationMode === "cities" && selectedCities.length > 1) {
+    const parts: SourceResult[] = [];
+    for (const city of selectedCities)
+      parts.push(
+        await fetchSource(
+          source,
+          { ...criteria, city, cities: [city] },
+          reserve,
+        ),
+      );
+    const successful = parts.filter((part) => part.status === "ok");
+    const listings = [
+      ...new Map(
+        successful
+          .flatMap((part) => part.listings)
+          .map((row) => [row.externalId, row]),
+      ).values(),
+    ].map((row) => ({ ...row, reasons: eligibility(row, criteria) }));
+    return {
+      ...result,
+      status: successful.length ? "ok" : (parts[0]?.status ?? "error"),
+      message: successful.length
+        ? `${successful.length} de ${parts.length} cidades consultadas. Cada cidade usa uma consulta da fonte.`
+        : (parts[0]?.message ?? "Falha na consulta das cidades."),
+      elapsedMs: Math.round(performance.now() - start),
+      creditsReserved: parts.reduce(
+        (sum, part) => sum + part.creditsReserved,
+        0,
+      ),
+      locationCredits: parts.reduce(
+        (sum, part) => sum + (part.locationCredits ?? 0),
+        0,
+      ),
+      total: parts.every((part) => part.total !== null)
+        ? parts.reduce((sum, part) => sum + (part.total ?? 0), 0)
+        : null,
+      partial: parts.some((part) => part.partial || part.status !== "ok"),
+      listings,
+    };
+  }
   try {
     const { db } = await import("./db");
     if (source === "olx") await checkGecko(config.key);
     let olxUrl = criteria.olxUrl;
     let resolvedRegion: string | null = null;
     let needsVerification = false;
-    if (source === "olx" && !olxUrl) {
+    if (source === "olx" && !olxUrl && criteria.locationMode === "cities") {
       const key = locationKey(criteria);
       const cached = await db.olxLocation.findUnique({ where: { id: key } });
       resolvedRegion =
@@ -326,6 +398,7 @@ export async function fetchSource(
       }
       olxUrl = buildOlxUrl(criteria, resolvedRegion);
     }
+    if (source === "olx" && !olxUrl) olxUrl = buildOlxStateUrl(criteria);
     await reserve(config.provider, config.cost);
     result.creditsReserved = config.cost;
     const payload =
@@ -341,7 +414,10 @@ export async function fetchSource(
             {
               make: catalogBrandSearchName(criteria.brand),
               model: criteria.model,
-              location: `${criteria.state.toLowerCase()}-${normalized(criteria.city).replaceAll(" ", "-")}`,
+              location:
+                criteria.locationMode === "state"
+                  ? criteria.state.toLowerCase()
+                  : `${criteria.state.toLowerCase()}-${normalized(criteria.city).replaceAll(" ", "-")}`,
               ...(criteria.yearMin !== null
                 ? { year_min: criteria.yearMin }
                 : {}),
@@ -372,7 +448,11 @@ export async function fetchSource(
       source === "olx"
         ? normalizeOlx(data, observedAt)
         : normalizeReef(data, observedAt);
-    if (source === "olx" && !criteria.olxUrl) {
+    if (
+      source === "olx" &&
+      !criteria.olxUrl &&
+      criteria.locationMode === "cities"
+    ) {
       if (
         result.listings.some((row) => row.state && row.state !== criteria.state)
       ) {

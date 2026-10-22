@@ -10,7 +10,11 @@ import {
   canonicalModel,
 } from "../src/lib/discovery";
 import { normalizeOlx, normalizeReef } from "../src/lib/discovery-providers";
-import { buildOlxUrl, regionCandidates } from "../src/lib/olx-search";
+import {
+  buildOlxStateUrl,
+  buildOlxUrl,
+  regionCandidates,
+} from "../src/lib/olx-search";
 import { parseCatalogModels } from "../src/lib/vehicle-catalog";
 
 const root = mkdtempSync(path.join(process.env.RADAR_TEST_ROOT!, "searches-"));
@@ -202,6 +206,48 @@ it("builds a city-scoped OLX URL automatically with encoded search and price", (
   ).toEqual(["valid-region"]);
 });
 
+it("builds an honest state-wide OLX URL and accepts every selected city", () => {
+  const statewide = searchSchema.parse({
+    ...criteria,
+    locationMode: "state",
+    city: "",
+    cities: [],
+    state: "SC",
+    olxUrl: "",
+  });
+  expect(new URL(buildOlxStateUrl(statewide)).pathname).toBe(
+    "/autos-e-pecas/carros-vans-e-utilitarios/estado-sc",
+  );
+  const multiple = searchSchema.parse({
+    ...criteria,
+    locationMode: "cities",
+    city: "Blumenau",
+    cities: ["Blumenau", "Gaspar"],
+    state: "SC",
+  });
+  const row = normalizeOlx(
+    {
+      items: [
+        {
+          ...olx(),
+          location: { city: "Gaspar", state: "SC" },
+          properties: olx().properties.map((property) =>
+            property.name === "vehicle_brand"
+              ? { ...property, value: "Toyota" }
+              : property,
+          ),
+        },
+      ],
+    },
+    new Date().toISOString(),
+  )[0];
+  expect(eligibility(row, multiple)).toEqual([]);
+  expect(eligibility({ ...row, city: "Joinville" }, multiple)).toContain(
+    "Fora da abrangência selecionada ou localização desconhecida",
+  );
+  expect(eligibility({ ...row, city: "Joinville" }, statewide)).toEqual([]);
+});
+
 it("resolves a new city on demand, verifies its listings, and caches without another lookup charge", async () => {
   currentCity = "Joinville";
   currentState = "SC";
@@ -270,6 +316,23 @@ it("excludes unknown fields and Corolla Cross, preserves monetary units and stri
   );
   expect(safe).toHaveLength(1);
   expect(JSON.stringify(safe)).not.toContain("DO NOT PERSIST");
+});
+it("keeps a Webmotors photo supplied in Reef media collections", () => {
+  const [row] = normalizeReef(
+    {
+      listings: [
+        {
+          ...reef,
+          images: [
+            { url: "javascript:alert(1)" },
+            { webpUrl: "https://image.webmotors.com.br/c180.webp" },
+          ],
+        },
+      ],
+    },
+    new Date().toISOString(),
+  );
+  expect(row.imageUrl).toBe("https://image.webmotors.com.br/c180.webp");
 });
 it("separates FIPE model labels from the textual query and normalized OLX attributes", () => {
   const family = parseCatalogModels({

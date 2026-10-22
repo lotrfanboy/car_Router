@@ -639,7 +639,14 @@ it("does not claim a notification was sent when provider delivery is uncertain",
 
 it("reuses a pre-upgrade saved search and preserves its history on a failed rerun", async () => {
   const legacy = await db.savedSearch.create({
-    data: { name: criteria.name, criteria: JSON.stringify(criteria) },
+    data: {
+      name: criteria.name,
+      criteria: JSON.stringify({
+        ...criteria,
+        cities: undefined,
+        locationMode: undefined,
+      }),
+    },
   });
   await db.searchRun.create({
     data: {

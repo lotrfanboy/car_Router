@@ -178,6 +178,11 @@ class OfflineCatalog:
             rows = [{"code": "family:civic", "name": "Civic", "searchName": "Civic", "versions": [{"code": "20", "name": "Civic EX 2.0"}]}] if query.get("brand") == ["2"] else [{"code": "family:corolla", "name": "Corolla", "searchName": "Corolla", "versions": [{"code": "10", "name": "Corolla XEi 2.0"}]}]
             if query.get("brand") == ["5"]:
                 rows = [{"code": "family:golf", "name": "Golf", "searchName": "Golf", "versions": [{"code": "50", "name": "Golf Highline 1.4 TSI"}]}]
+        elif kind == "years":
+            model = query.get("models", [""])[0]
+            name = "Civic EX 2.0" if model == "20" else "Corolla XEi 2.0"
+            code = "20" if model == "20" else "10"
+            rows = [{"code": "2020", "name": "2020", "versions": [{"code": code, "name": name}]}]
         else:
             if query.get("state") == ["SP"] and self.hold_city:
                 self.pending_cities.append(route)
@@ -276,7 +281,7 @@ def catalog_checks(page, catalog, searches):
     expect(page.get_by_role("button", name="Buscar agora", exact=True)).to_be_enabled()
     brand = page.get_by_role("combobox", name="Marca", exact=True)
     model = page.get_by_role("combobox", name="Modelo", exact=True)
-    city = page.get_by_role("combobox", name="Cidade", exact=True)
+    city = page.get_by_role("combobox", name="Adicionar cidade", exact=True)
     model_requests = sum(kind == "models" for kind, _ in catalog.requests)
     run_requests = len(searches.requests)
     brand.fill("to")
@@ -293,7 +298,7 @@ def catalog_checks(page, catalog, searches):
     expect(model).to_have_value("Corolla")
     assert sum(kind == "models" for kind, _ in catalog.requests) == model_requests + 1
     assert len(searches.requests) == run_requests
-    city.fill("Curitiba")
+    choose(page, city, "Curitiba")
     page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
     expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
     saved = searches.saved_payloads[-1]
@@ -338,7 +343,6 @@ def catalog_checks(page, catalog, searches):
     brand.fill("Honda")
     expect(model).to_have_value("")
     expect(page.locator('input[name="version"]')).to_have_value("")
-    city.fill("Curitiba")
     page.locator('select[name="state"]').select_option("SP")
     expect(city).to_have_value("")
     city.click()
@@ -385,7 +389,7 @@ def catalog_checks(page, catalog, searches):
     expect(page.get_by_text("Catálogo indisponível. Digite manualmente.", exact=False)).to_be_visible()
     manual_text(page, brand, "Marca manual")
     manual_text(page, model, "Modelo manual")
-    city.fill("Curitiba")
+    choose(page, city, "Curitiba")
     page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
     expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
     assert not searches.saved_payloads[-1].get("catalog"), "Manual text must not retain a catalog identity"
@@ -396,7 +400,7 @@ def catalog_checks(page, catalog, searches):
     choose(page, brand, "VW - VolksWagen", "VW")
     expect(brand).to_have_value("Volkswagen")
     choose(page, model, "Golf")
-    city.fill("Curitiba")
+    choose(page, city, "Curitiba")
     page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
     expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
     saved = searches.saved_payloads[-1]
@@ -518,9 +522,10 @@ def legacy_url_checks(page, searches):
         page.goto(BASE + "/buscar?busca=test-legacy")
         expect(page.get_by_role("heading", name="1 candidato", exact=True)).to_be_visible()
         if changed == "city":
-            manual_text(page, page.get_by_role("combobox", name="Cidade", exact=True), "Londrina")
+            page.locator('select[name="state"]').select_option("SP")
+            choose(page, page.get_by_role("combobox", name="Adicionar cidade", exact=True), "São Paulo")
         elif changed == "yearMin":
-            page.get_by_role("spinbutton", name="Ano-modelo de", exact=True).fill("2020")
+            page.get_by_role("combobox", name="Ano-modelo de", exact=True).select_option("2020")
         elif changed == "model":
             manual_text(page, page.get_by_role("combobox", name="Modelo", exact=True), "Yaris")
         else:
@@ -682,10 +687,10 @@ def main():
                 touch.get_by_role("combobox", name="Modelo", exact=True).tap()
                 touch.get_by_role("option", name="Corolla", exact=True).tap()
                 expect(touch.get_by_role("combobox", name="Modelo", exact=True)).to_have_value("Corolla")
-                touch.locator('input[name="version"]').tap()
-                touch.locator('input[name="version"]').fill("XEi")
-                touch.get_by_role("combobox", name="Cidade", exact=True).tap()
-                touch.get_by_role("combobox", name="Cidade", exact=True).fill("Curitiba")
+                touch.get_by_role("combobox", name="Ano-modelo de", exact=True).select_option("2020")
+                touch.get_by_role("combobox", name=re.compile("^Versão")).select_option(label="XEi 2.0")
+                touch.get_by_role("combobox", name="Adicionar cidade", exact=True).tap()
+                touch.get_by_role("combobox", name="Adicionar cidade", exact=True).fill("Curitiba")
                 touch.get_by_role("option", name="Curitiba", exact=True).tap()
                 touch.locator(".advanced-filters > summary:visible").tap()
                 mobile_budget = touch.get_by_role("spinbutton", name="Orçamento máximo (R$)", exact=True)

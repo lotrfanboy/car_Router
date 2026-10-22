@@ -4,6 +4,7 @@ import {
   parseCatalogBrands,
   parseCatalogCities,
   parseCatalogModels,
+  parseCatalogYears,
 } from "@/lib/vehicle-catalog";
 
 async function json(url: string) {
@@ -34,6 +35,41 @@ export async function GET(request: NextRequest) {
         `https://parallelum.com.br/fipe/api/v1/carros/marcas/${brand}/modelos`,
       );
       return NextResponse.json(parseCatalogModels(data));
+    }
+    if (type === "years") {
+      const brand = request.nextUrl.searchParams.get("brand") ?? "";
+      const encoded = request.nextUrl.searchParams.get("models") ?? "";
+      const models = encoded.split(",").filter(Boolean);
+      if (
+        !/^\d{1,4}$/.test(brand) ||
+        !models.length ||
+        models.length > 40 ||
+        models.some((code) => !/^\d{1,10}$/.test(code))
+      )
+        return NextResponse.json(
+          { error: "Modelo inválido." },
+          { status: 400 },
+        );
+      const catalog = await json(
+        `https://parallelum.com.br/fipe/api/v1/carros/marcas/${brand}/modelos`,
+      );
+      const allowed = parseCatalogModels(catalog)
+        .flatMap((family) => family.versions)
+        .filter((model) => models.includes(model.code));
+      if (allowed.length !== new Set(models).size)
+        return NextResponse.json(
+          { error: "Modelo inválido." },
+          { status: 400 },
+        );
+      const values = await Promise.all(
+        allowed.map(async (model) => ({
+          model,
+          value: await json(
+            `https://parallelum.com.br/fipe/api/v1/carros/marcas/${brand}/modelos/${model.code}/anos`,
+          ),
+        })),
+      );
+      return NextResponse.json(parseCatalogYears(values));
     }
     if (type === "cities") {
       const state = request.nextUrl.searchParams.get("state") ?? "";

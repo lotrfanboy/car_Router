@@ -26,6 +26,19 @@ export function buildOlxUrl(criteria: SearchCriteria, region: string) {
     url.searchParams.set("pe", String(criteria.priceMax));
   return url.toString();
 }
+export function buildOlxStateUrl(criteria: SearchCriteria) {
+  const url = new URL(
+    `https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-${criteria.state.toLowerCase()}`,
+  );
+  url.searchParams.set(
+    "q",
+    `${catalogBrandSearchName(criteria.brand)} ${criteria.model}`,
+  );
+  url.searchParams.set("sf", "1");
+  if (criteria.priceMax !== null)
+    url.searchParams.set("pe", String(criteria.priceMax));
+  return url.toString();
+}
 export function regionCandidates(data: unknown): string[] {
   const rows =
     data && typeof data === "object" && "regions" in data ? data.regions : null;

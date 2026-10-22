@@ -103,7 +103,7 @@ export async function listSearches() {
   });
   return Promise.all(
     rows.map(async (row) => {
-      const criteria = JSON.parse(row.criteria) as SearchCriteria;
+      const criteria = searchSchema.parse(JSON.parse(row.criteria));
       const latest = row.runs[0]
         ? {
             id: row.runs[0].id,
@@ -247,9 +247,18 @@ export function referenceCriteria(criteria: SearchCriteria): SearchCriteria {
       criteria.yearMax === null ? null : Math.min(2100, criteria.yearMax + 1),
   };
 }
-function criteriaKey(criteria: SearchCriteria, collection = false) {
+function criteriaKey(
+  criteria: SearchCriteria,
+  collection = false,
+  legacyLocation = false,
+) {
+  const locationFields: Partial<SearchCriteria> = { ...criteria };
+  if (legacyLocation) {
+    delete locationFields.locationMode;
+    delete locationFields.cities;
+  }
   const canonical = {
-    ...criteria,
+    ...locationFields,
     // Catalog provenance belongs to a saved selection, not the paid query.
     // Reuse identical source queries even when their FIPE identities differ.
     ...(collection ? { catalog: undefined } : {}),
@@ -258,6 +267,18 @@ function criteriaKey(criteria: SearchCriteria, collection = false) {
     model: normalized(criteria.model),
     version: normalized(criteria.version ?? ""),
     city: normalized(criteria.city),
+    ...(legacyLocation
+      ? {}
+      : {
+          cities: (criteria.cities.length
+            ? criteria.cities
+            : criteria.city
+              ? [criteria.city]
+              : []
+          )
+            .map(normalized)
+            .sort(),
+        }),
     sources: [...criteria.sources].sort(),
   };
   return createHash("sha256")
@@ -275,16 +296,23 @@ export async function saveSearch(input: unknown) {
   const queryKey = criteriaKey(data);
   const existing = await db.savedSearch.findUnique({ where: { queryKey } });
   if (existing) return existing;
-  // Adopt a matching legacy search rather than orphaning its run history on first use.
+  const previousKey = criteriaKey(data, false, true);
+  const previous = await db.savedSearch.findUnique({
+    where: { queryKey: previousKey },
+  });
+  if (previous) return previous;
+  // Recompute persisted identities after schema evolution rather than orphaning
+  // run history when a single legacy city becomes `cities: [city]`.
   const legacy = await db.savedSearch.findMany({ where: { queryKey: null } });
   for (const row of legacy) {
     try {
       const parsed = searchSchema.safeParse(JSON.parse(row.criteria));
-      if (parsed.success && criteriaKey(parsed.data) === queryKey)
+      if (parsed.success && criteriaKey(parsed.data) === queryKey) {
         return await db.savedSearch.update({
           where: { id: row.id },
           data: { queryKey },
         });
+      }
     } catch {
       /* Preserve unreadable legacy records without rewriting them. */
     }
