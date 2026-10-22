@@ -1,5 +1,7 @@
 # Catálogo, correspondência e retomada da busca
 
+Relatório histórico. Os agrupamentos e aliases descritos abaixo foram substituídos na [etapa de busca genérica](VALIDACAO-BUSCA-GENERICA-2026-10-22.md); não representam o contrato atual do catálogo.
+
 ## Base e reconciliação
 
 - Base: `103ee04f7cbb07bdaaf16397c0ff5aa45bb82b5e` (`origin/main`, merge da PR 3). Branch de trabalho: `fix/catalog-identity-20261022`.

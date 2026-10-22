@@ -1,5 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
-import { catalogBrandSearchName, catalogModelFamily } from "./vehicle-catalog";
+import {
+  resolveCatalogVehicle,
+  sourceCatalogName,
+  emptyCatalog,
+  type VehicleCatalog,
+} from "./vehicle-catalog";
+import { readVehicleCatalog } from "./catalog-store";
 import {
   buildOlxUrl,
   buildOlxStateUrl,
@@ -22,6 +28,11 @@ const obj = (v: unknown): Row =>
   v && typeof v === "object" && !Array.isArray(v) ? (v as Row) : {};
 const str = (v: unknown) =>
   typeof v === "string" && v.trim() ? v.trim() : null;
+// Preserve original vehicle fields and media for audit without seller contacts.
+const originalFields = (row: Row, fields: string[]) =>
+  Object.fromEntries(
+    fields.filter((key) => key in row).map((key) => [key, row[key]]),
+  );
 const photoUrl = (v: unknown) => {
   const value = str(v);
   try {
@@ -56,6 +67,7 @@ const reefListingPhoto = (row: Row) => {
     .flat() as unknown[];
   return (
     photoUrl(row.image_url) ??
+    photoUrl(row.image) ??
     photoUrl(row.imageUrl) ??
     photoUrl(row.thumbnail_url) ??
     photoUrl(obj(row.image).url) ??
@@ -180,7 +192,11 @@ export async function checkGecko(key: string) {
     );
 }
 
-export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
+export function normalizeOlx(
+  value: unknown,
+  observedAt: string,
+  catalog: VehicleCatalog = emptyCatalog,
+): Listing[] {
   const data = obj(value);
   if (!Array.isArray(data.items))
     throw new Error("A OLX retornou um formato inesperado.");
@@ -198,30 +214,49 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
           attrs[String(p.name)] = String(p.value);
       }
     const sourceModel = str(attrs.vehicle_model);
-    const fullModel = sourceModel?.replace(/\s+/g, " ") ?? "";
-    // Shared conservative boundaries keep compound models intact. Preserve the
-    // original attribute and do not claim an inferred trim is FIPE-verified.
-    const model = fullModel ? catalogModelFamily(fullModel) : null;
     const explicitVersion = str(attrs.vehicle_version);
+    const sourceIdentity = {
+      brandId: str(attrs.vehicle_brand_id),
+      modelId: str(attrs.vehicle_model_id),
+      versionId: str(attrs.vehicle_version_id),
+    };
+    const resolved = resolveCatalogVehicle(catalog, {
+      source: "olx",
+      brand: str(attrs.vehicle_brand),
+      model: sourceModel,
+      version: explicitVersion,
+      ...sourceIdentity,
+    });
     return [
       {
         source: "olx",
         externalId: id,
         url,
         title: str(r.title) ?? "Anúncio OLX",
-        brand: str(attrs.vehicle_brand),
-        model,
+        brand: resolved?.brand.name ?? str(attrs.vehicle_brand),
+        model: resolved?.model?.name ?? sourceModel,
         sourceModel,
-        version:
-          explicitVersion ??
-          (model && fullModel.length > model.length
-            ? fullModel.slice(model.length).trim()
-            : null),
-        versionOrigin: explicitVersion
-          ? "explicit"
-          : fullModel.length > (model?.length ?? 0)
-            ? "inferred"
-            : "unknown",
+        sourceIdentity,
+        identity: resolved?.identity,
+        original: {
+          brand: str(attrs.vehicle_brand),
+          model: sourceModel,
+          version: explicitVersion,
+          properties: r.properties as unknown[] | undefined,
+          fields: originalFields(r, [
+            "id",
+            "url",
+            "title",
+            "price",
+            "images",
+            "image_url",
+            "location",
+            "professionalAd",
+          ]),
+        },
+        version: resolved?.version?.name ?? explicitVersion,
+        versionOrigin:
+          explicitVersion || resolved?.version ? "explicit" : "unknown",
         fuel: str(attrs.fuel),
         transmission: str(attrs.gearbox),
         engine: str(attrs.motorpower),
@@ -243,7 +278,11 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
     ];
   });
 }
-export function normalizeReef(value: unknown, observedAt: string): Listing[] {
+export function normalizeReef(
+  value: unknown,
+  observedAt: string,
+  catalog: VehicleCatalog = emptyCatalog,
+): Listing[] {
   const data = obj(value);
   if (!Array.isArray(data.listings))
     throw new Error("A Webmotors retornou um formato inesperado.");
@@ -253,20 +292,69 @@ export function normalizeReef(value: unknown, observedAt: string): Listing[] {
       id = integer(r.listing_id),
       url = str(r.url);
     if (id === null || !url || !publicListingUrl(url, "webmotors")) return [];
+    const sourceId = (value: unknown) =>
+      str(value) ?? (integer(value) !== null ? String(value) : null);
+    const sourceIdentity = {
+      brandId: sourceId(r.make_id),
+      modelId: sourceId(r.model_id),
+      versionId: sourceId(r.trim_id),
+    };
+    const version = str(r.trim) ?? str(r.version);
+    const resolved = resolveCatalogVehicle(catalog, {
+      source: "webmotors",
+      brand: str(r.make),
+      model: str(r.model),
+      version,
+      ...sourceIdentity,
+    });
+
     return [
       {
         source: "webmotors",
         externalId: String(id),
         url,
         title: str(r.title) ?? "Anúncio Webmotors",
-        brand: str(r.make),
-        model: str(r.model),
+        brand: resolved?.brand.name ?? str(r.make),
+        model: resolved?.model?.name ?? str(r.model),
         sourceModel: str(r.model),
-        version: str(r.version),
-        versionOrigin: str(r.version) ? "explicit" : "unknown",
+        sourceIdentity,
+        identity: resolved?.identity,
+        original: {
+          brand: str(r.make),
+          model: str(r.model),
+          version,
+          fields: {
+            ...originalFields(r, [
+              "listing_id",
+              "url",
+              "title",
+              "make_id",
+              "model_id",
+              "trim_id",
+              "year_model",
+              "year_manufacture",
+              "price",
+              "mileage_km",
+              "fuel",
+              "transmission",
+              "engine",
+              "engine_litres",
+              "images",
+              "photos",
+              "media",
+              "image",
+              "image_url",
+              "imageUrl",
+              "thumbnail_url",
+            ]),
+            seller: originalFields(seller, ["city", "state_code", "type"]),
+          },
+        },
+        version: resolved?.version?.name ?? version,
+        versionOrigin: version || resolved?.version ? "explicit" : "unknown",
         fuel: str(r.fuel),
         transmission: str(r.transmission),
-        engine: str(r.engine),
+        engine: str(r.engine) ?? str(r.engine_litres),
         imageUrl: reefListingPhoto(r),
         modelYear: integer(r.year_model),
         priceCents: price(r.price),
@@ -352,10 +440,96 @@ export async function fetchSource(
         ? parts.reduce((sum, part) => sum + (part.total ?? 0), 0)
         : null,
       partial: parts.some((part) => part.partial || part.status !== "ok"),
+      received: parts.reduce(
+        (sum, part) => sum + (part.received ?? part.listings.length),
+        0,
+      ),
+      normalizationDiscards: parts.reduce<Record<string, number>>(
+        (counts, part) => {
+          for (const [reason, count] of Object.entries(
+            part.normalizationDiscards ?? {},
+          ))
+            counts[reason] = (counts[reason] ?? 0) + count;
+          return counts;
+        },
+        {
+          ...(successful.flatMap((part) => part.listings).length >
+          listings.length
+            ? {
+                "Anúncio repetido entre cidades":
+                  successful.flatMap((part) => part.listings).length -
+                  listings.length,
+              }
+            : {}),
+        },
+      ),
+      applied: successful[0]?.applied,
       listings,
     };
   }
   try {
+    const catalog = await readVehicleCatalog();
+    const selected =
+      criteria.catalog?.provider === "carrouter" ? criteria.catalog : undefined;
+    const brandEntity = catalog.brands.find(
+      (item) => item.id === selected?.brandCode,
+    );
+    const modelEntity = catalog.models.find(
+      (item) =>
+        item.id === selected?.modelCode && item.brandId === brandEntity?.id,
+    );
+    const versionEntity = catalog.versions.find(
+      (item) =>
+        item.id === selected?.versionCode && item.modelId === modelEntity?.id,
+    );
+    if (
+      selected &&
+      (!sourceCatalogName(brandEntity, source) ||
+        (selected.modelCode && !sourceCatalogName(modelEntity, source)) ||
+        (selected.versionCode && !sourceCatalogName(versionEntity, source)))
+    )
+      throw new Error(
+        "Catálogo sem correspondência confirmada para esta seleção na fonte. Nenhuma coleta de anúncios foi executada nesta fonte.",
+      );
+    const query = {
+      ...criteria,
+      brand: sourceCatalogName(brandEntity, source) ?? criteria.brand,
+      model: sourceCatalogName(modelEntity, source) ?? criteria.model,
+    };
+    const trim = sourceCatalogName(versionEntity, source);
+    const optionalFilters = [
+      ...(criteria.yearMin !== null || criteria.yearMax !== null
+        ? ["ano"]
+        : []),
+      ...(criteria.priceMax !== null ? ["preço máximo"] : []),
+      ...(criteria.mileageMax !== null ? ["quilometragem máxima"] : []),
+      ...(criteria.privateOnly ? ["vendedor particular"] : []),
+    ];
+    result.applied = {
+      remote:
+        source === "olx"
+          ? criteria.olxUrl
+            ? ["URL salva (filtros próprios da URL)"]
+            : [
+                "marca/modelo (texto)",
+                "estado/região",
+                ...(criteria.priceMax !== null ? ["preço máximo"] : []),
+              ]
+          : [
+              "marca",
+              "modelo",
+              "localização",
+              ...optionalFilters,
+              ...(trim ? ["versão"] : []),
+            ],
+      local: [
+        "marca",
+        "modelo",
+        "localização",
+        ...(criteria.version ? ["versão"] : []),
+        ...optionalFilters,
+      ],
+    };
     const { db } = await import("./db");
     if (source === "olx") await checkGecko(config.key);
     let olxUrl = criteria.olxUrl;
@@ -396,9 +570,9 @@ export async function fetchSource(
         resolvedRegion = candidates[0];
         needsVerification = true;
       }
-      olxUrl = buildOlxUrl(criteria, resolvedRegion);
+      olxUrl = buildOlxUrl(query, resolvedRegion);
     }
-    if (source === "olx" && !olxUrl) olxUrl = buildOlxStateUrl(criteria);
+    if (source === "olx" && !olxUrl) olxUrl = buildOlxStateUrl(query);
     await reserve(config.provider, config.cost);
     result.creditsReserved = config.cost;
     const payload =
@@ -412,8 +586,9 @@ export async function fetchSource(
             "https://api.reefapi.com/webmotors/v1/search",
             config.key,
             {
-              make: catalogBrandSearchName(criteria.brand),
-              model: criteria.model,
+              make: query.brand,
+              model: query.model,
+              ...(trim ? { trim } : {}),
               location:
                 criteria.locationMode === "state"
                   ? criteria.state.toLowerCase()
@@ -441,57 +616,64 @@ export async function fetchSource(
         "Webmotors não concluiu a coleta. Nenhum resultado anterior foi apagado.",
       );
     const data = obj(payload.data);
+    const meta = obj(payload.meta);
     result.total = integer(
-      source === "olx" ? data.totalResults : data.total_results,
+      source === "olx"
+        ? data.totalResults
+        : (data.total_results ?? meta.total_results),
     );
     result.listings =
       source === "olx"
-        ? normalizeOlx(data, observedAt)
-        : normalizeReef(data, observedAt);
+        ? normalizeOlx(data, observedAt, catalog)
+        : normalizeReef(data, observedAt, catalog);
+    // An empty or neighbouring-city page is a valid result. Never discard a
+    // whole page or claim a failed integration just because no listing matches.
     if (
       source === "olx" &&
-      !criteria.olxUrl &&
-      criteria.locationMode === "cities"
+      needsVerification &&
+      resolvedRegion &&
+      result.listings.some(
+        (row) =>
+          row.city &&
+          normalized(row.city) === normalized(criteria.city) &&
+          row.state === criteria.state,
+      )
     ) {
-      if (
-        result.listings.some((row) => row.state && row.state !== criteria.state)
-      ) {
-        result.listings = [];
-        throw new Error(
-          "Localização OLX divergente: a fonte ampliou a região. Resultados descartados para não misturar estados.",
-        );
-      }
-      if (needsVerification) {
-        if (
-          !result.listings.some(
-            (row) =>
-              row.city &&
-              normalized(row.city) === normalized(criteria.city) &&
-              row.state === criteria.state,
-          )
-        ) {
-          result.listings = [];
-          throw new Error(
-            "Localização OLX ainda não confirmada pelos resultados. Não vou apresentar uma busca nacional como se fosse da sua cidade.",
-          );
-        }
-        await db.olxLocation.upsert({
-          where: { id: locationKey(criteria) },
-          create: { id: locationKey(criteria), region: resolvedRegion! },
-          update: { region: resolvedRegion!, verifiedAt: new Date() },
-        });
-      }
+      await db.olxLocation.upsert({
+        where: { id: locationKey(criteria) },
+        create: { id: locationKey(criteria), region: resolvedRegion },
+        update: { region: resolvedRegion, verifiedAt: new Date() },
+      });
     }
+    const receivedRows = source === "olx" ? data.items : data.listings;
+    result.received = Array.isArray(receivedRows) ? receivedRows.length : 0;
+    const normalizedCount = result.listings.length;
+    result.normalizationDiscards = {};
+    const overflow = Math.max(0, result.received - 100);
+    if (overflow)
+      result.normalizationDiscards["Limite de registros da resposta excedido"] =
+        overflow;
+    const invalid = result.received - overflow - normalizedCount;
+    if (invalid)
+      result.normalizationDiscards["Identificador ou URL de anúncio inválido"] =
+        invalid;
     result.listings = [
       ...new Map(result.listings.map((row) => [row.externalId, row])).values(),
     ].map((row) => ({ ...row, reasons: eligibility(row, criteria) }));
+    const duplicates = normalizedCount - result.listings.length;
+    if (duplicates)
+      result.normalizationDiscards["Anúncio duplicado na resposta"] =
+        duplicates;
     result.partial =
       source === "olx"
         ? Boolean(data.nextPageUrl) ||
           result.total === null ||
-          result.total > result.listings.length
-        : data.has_more !== false ||
-          (result.total !== null && result.total > result.listings.length);
+          result.total > result.received ||
+          overflow > 0
+        : (data.has_more ?? obj(meta.pagination).has_more ?? meta.has_more) !==
+            false ||
+          overflow > 0 ||
+          (result.total !== null && result.total > result.received);
     result.message = result.partial
       ? "Uma página consultada. Há cobertura parcial; consulte a origem para ver mais anúncios."
       : "Todos os resultados declarados para este recorte foram recebidos.";
@@ -499,7 +681,7 @@ export async function fetchSource(
     result.status = "error";
     result.message =
       error instanceof Error &&
-      /^(Localização|Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
+      /^(Catálogo|Localização|Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
         error.message,
       )
         ? error.message

@@ -10,6 +10,7 @@ import {
 } from "./discovery";
 import { fetchSource, providerConfig } from "./discovery-providers";
 import { enrichResult } from "./listings-store";
+import { readVehicleCatalog } from "./catalog-store";
 
 export class SearchError extends Error {
   constructor(
@@ -220,32 +221,9 @@ async function recoverSearchRuns(
     cursor = runs[runs.length - 1].id;
   }
 }
+/** Collection honors the requested scope. Comparables use already persisted observations. */
 export function referenceCriteria(criteria: SearchCriteria): SearchCriteria {
-  let olxUrl = criteria.olxUrl;
-  if (olxUrl) {
-    const url = new URL(olxUrl);
-    for (const key of [
-      "pe",
-      "ps",
-      "price_max",
-      "price_min",
-      "priceMax",
-      "priceMin",
-    ])
-      url.searchParams.delete(key);
-    olxUrl = url.toString();
-  }
-  return {
-    ...criteria,
-    priceMax: null,
-    mileageMax: null,
-    privateOnly: false,
-    olxUrl,
-    yearMin:
-      criteria.yearMin === null ? null : Math.max(1900, criteria.yearMin - 1),
-    yearMax:
-      criteria.yearMax === null ? null : Math.min(2100, criteria.yearMax + 1),
-  };
+  return { ...criteria };
 }
 function criteriaKey(
   criteria: SearchCriteria,
@@ -259,9 +237,17 @@ function criteriaKey(
   }
   const canonical = {
     ...locationFields,
-    // Catalog provenance belongs to a saved selection, not the paid query.
-    // Reuse identical source queries even when their FIPE identities differ.
-    ...(collection ? { catalog: undefined } : {}),
+    // Legacy FIPE metadata did not affect the query. The new catalog's source
+    // mappings do, so its identity/revision must participate in the cache key.
+    ...(collection
+      ? {
+          catalog:
+            criteria.catalog?.provider === "carrouter"
+              ? criteria.catalog
+              : undefined,
+          collectionVersion: 2,
+        }
+      : {}),
     name: "",
     brand: normalized(criteria.brand),
     model: normalized(criteria.model),
@@ -293,6 +279,35 @@ function criteriaKey(
 }
 export async function saveSearch(input: unknown) {
   const data = searchSchema.parse(input);
+  if (data.catalog?.provider === "carrouter") {
+    const catalog = await readVehicleCatalog();
+    const selection = data.catalog;
+    const brand = catalog.brands.find(
+      (item) => item.id === selection.brandCode,
+    );
+    const model = catalog.models.find(
+      (item) => item.id === selection.modelCode && item.brandId === brand?.id,
+    );
+    const version = catalog.versions.find(
+      (item) => item.id === selection.versionCode && item.modelId === model?.id,
+    );
+    if (
+      !brand ||
+      (selection.modelCode && !model) ||
+      (selection.versionCode && !version) ||
+      selection.revision !== catalog.revision ||
+      data.brand !== brand.name ||
+      selection.brandName !== brand.name ||
+      (model &&
+        (data.model !== model.name || selection.modelName !== model.name)) ||
+      (version &&
+        (data.version !== version.name ||
+          selection.versionName !== version.name))
+    )
+      throw new SearchError(
+        "Seleção de catálogo desatualizada ou incompatível. Selecione novamente ou confirme a entrada manual.",
+      );
+  }
   const queryKey = criteriaKey(data);
   const existing = await db.savedSearch.findUnique({ where: { queryKey } });
   if (existing) return existing;

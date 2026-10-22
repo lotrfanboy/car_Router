@@ -140,15 +140,15 @@ async function createRadar(enabled = true) {
     enabled,
   });
 }
-it("collects uncapped references while applying the original budget to candidates", async () => {
+it("preserves every collection filter and uses stored observations for comparisons", async () => {
   const search = await store.saveSearch(criteria);
   const run = await store.executeSearch(search.id);
   expect(state.calls[0]).toMatchObject({
-    priceMax: null,
-    mileageMax: null,
-    privateOnly: false,
-    yearMin: 2020,
-    yearMax: 2022,
+    priceMax: 110000,
+    mileageMax: 70000,
+    privateOnly: true,
+    yearMin: 2021,
+    yearMax: 2021,
   });
   const candidates = run.sources[0].listings.filter((x) => !x.reasons.length);
   expect(candidates).toHaveLength(1);
@@ -165,9 +165,9 @@ it("collects uncapped references while applying the original budget to candidate
       olxUrl:
         "https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios?pe=100000&ps=50000&q=Toyota",
     }).olxUrl,
-  ).not.toMatch(/pe=|ps=/);
+  ).toContain("pe=100000&ps=50000");
 });
-it("deduplicates repeated search creation and reuses a collection across budgets", async () => {
+it("deduplicates identical searches but does not reuse a narrower collection for another budget", async () => {
   const [a, b] = await Promise.all([
     store.saveSearch(criteria),
     store.saveSearch({ ...criteria, name: "Another name" }),
@@ -177,8 +177,8 @@ it("deduplicates repeated search creation and reuses a collection across budgets
   await store.executeSearch(a.id);
   const other = await store.saveSearch({ ...criteria, priceMax: 150000 });
   const run = await store.executeSearch(other.id);
-  expect(run).toHaveProperty("cached", true);
-  expect(state.calls).toHaveLength(1);
+  expect("cached" in run && run.cached).not.toBe(true);
+  expect(state.calls).toHaveLength(2);
   expect(run.sources[0].listings.filter((x) => !x.reasons.length)).toHaveLength(
     7,
   );

@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "revision": "test-only-2026-10",
+  "evidence": [
+    {
+      "id": "fixture",
+      "url": "https://catalog.test/fixture",
+      "retrievedAt": "2026-10-22T00:00:00.000Z",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "kind": "catalog"
+    }
+  ],
+  "brands": [
+    {
+      "id": "wm:brand:35",
+      "name": "Toyota",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "35",
+          "name": "TOYOTA",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "35",
+          "name": "Toyota",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:brand:25",
+      "name": "Honda",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "25",
+          "name": "HONDA",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "25",
+          "name": "Honda",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:brand:59",
+      "name": "Volkswagen",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "59",
+          "name": "VOLKSWAGEN",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "59",
+          "name": "Volkswagen",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:brand:39",
+      "name": "Mercedes-Benz",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "39",
+          "name": "MERCEDES-BENZ",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "39",
+          "name": "Mercedes",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "wm:model:1",
+      "brandId": "wm:brand:35",
+      "name": "Corolla",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "1",
+          "name": "COROLLA",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "1",
+          "name": "Corolla",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:2",
+      "brandId": "wm:brand:35",
+      "name": "Corolla Cross",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "2",
+          "name": "COROLLA CROSS",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "2",
+          "name": "Corolla Cross",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:3",
+      "brandId": "wm:brand:25",
+      "name": "Civic",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "3",
+          "name": "CIVIC",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "3",
+          "name": "Civic",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:4",
+      "brandId": "wm:brand:25",
+      "name": "Civic Type R",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "4",
+          "name": "CIVIC TYPE R",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "4",
+          "name": "Civic Type R",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:5",
+      "brandId": "wm:brand:59",
+      "name": "Golf",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "5",
+          "name": "GOLF",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "5",
+          "name": "Golf",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:6",
+      "brandId": "wm:brand:59",
+      "name": "Golf Variant",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "6",
+          "name": "GOLF VARIANT",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "6",
+          "name": "Golf Variant",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:7",
+      "brandId": "wm:brand:39",
+      "name": "C180",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "7",
+          "name": "C180",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "7",
+          "name": "C180",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:model:8",
+      "brandId": "wm:brand:39",
+      "name": "C180 Coupé",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "8",
+          "name": "C180 COUPÉ",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "8",
+          "name": "C180 Coupé",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    }
+  ],
+  "versions": [
+    {
+      "id": "wm:version:1",
+      "modelId": "wm:model:1",
+      "name": "2.0 VVT-IE FLEX XEI DIRECT SHIFT",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "1",
+          "name": "2.0 VVT-IE FLEX XEI DIRECT SHIFT",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "1",
+          "name": "Corolla XEi 2.0",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:2",
+      "modelId": "wm:model:2",
+      "name": "2.0 XRE",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "2",
+          "name": "2.0 XRE",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "2",
+          "name": "Corolla Cross XRE 2.0",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:3",
+      "modelId": "wm:model:3",
+      "name": "1.5 TOURING",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "3",
+          "name": "1.5 TOURING",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "3",
+          "name": "Civic Touring 1.5",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:4",
+      "modelId": "wm:model:4",
+      "name": "2.0 TURBO",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "4",
+          "name": "2.0 TURBO",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "4",
+          "name": "Civic Type R 2.0",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:5",
+      "modelId": "wm:model:5",
+      "name": "1.4 HIGHLINE TSI",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "5",
+          "name": "1.4 HIGHLINE TSI",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "5",
+          "name": "Golf Highline 1.4 TSI",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:6",
+      "modelId": "wm:model:6",
+      "name": "1.4 COMFORTLINE",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "6",
+          "name": "1.4 COMFORTLINE",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "6",
+          "name": "Golf Variant Comfortline 1.4",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:7",
+      "modelId": "wm:model:7",
+      "name": "1.6 AVANTGARDE",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "7",
+          "name": "1.6 AVANTGARDE",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "7",
+          "name": "C 180 CGI Avantgarde 1.6",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    },
+    {
+      "id": "wm:version:8",
+      "modelId": "wm:model:8",
+      "name": "1.6 AVANTGARDE",
+      "references": [
+        {
+          "source": "webmotors",
+          "id": "8",
+          "name": "1.6 AVANTGARDE",
+          "aliases": [],
+          "evidenceId": "fixture"
+        },
+        {
+          "source": "olx",
+          "id": "8",
+          "name": "C-180 Coupé Avantgarde 1.6",
+          "aliases": [],
+          "evidenceId": "fixture"
+        }
+      ]
+    }
+  ]
+}

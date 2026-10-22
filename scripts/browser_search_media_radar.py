@@ -125,7 +125,8 @@ def seed(db_path):
 def start_server(db_path, log):
     env = {**os.environ, "DATABASE_URL": "file:" + str(db_path), "GECKO_API_KEY": " ",
            "REEF_API_KEY": " ", "REEF_FREE_TRIAL": "false", "RADAR_SCHEDULER_ENABLED": "false",
-           "RESEND_API_KEY": " ", "RADAR_CRON_SECRET": " "}
+           "RESEND_API_KEY": " ", "RADAR_CRON_SECRET": " ",
+           "VEHICLE_CATALOG_PATH": str(REPO / "tests/fixtures/vehicle-catalog.json")}
     process = subprocess.Popen(["node", "node_modules/next/dist/bin/next", "start", "--hostname",
                                 "127.0.0.1", "--port", str(urlparse(BASE).port)], cwd=REPO, env=env,
                                stdout=log, stderr=log)
@@ -163,33 +164,25 @@ class OfflineCatalog:
         query = parse_qs(urlparse(route.request.url).query)
         kind = query.get("type", [""])[0]
         self.requests.append((kind, query))
-        if kind == "brands":
-            if self.fail_brands:
-                route.fulfill(status=503, json={"error": "Fixture unavailable"})
-                return
-            rows = [{"code": "1", "name": "Toyota", "searchName": "Toyota"}, {"code": "2", "name": "Honda", "searchName": "Honda"},
-                    {"code": "3", "name": "Audi"}, {"code": "4", "name": "AUDI"},
-                    {"code": "5", "name": "VW - VolksWagen", "searchName": "Volkswagen"}]
-            rows += [{"code": str(100 + i), "name": f"Marca fixture {i:02}"} for i in range(25)]
-        elif kind == "models":
-            if query.get("brand") == ["1"] and self.hold_model:
-                self.pending_models.append(route)
-                return
-            rows = [{"code": "family:civic", "name": "Civic", "searchName": "Civic", "versions": [{"code": "20", "name": "Civic EX 2.0"}]}] if query.get("brand") == ["2"] else [{"code": "family:corolla", "name": "Corolla", "searchName": "Corolla", "versions": [{"code": "10", "name": "Corolla XEi 2.0"}]}]
-            if query.get("brand") == ["5"]:
-                rows = [{"code": "family:golf", "name": "Golf", "searchName": "Golf", "versions": [{"code": "50", "name": "Golf Highline 1.4 TSI"}]}]
-        elif kind == "years":
-            model = query.get("models", [""])[0]
-            name = "Civic EX 2.0" if model == "20" else "Corolla XEi 2.0"
-            code = "20" if model == "20" else "10"
-            rows = [{"code": "2020", "name": "2020", "versions": [{"code": code, "name": name}]}]
-        else:
+        if kind == "brands" and self.fail_brands:
+            return route.fulfill(status=503, json={"error": "Fixture unavailable"})
+        if kind == "models" and query.get("brand") == ["wm:brand:35"] and self.hold_model:
+            self.pending_models.append(route)
+            return
+        if kind == "cities":
             if query.get("state") == ["SP"] and self.hold_city:
                 self.pending_cities.append(route)
                 return
-            names = {"PR": "Curitiba", "SP": "São Paulo", "SC": "Florianópolis"}
-            rows = [{"code": "1", "name": names.get(query.get("state", ["PR"])[0], "Cidade fixture")}]
-        route.fulfill(json=rows)
+            names = {"PR": ["Curitiba", "Londrina"], "SP": ["São Paulo", "Campinas"], "SC": ["Florianópolis"]}
+            rows = [{"code": str(i + 1), "name": name} for i, name in enumerate(names.get(query.get("state", ["PR"])[0], []))]
+            return route.fulfill(json=rows)
+        # The production route reads the test-only catalog on the isolated server.
+        # Only keyboard stress-test entries are added here, never saved as data.
+        response = route.fetch()
+        rows = response.json()
+        if kind == "brands" and response.ok:
+            rows += [{"code": str(100 + i), "name": f"Marca fixture {i:02}"} for i in range(25)]
+        route.fulfill(response=response, json=rows)
 
 
 class OfflineSearch:
@@ -227,7 +220,8 @@ class OfflineSearch:
             return route.fulfill(status=409, json={"error": "Nenhuma fonte selecionada está configurada."})
         source = dict(source="olx", status="error" if self.mode == "source_error" else "ok",
                       message="Falha da fonte controlada no teste." if self.mode == "source_error" else "Consulta isolada de teste.",
-                      observedAt=timestamp(), elapsedMs=1, creditsReserved=0, total=7, partial=True,
+                      observedAt=timestamp(), elapsedMs=1, creditsReserved=0, total=0 if self.mode == "empty" else 7, partial=self.mode != "empty",
+                      received=0 if self.mode in ("source_error", "empty") else len(self.rows),
                       listings=[] if self.mode in ("source_error", "empty") else copy.deepcopy(self.rows))
         result = {"sources": [source]}
         search_id = urlparse(route.request.url).path.split("/")[3]
@@ -262,6 +256,7 @@ def loaded_photo(page):
 
 
 def choose(page, control, label, query=None):
+    control.fill("")
     control.fill(query if query is not None else label)
     expect(page.get_by_role("option", name=label, exact=True)).to_be_visible()
     control.press("ArrowDown")
@@ -282,80 +277,111 @@ def catalog_checks(page, catalog, searches):
     brand = page.get_by_role("combobox", name="Marca", exact=True)
     model = page.get_by_role("combobox", name="Modelo", exact=True)
     city = page.get_by_role("combobox", name="Adicionar cidade", exact=True)
-    model_requests = sum(kind == "models" for kind, _ in catalog.requests)
+    year_min = page.get_by_role("textbox", name="Ano-modelo de", exact=True)
+    year_max = page.get_by_role("textbox", name="Ano-modelo até", exact=True)
+    save = page.get_by_role("button", name="Salvar critérios sem consultar", exact=True)
     run_requests = len(searches.requests)
+    model_requests = sum(kind == "models" for kind, _ in catalog.requests)
     brand.fill("to")
     assert sum(kind == "models" for kind, _ in catalog.requests) == model_requests
-    expect(page.get_by_role("option", name="Toyota", exact=True)).to_be_visible()
-    brand.press("ArrowDown")
-    assert brand.get_attribute("aria-activedescendant")
-    brand.press("Enter")
-    expect(brand).to_have_value("Toyota")
-    model.click()
-    expect(page.get_by_role("option", name="Corolla", exact=True)).to_be_visible()
-    model.press("ArrowDown")
-    model.press("Enter")
-    expect(model).to_have_value("Corolla")
-    assert sum(kind == "models" for kind, _ in catalog.requests) == model_requests + 1
+    choose(page, brand, "Toyota")
+    choose(page, model, "Corolla")
+    versions = page.get_by_role("combobox", name=re.compile("^Versão"))
+    expect(versions).to_have_value("")
+    expect(versions.locator("option")).to_have_count(2)
     assert len(searches.requests) == run_requests
+    version_id = versions.locator("option").nth(1).get_attribute("value")
+    versions.select_option(version_id)
+    # Years do not query or prune the catalogue, even outside this car's existence.
+    request_count = len(catalog.requests)
+    year_min.fill("1901")
+    year_max.fill("2099")
+    expect(versions).to_have_value(version_id)
+    assert len(catalog.requests) == request_count
     choose(page, city, "Curitiba")
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
+    choose(page, city, "Londrina")
+    expect(page.get_by_role("button", name="Remover Curitiba", exact=True)).to_be_visible()
+    expect(page.get_by_role("button", name="Remover Londrina", exact=True)).to_be_visible()
+    save.click()
     expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
     saved = searches.saved_payloads[-1]
-    assert saved["brand"] == "Toyota" and saved["model"] == "Corolla"
-    assert saved["catalog"]["provider"] == "fipe" and saved["catalog"]["brandCode"] == "1"
-    assert saved["catalog"]["modelGroup"] == "family:corolla"
-    assert not saved["catalog"].get("modelCode"), "A grouped family is not a FIPE version ID"
-    assert saved.get("version", "") == "", "A FIPE description must not become a strict version filter"
+    assert saved["catalog"]["brandCode"] == "wm:brand:35"
+    assert saved["catalog"]["modelCode"] == "wm:model:1"
+    assert saved["catalog"]["versionCode"] == version_id
+    assert saved["cities"] == ["Curitiba", "Londrina"] and saved["locationMode"] == "cities"
+    assert saved["yearMin"] == 1901 and saved["yearMax"] == 2099
+    selected = page.get_by_role("combobox", name="Retomar uma busca", exact=True)
+    expect(selected).not_to_have_value("")
+    expect(save).to_be_enabled()
+    saved_id = selected.input_value()
+    assert saved_id
+    page.goto(BASE + "/buscar?busca=" + saved_id)
+    expect(versions).to_have_value(version_id)
+    expect(year_min).to_have_value("1901")
+    expect(year_max).to_have_value("2099")
+    expect(page.get_by_role("button", name="Remover Londrina", exact=True)).to_be_visible()
+    page.get_by_role("button", name="Remover Curitiba", exact=True).click()
+    save.click()
+    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
+    assert searches.saved_payloads[-1]["cities"] == ["Londrina"]
+    page.locator('select[name="state"]:visible').select_option("SP")
+    expect(page.locator(".city-chips:visible button")).to_have_count(0)
+    save.click()
+    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
+    assert searches.saved_payloads[-1]["cities"] == [] and searches.saved_payloads[-1]["city"] == ""
+    assert searches.saved_payloads[-1]["locationMode"] == "state"
+    expect(selected).not_to_have_value("")
+    expect(save).to_be_enabled()
+    whole_state_id = selected.input_value()
+    page.goto(BASE + "/buscar?busca=" + whole_state_id)
+    expect(page.locator(".city-chips:visible")).to_contain_text("todo o estado de SP")
+    expect(page.get_by_role("radio")).to_have_count(0)
+    # Both invalid format and reversed interval reject without silently adjusting.
+    before_saves = len(searches.saved_payloads)
+    year_min.fill("20x0")
+    save.click()
+    expect(page.locator(".error-box[role=alert]:visible")).to_contain_text("quatro dígitos")
+    expect(year_min).to_have_value("20x0")
+    year_min.fill("2025")
+    year_max.fill("2020")
+    save.click()
+    expect(page.locator(".error-box[role=alert]:visible")).to_contain_text("intervalo dos anos")
+    expect(year_min).to_have_value("2025")
+    expect(year_max).to_have_value("2020")
+    assert len(searches.saved_payloads) == before_saves
+    year_min.fill("")
+    year_max.fill("")
+    # Same hierarchy mechanics across four brands; similar names remain separate.
+    for brand_name, model_name, sibling in [("Toyota", "Corolla", "Corolla Cross"), ("Honda", "Civic", "Civic Type R"), ("Volkswagen", "Golf", "Golf Variant"), ("Mercedes-Benz", "C180", "C180 Coupé")]:
+        choose(page, brand, brand_name)
+        expect(model).to_have_value("")
+        expect(page.locator('[name="version"]:visible')).to_have_value("")
+        choose(page, model, model_name)
+        expect(versions).to_have_value("")
+        expect(versions.locator("option")).to_have_count(2)
+        versions.select_option(index=1)
+        old_version = versions.input_value()
+        choose(page, model, sibling)
+        expect(versions).to_have_value("")
+        expect(versions.locator("option")).to_have_count(2)
+        assert versions.locator("option").nth(1).get_attribute("value") != old_version
     assert len(searches.requests) == run_requests
-    saved_selector = page.get_by_role("combobox", name="Retomar uma busca", exact=True)
-    expect(saved_selector).not_to_have_value("")
-    grouped_id = saved_selector.input_value()
-    assert grouped_id
-    page.goto(BASE + "/buscar?busca=" + grouped_id)
-    expect(model).to_have_value("Corolla")
-    expect(page.get_by_text("Entrada manual confirmada.", exact=False)).to_have_count(0)
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
-    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
-    assert searches.saved_payloads[-1]["catalog"]["modelGroup"] == "family:corolla"
-
-    # A real catalog brand plus a manually confirmed model must stay mixed after
-    # reload; restoring the brand must not invent a family selection for the text.
-    manual_text(page, model, "Corolla texto manual")
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
-    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
-    saved = searches.saved_payloads[-1]
-    assert saved["catalog"]["brandCode"] == "1" and not saved["catalog"].get("modelGroup")
-    expect(saved_selector).not_to_have_value(grouped_id)
-    expect(saved_selector).not_to_have_value("")
-    manual_id = saved_selector.input_value()
-    assert manual_id and manual_id != grouped_id
-    page.goto(BASE + "/buscar?busca=" + manual_id)
-    expect(model).to_have_value("Corolla texto manual")
-    expect(page.get_by_text("Entrada manual confirmada.", exact=False)).to_be_visible()
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
-    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
-    assert searches.saved_payloads[-1]["model"] == "Corolla texto manual"
-    assert searches.saved_payloads[-1]["catalog"]["brandCode"] == "1"
-    assert not searches.saved_payloads[-1]["catalog"].get("modelGroup")
-    assert len(searches.requests) == run_requests
-    page.locator('input[name="version"]').fill("XEi")
-    brand.fill("Honda")
-    expect(model).to_have_value("")
-    expect(page.locator('input[name="version"]')).to_have_value("")
-    page.locator('select[name="state"]').select_option("SP")
-    expect(city).to_have_value("")
-    city.click()
-    expect(page.get_by_role("option", name="São Paulo", exact=True)).to_be_visible()
+    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), "desktop overflow"
+    for selector in ('select[name="state"]:visible', 'input[name="city"]:visible', 'input[name="yearMin"]:visible'):
+        box = page.locator(selector).bounding_box()
+        assert 32 <= box["height"] <= 56, (selector, box)
+    page.screenshot(path=str(ARTIFACTS / "11-search-filters-desktop.png"), full_page=True)
+    assert not any(kind == "years" for kind, _ in catalog.requests)
+    # Incomplete city text cannot silently turn into an all-state search.
+    city.fill("São")
     city.press("Escape")
-    expect(city).to_have_attribute("aria-expanded", "false")
-    # Resolve an older request after a newer one; only the new options may render.
-    # Start fresh so a valid cached Toyota catalog cannot satisfy this check.
+    save.click()
+    expect(page.locator(".error-box[role=alert]:visible")).to_contain_text("Selecione a cidade")
+    city.fill("")
+    # Resolve an older request after a newer one; only the new parent may render.
     page.goto(BASE + "/buscar")
-    expect(page.get_by_role("button", name="Buscar agora", exact=True)).to_be_enabled()
     catalog.hold_model = True
     choose(page, brand, "Toyota")
-    page.wait_for_function("document.querySelector('[name=model]').value === ''")
     model.click()
     expect(page.get_by_text("Carregando opções…", exact=True)).to_be_visible()
     assert catalog.pending_models
@@ -363,51 +389,35 @@ def catalog_checks(page, catalog, searches):
     model.click()
     expect(page.get_by_role("option", name="Civic", exact=True)).to_be_visible()
     for route in catalog.pending_models:
-        route.fulfill(json=[{"code": "family:old", "name": "RESPOSTA ANTIGA TOYOTA", "searchName": "RESPOSTA ANTIGA TOYOTA", "versions": []}])
+        route.fulfill(json=[{"code": "old", "name": "RESPOSTA ANTIGA TOYOTA"}])
     catalog.hold_model = False
     expect(page.get_by_role("option", name="RESPOSTA ANTIGA TOYOTA")).to_have_count(0)
-    expect(page.get_by_role("option", name="Civic", exact=True)).to_be_visible()
-    page.locator('select[name="state"]').select_option("PR")
     catalog.hold_city = True
-    page.locator('select[name="state"]').select_option("SP")
+    page.locator('select[name="state"]:visible').select_option("SP")
     city.click()
     expect(page.get_by_text("Carregando opções…", exact=True)).to_be_visible()
     assert catalog.pending_cities
-    page.locator('select[name="state"]').select_option("SC")
+    page.locator('select[name="state"]:visible').select_option("SC")
     city.click()
     expect(page.get_by_role("option", name="Florianópolis", exact=True)).to_be_visible()
     for route in catalog.pending_cities:
         route.fulfill(json=[{"code": "old", "name": "RESPOSTA ANTIGA SP"}])
     catalog.hold_city = False
     expect(page.get_by_role("option", name="RESPOSTA ANTIGA SP")).to_have_count(0)
-    expect(page.get_by_role("option", name="Florianópolis", exact=True)).to_be_visible()
-    # A missing catalog still permits saving manually typed criteria, without keys.
+    # Explicit temporary manual fallback never acquires a fabricated ID.
     catalog.fail_brands = True
-    page.reload()
-    expect(page.get_by_role("button", name="Buscar agora", exact=True)).to_be_enabled()
+    page.goto(BASE + "/buscar")
     brand.click()
-    expect(page.get_by_text("Catálogo indisponível. Digite manualmente.", exact=False)).to_be_visible()
+    expect(page.get_by_text("Catálogo indisponível. Digite e confirme a entrada manual.", exact=False)).to_be_visible()
     manual_text(page, brand, "Marca manual")
     manual_text(page, model, "Modelo manual")
-    choose(page, city, "Curitiba")
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
+    page.locator('input[name="version"]:visible').fill("Versão manual")
+    expect(page.get_by_text("Entrada manual confirmada, temporária", exact=False)).to_be_visible()
+    save.click()
     expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
-    assert not searches.saved_payloads[-1].get("catalog"), "Manual text must not retain a catalog identity"
+    assert not searches.saved_payloads[-1].get("catalog")
     assert len(searches.requests) == run_requests
     catalog.fail_brands = False
-    # Catalog labels, query text and provenance are separate even for aliases.
-    page.goto(BASE + "/buscar")
-    choose(page, brand, "VW - VolksWagen", "VW")
-    expect(brand).to_have_value("Volkswagen")
-    choose(page, model, "Golf")
-    choose(page, city, "Curitiba")
-    page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
-    expect(page.get_by_role("status").filter(has_text="Critérios salvos. Nenhuma consulta realizada.")).to_be_visible()
-    saved = searches.saved_payloads[-1]
-    assert saved["brand"] == "Volkswagen" and saved["model"] == "Golf"
-    assert saved["catalog"]["brandName"] == "VW - VolksWagen"
-    assert saved["catalog"]["modelGroup"] == "family:golf"
-    assert not saved["catalog"].get("modelCode")
 
 
 def long_keyboard_list(page):
@@ -446,6 +456,8 @@ def search_failure_checks(page, searches):
     expect(page.get_by_role("heading", name="1 candidato", exact=True)).to_be_visible()
     budget = page.get_by_role("spinbutton", name="Orçamento máximo (R$)", exact=True)
     budget.fill("108000")
+    expect(page.get_by_role("status").filter(has_text="Os filtros foram alterados")).to_be_visible()
+    expect(page.get_by_text("Critérios aplicados:", exact=False)).to_contain_text("109000")
     searches.mode, searches.defer = "http_error", True
     page.get_by_role("button", name="Buscar agora", exact=True).click()
     expect(page.locator(".discovery-results:visible")).to_have_attribute("aria-busy", "true")
@@ -511,6 +523,29 @@ def search_failure_checks(page, searches):
     searches.available = False
 
 
+def empty_search_checks(page, searches):
+    searches.available, searches.mode = True, "empty"
+    page.goto(BASE + "/buscar")
+    choose(page, page.get_by_role("combobox", name="Marca", exact=True), "Toyota")
+    choose(page, page.get_by_role("combobox", name="Modelo", exact=True), "Corolla")
+    expect(page.get_by_role("combobox", name=re.compile("^Versão"))).to_have_value("")
+    page.get_by_role("textbox", name="Ano-modelo de", exact=True).fill("1901")
+    page.get_by_role("textbox", name="Ano-modelo até", exact=True).fill("1901")
+    before = len(searches.requests)
+    page.get_by_role("button", name="Buscar agora", exact=True).click()
+    expect(page.get_by_role("heading", name="Nenhum candidato neste recorte", exact=True)).to_be_visible()
+    assert len(searches.requests) == before + 1
+    assert searches.saved_payloads[-1]["yearMin"] == searches.saved_payloads[-1]["yearMax"] == 1901
+    expect(page.get_by_text("Critérios aplicados:", exact=False)).to_contain_text("Todas as versões")
+    summary = page.locator(".source-results:visible summary")
+    expect(summary).to_contain_text("Consultada")
+    summary.click()
+    expect(page.locator(".source-results:visible")).to_contain_text("0 recebidos · 0 aprovados · 0 descartados")
+    expect(page.locator(".error-box:visible")).to_have_count(0)
+    page.screenshot(path=str(ARTIFACTS / "12-search-empty-desktop.png"), full_page=True)
+    searches.available = False
+
+
 def legacy_url_checks(page, searches):
     before = len(searches.requests)
     page.goto(BASE + "/buscar?busca=test-legacy")
@@ -522,10 +557,10 @@ def legacy_url_checks(page, searches):
         page.goto(BASE + "/buscar?busca=test-legacy")
         expect(page.get_by_role("heading", name="1 candidato", exact=True)).to_be_visible()
         if changed == "city":
-            page.locator('select[name="state"]').select_option("SP")
+            page.locator('select[name="state"]:visible').select_option("SP")
             choose(page, page.get_by_role("combobox", name="Adicionar cidade", exact=True), "São Paulo")
         elif changed == "yearMin":
-            page.get_by_role("combobox", name="Ano-modelo de", exact=True).select_option("2020")
+            page.get_by_role("textbox", name="Ano-modelo de", exact=True).fill("2020")
         elif changed == "model":
             manual_text(page, page.get_by_role("combobox", name="Modelo", exact=True), "Yaris")
         else:
@@ -562,6 +597,10 @@ def main():
                 expect(page.get_by_role("heading", name="1 candidato", exact=True)).to_be_visible()
                 expect(page.get_by_text("23,1% abaixo da média", exact=True)).to_be_visible()
                 loaded_photo(page)
+                page.locator(".source-results:visible summary").click()
+                expect(page.locator(".source-results:visible")).to_contain_text("7 recebidos · 1 aprovados · 6 descartados")
+                expect(page.get_by_role("list", name="Descartes por motivo")).to_contain_text("Preço fora do limite ou desconhecido: 6")
+                page.locator(".source-results:visible summary").click()
                 page.get_by_role("button", name="Salvar", exact=True).click()
                 expect(page.get_by_role("button", name="Salvo", exact=True)).to_be_visible()
                 page.get_by_role("link", name="Conferir semelhantes", exact=True).click()
@@ -644,9 +683,11 @@ def main():
                 checks.append("radar create/persist/pause/edit/cancel-delete and honest pending state")
 
                 catalog_checks(page, catalog, searches)
-                checks.append("grouped catalog keyboard, short query/provenance, grouped versus manual model identity after reload, dependent clearing, out-of-order responses, explicit manual save without credentials")
+                checks.append("real catalog route with fixture IDs across four brands, distinct similar models, versions optional, independent/invalid years, multi-city/state persistence, dependent clearing, out-of-order responses, temporary manual save")
                 search_failure_checks(page, searches)
                 checks.append("loading/HTTP/source failure preserve input and results; total failure/interruption after partial failure recover each source separately on reload; empty differs from unavailable")
+                empty_search_checks(page, searches)
+                checks.append("explicit Search accepts a nonexistent model/year combination; zero received is a successful result, criteria and totals shown")
                 legacy_url_checks(page, searches)
                 checks.append("untouched legacy OLX URL preserved; city/year/model/brand edits clear stale URL without provider calls")
                 page.goto(BASE + "/buscar?busca=test-search")
@@ -675,7 +716,8 @@ def main():
                 zoom_context.close()
                 checks.append("long-list keyboard scrolling at 100%/200% CSS zoom; 720px reflow at DPR2 and skip link")
 
-                mobile = setup_context(browser, OfflineCatalog(), errors,
+                searches.available, searches.mode = True, "empty"
+                mobile = setup_context(browser, OfflineCatalog(), errors, searches,
                                        viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
                 touch = mobile.new_page()
                 touch.goto(BASE + "/buscar")
@@ -687,11 +729,14 @@ def main():
                 touch.get_by_role("combobox", name="Modelo", exact=True).tap()
                 touch.get_by_role("option", name="Corolla", exact=True).tap()
                 expect(touch.get_by_role("combobox", name="Modelo", exact=True)).to_have_value("Corolla")
-                touch.get_by_role("combobox", name="Ano-modelo de", exact=True).select_option("2020")
-                touch.get_by_role("combobox", name=re.compile("^Versão")).select_option(label="XEi 2.0")
+                touch.get_by_role("textbox", name="Ano-modelo de", exact=True).fill("1901")
+                touch.get_by_role("combobox", name=re.compile("^Versão")).select_option(index=1)
                 touch.get_by_role("combobox", name="Adicionar cidade", exact=True).tap()
                 touch.get_by_role("combobox", name="Adicionar cidade", exact=True).fill("Curitiba")
                 touch.get_by_role("option", name="Curitiba", exact=True).tap()
+                choose(touch, touch.get_by_role("combobox", name="Adicionar cidade", exact=True), "Londrina")
+                touch.get_by_role("button", name="Remover Curitiba", exact=True).tap()
+                expect(touch.get_by_role("button", name="Remover Londrina", exact=True)).to_be_visible()
                 touch.locator(".advanced-filters > summary:visible").tap()
                 mobile_budget = touch.get_by_role("spinbutton", name="Orçamento máximo (R$)", exact=True)
                 mobile_budget.tap()
@@ -700,11 +745,22 @@ def main():
                 assert touch.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), "mobile search overflow"
                 touch.evaluate("window.scrollTo(0,0)")
                 touch.screenshot(path=str(ARTIFACTS / "04-busca-touch.png"), full_page=True)
+                before_mobile = len(searches.requests)
+                touch.get_by_role("button", name="Buscar agora", exact=True).tap()
+                expect(touch.get_by_role("heading", name="Nenhum candidato neste recorte", exact=True)).to_be_visible()
+                assert len(searches.requests) == before_mobile + 1
+                expect(touch.get_by_role("combobox", name="Retomar uma busca", exact=True)).not_to_have_value("")
+                mobile_id = touch.get_by_role("combobox", name="Retomar uma busca", exact=True).input_value()
+                touch.goto(BASE + "/buscar?busca=" + mobile_id)
+                expect(touch.get_by_role("textbox", name="Ano-modelo de", exact=True)).to_have_value("1901")
+                expect(touch.get_by_role("button", name="Remover Londrina", exact=True)).to_be_visible()
+                expect(touch.get_by_role("heading", name="Nenhum candidato neste recorte", exact=True)).to_be_visible()
+                searches.available = False
                 touch.goto(BASE + "/salvos")
                 expect(touch.get_by_role("checkbox", name="Comparar este anúncio")).to_have_count(4)
                 assert touch.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), "mobile saved overflow"
                 touch.screenshot(path=str(ARTIFACTS / "05-salvos-touch.png"), full_page=True)
-                checks.append("390px touch brand/model/version/city/budget controls, sticky actions and mobile search/saved layout")
+                checks.append("390px touch brand/model/version/city chips/budget, explicit Search and saved query restoration, sticky actions and mobile search/saved layout")
 
                 stop_server(process)
                 process = start_server(db_path, log)
@@ -730,7 +786,7 @@ def main():
                       "completed_at": timestamp(), "build_id": build_id,
                       "provider_extractions": 0, "intercepted_run_requests": len(searches.requests),
                       "css_zoom_200_scroll_width": css_zoom_scroll_width,
-                      "limitations": ["Offline grouped catalog and photo fixtures; short query/provenance checked, but no live provider delivery or FIPE/OLX mapping proof.",
+                      "limitations": ["Local production catalog route with synthetic test data and offline photo/response fixtures. No proof of live provider coverage or real cross-source mappings.",
                                       "Scheduler disabled; no external cron or actual notification was created.",
                                       "Keyboard scroll tested at CSS zoom 200%; responsive reflow at 720px/DPR2. No physical mobile device or browser UI zoom.",
                                       "CSS zoom keeps desktop media queries; measured width is recorded above. The 720px reflow has no overflow."]}

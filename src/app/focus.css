@@ -245,7 +245,7 @@ input[type="checkbox"] {
   border-top: 1px solid var(--line);
   padding-top: 14px;
 }
-.location-scope {
+.focus-workspace .discovery-form .location-scope {
   display: grid;
   gap: 12px;
   padding: 14px;
@@ -256,17 +256,16 @@ input[type="checkbox"] {
   padding: 0 5px;
   font-weight: 650;
 }
-.scope-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
 .location-row > label,
 .location-row > .search-combobox {
   display: grid;
-  grid-template-rows: auto minmax(42px, auto);
+  grid-template-rows: auto 42px;
   align-content: start;
   gap: 5px;
+}
+.focus-workspace .location-row .search-combobox-input input {
+  min-height: 0;
+  height: 40px;
 }
 .city-chips {
   display: flex;
@@ -768,4 +767,29 @@ summary {
 .previous-results > p,
 .previous-results > .listing-card {
   margin-top: 12px;
+}
+
+/* Search controls should size to their content, never stretch to the next column. */
+.focus-workspace .search-fields {
+  align-content: start;
+}
+.focus-workspace .search-fields .form-grid {
+  align-items: start;
+}
+.focus-workspace .location-scope {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+.focus-workspace .discovery-form .discovery-check input {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  flex: 0 0 16px;
+}
+.focus-workspace .city-chips button {
+  width: auto;
+  min-height: 32px;
+}
+.focus-workspace .discovery-results p {
+  overflow-wrap: anywhere;
 }

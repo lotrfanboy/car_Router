@@ -1,333 +1,295 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
-import { GET } from "../src/app/api/search-options/route";
+import fixture from "./fixtures/vehicle-catalog.json";
 import {
-  catalogBrandSearchName,
-  catalogModelFamily,
-  parseCatalogBrands,
-  parseCatalogModels,
+  catalogSchema,
+  catalogKey,
+  resolveCatalogVehicle,
+  sourceCatalogName,
   parseCatalogCities,
-  parseCatalogYears,
+  emptyCatalog,
 } from "../src/lib/vehicle-catalog";
-
-afterEach(() => vi.unstubAllGlobals());
-
-// Source-shaped fixtures, not a bundled catalog or proof of a live connection.
-const volkswagen = {
-  modelos: [
-    { codigo: 6601, nome: "Golf Highline 1.4 TSI 140cv Aut." },
-    { codigo: 6600, nome: "Golf GTi 2.0 TSI 220cv Aut." },
-    { codigo: 8372, nome: "Golf Variant Comf. 250 1.4 TSI Flex Aut." },
-    { codigo: 2472, nome: "New Beetle 2.0 Mi Mec./Aut." },
-  ],
-};
+import { normalizeOlx, normalizeReef } from "../src/lib/discovery-providers";
+import { eligibility, searchSchema } from "../src/lib/discovery";
+import { GET } from "../src/app/api/search-options/route";
+const state = vi.hoisted(() => ({ empty: false, noVersions: false }));
+vi.mock("../src/lib/catalog-store", async () => {
+  const { default: data } = await import("./fixtures/vehicle-catalog.json");
+  const { catalogSchema, emptyCatalog } =
+    await import("../src/lib/vehicle-catalog");
+  return {
+    readVehicleCatalog: async () =>
+      state.empty
+        ? emptyCatalog
+        : catalogSchema.parse(
+            state.noVersions ? { ...data, versions: [] } : data,
+          ),
+  };
+});
+const catalog = catalogSchema.parse(fixture);
 const request = (query: string) =>
   new NextRequest(`http://localhost/api/search-options?${query}`);
+afterEach(() => {
+  vi.unstubAllGlobals();
+  state.empty = false;
+  state.noVersions = false;
+});
+const criteria = searchSchema.parse({
+  name: "Teste",
+  brand: "Toyota",
+  model: "Corolla",
+  state: "PR",
+  yearMin: null,
+  yearMax: null,
+  priceMax: null,
+  mileageMax: null,
+  privateOnly: false,
+  sources: ["olx"],
+});
 
-describe("catalog identity and query families", () => {
-  it("retains brand identities and exposes query aliases separately", () => {
-    expect(
-      parseCatalogBrands([
-        { codigo: "59", nome: "VW - VolksWagen" },
-        { codigo: "23", nome: "GM - Chevrolet" },
-        { codigo: 25, nome: "Honda" },
-      ]),
-    ).toEqual([
-      { code: "23", name: "GM - Chevrolet", searchName: "Chevrolet" },
-      { code: "25", name: "Honda", searchName: "Honda" },
-      { code: "59", name: "VW - VolksWagen", searchName: "Volkswagen" },
-    ]);
-    expect(catalogBrandSearchName("Mercedes")).toBe("Mercedes-Benz");
-    expect(catalogBrandSearchName("Mercedes-Benz")).toBe("Mercedes-Benz");
-    expect(catalogBrandSearchName("VW")).toBe("Volkswagen");
-    expect(catalogBrandSearchName("Volkswagen")).toBe("Volkswagen");
-    expect(catalogBrandSearchName("Kia Motors")).toBe("Kia");
-    expect(catalogBrandSearchName("An unknown brand")).toBe("An unknown brand");
+describe("catalog relationships are data, not model-name rules", () => {
+  it("keeps decimal specifications distinct and refuses an arbitrary source mapping", () => {
+    expect(catalogKey("Engine 1.6")).not.toBe(catalogKey("Engine 16"));
+    expect(catalogKey("Engine 1,6")).toBe(catalogKey("Engine 1.6"));
+    const model = structuredClone(catalog.models[0]);
+    model.references.push({
+      ...model.references[0],
+      id: "alternative",
+      name: "Alternative source name",
+    });
+    expect(sourceCatalogName(model, "webmotors")).toBeUndefined();
   });
-
-  it("derives only returned families, retaining every complete FIPE identity", () => {
-    expect(parseCatalogModels(volkswagen)).toEqual([
-      {
-        code: "family:golf",
-        name: "Golf",
-        searchName: "Golf",
-        versions: [volkswagen.modelos[1], volkswagen.modelos[0]].map((v) => ({
-          code: String(v.codigo),
-          name: v.nome,
-        })),
-      },
-      {
-        code: "family:golf variant",
-        name: "Golf Variant",
-        searchName: "Golf Variant",
-        versions: [{ code: "8372", name: volkswagen.modelos[2].nome }],
-      },
-      {
-        code: "family:new beetle",
-        name: "New Beetle",
-        searchName: "New Beetle",
-        versions: [{ code: "2472", name: volkswagen.modelos[3].nome }],
-      },
-    ]);
-  });
-
-  it("derives selectable years and the versions available in each year", () => {
-    expect(
-      parseCatalogYears([
-        {
-          model: { code: "1", name: "C 180 CGI Avantgarde" },
-          value: [
-            { codigo: "2020-1", nome: "2020 Gasolina" },
-            { codigo: "2019-1", nome: "2019 Gasolina" },
-          ],
-        },
-        {
-          model: { code: "2", name: "C 180 Exclusive" },
-          value: [{ codigo: "2020-1", nome: "2020 Gasolina" }],
-        },
-      ]),
-    ).toEqual([
-      {
-        code: "2020",
-        name: "2020",
-        versions: [
-          { code: "1", name: "C 180 CGI Avantgarde" },
-          { code: "2", name: "C 180 Exclusive" },
-        ],
-      },
-      {
-        code: "2019",
-        name: "2019",
-        versions: [{ code: "1", name: "C 180 CGI Avantgarde" }],
-      },
-    ]);
-  });
-
-  it("coalesces known C180 spelling aliases without discarding trims or their identities", () => {
-    const modelos = [
-      { codigo: 1, nome: "C 180 CGI Avantgarde 1.6 Aut." },
-      { codigo: 2, nome: "C-180 Exclusive 1.6 Aut." },
-      { codigo: 3, nome: "C180 Kompressor 1.8 Aut." },
-      { codigo: 4, nome: "C 200 Avantgarde 2.0 Aut." },
-    ];
-    const result = parseCatalogModels({ modelos });
-    expect(result).toHaveLength(2);
-    const family = result.find((item) => item.searchName === "C180")!;
-    expect(family).toMatchObject({ code: "family:c180", name: "C 180" });
-    expect(family.versions).toHaveLength(3);
-    for (const original of modelos.slice(0, 3))
-      expect(family.versions).toContainEqual({
-        code: String(original.codigo),
-        name: original.nome,
+  it.each(catalog.models)(
+    "resolves $name via its exact source version record and parent IDs",
+    (model) => {
+      const brand = catalog.brands.find((item) => item.id === model.brandId)!;
+      const version = catalog.versions.find(
+        (item) => item.modelId === model.id,
+      )!;
+      const source = version.references.find((ref) => ref.source === "olx")!;
+      const resolved = resolveCatalogVehicle(catalog, {
+        source: "olx",
+        brand: brand.references.find((ref) => ref.source === "olx")!.name,
+        model: source.name,
       });
-    expect(result.find((item) => item.searchName === "C 200")).toBeDefined();
-  });
-
-  it("keeps explicit Mercedes body families separate and retains their original records", () => {
-    const modelos = [
-      { codigo: 1, nome: "C 180 CGI Avantgarde 1.6 Aut." },
-      { codigo: 2, nome: "C 180 Coupé 1.6 Aut." },
-      { codigo: 3, nome: "C-180 Coupe CGI Avantgarde 1.6 Aut." },
-      { codigo: 4, nome: "C180 Cabriolet 1.6 Aut." },
-      { codigo: 5, nome: "C 180 Touring 1.6 Aut." },
-      { codigo: 6, nome: "C-180 SW 1.6 Aut." },
-      { codigo: 7, nome: "C 180 CGI Coupé 1.8 Aut." },
-    ];
-    const groups = parseCatalogModels({ modelos });
-    expect(groups.map((group) => group.code).sort()).toEqual([
-      "family:c180",
-      "family:c180 cabriolet",
-      "family:c180 cgi coupe",
-      "family:c180 coupe",
-      "family:c180 sw",
-      "family:c180 touring",
-    ]);
-    expect(
-      groups
-        .find((group) => group.code === "family:c180 coupe")
-        ?.versions.map((item) => item.code)
-        .sort(),
-    ).toEqual(["2", "3"]);
-    expect(
-      groups
-        .find((group) => group.code === "family:c180")
-        ?.versions.map((item) => item.code),
-    ).toEqual(["1"]);
-    expect(
-      groups.find((group) => group.code === "family:c180 coupe")?.searchName,
-    ).toBe("C180 Coupé");
-    for (const original of modelos)
-      expect(groups.flatMap((group) => group.versions)).toContainEqual({
-        code: String(original.codigo),
-        name: original.nome,
+      expect(resolved?.identity).toEqual({
+        brandId: brand.id,
+        modelId: model.id,
+        versionId: version.id,
       });
-  });
-
-  it.each([
-    ["Corolla XEi 2.0 Flex 16V Aut.", "Corolla"],
-    ["Corolla Altis 2.0 Flex 16V Aut.", "Corolla"],
-    ["COROLLA ALTIS HYBRID PREMIUM 1.8", "COROLLA"],
-    ["Corolla Cross XRE 2.0 16V Flex Aut.", "Corolla Cross"],
-    ["Corolla Fielder 1.8 16V", "Corolla Fielder"],
-    ["Civic Touring 1.5 Turbo 16V Aut.", "Civic"],
-    ["CIVIC SI 2.0 16V", "CIVIC"],
-    ["Civic Type R 2.0 Turbo", "Civic"],
-    ["HB20 Comfort Plus 1.0 Flex 12V", "HB20"],
-    ["HB20S Comfort Plus 1.0 Flex", "HB20S"],
-    ["320i Touring 2.0", "320i Touring"],
-    ["Onix Plus LT 1.0 Turbo", "Onix Plus"],
-    ["Onix LT 1.0", "Onix"],
-    ["Grand Cherokee Limited 3.0", "Grand Cherokee"],
-    ["Grand Vitara 2.0", "Grand Vitara"],
-    ["Range Rover Sport 3.0", "Range Rover Sport"],
-    ["Range Rover Evoque 2.0", "Range Rover Evoque"],
-    ["C 180 CGI Avantgarde 1.6", "C 180"],
-    ["C180 Avantgarde 1.6", "C180"],
-    ["C 180 Coupé CGI Avantgarde 1.6", "C 180 Coupé"],
-    ["C180 Coupe CGI Avantgarde 1.6", "C180 Coupe"],
-    ["C-180 Cabriolet Avantgarde 1.6", "C-180 Cabriolet"],
-    ["C180 Touring Avantgarde 1.6", "C180 Touring"],
-    ["C 180 SW Avantgarde 1.6", "C 180 SW"],
-    ["C-180 CGI Coupe 1.8", "C-180 CGI Coupe"],
-    ["C-180 Exclusive 1.6", "C-180"],
-    ["C 200 Kompressor 1.8", "C 200"],
-    ["GLA 200 Advance 1.6", "GLA 200"],
-    ["AMAROK CD2.0 16V/S CD2.0 16V TDI 4x2 Die", "AMAROK"],
-    ["Gol (novo) 1.0 Mi Total Flex", "Gol"],
-    ["Fox Highline1.6 Flex 16V", "Fox"],
-    ["Model 3 Long Range", "Model 3 Long Range"],
-    ["Future Compound Name 2.0", "Future Compound Name"],
-    ["207 SW 1.6", "207 SW"],
-  ])(
-    "derives %s without merging distinct compound identities",
-    (name, expected) => {
-      expect(catalogModelFamily(name)).toBe(expected);
-      expect(name.startsWith(catalogModelFamily(name))).toBe(true);
     },
   );
-
-  it("keeps broad model queries independent of trim choices", () => {
-    const models = parseCatalogModels({
-      modelos: [
-        { codigo: 1, nome: "Corolla XEi 2.0 Flex 16V Aut." },
-        { codigo: 2, nome: "Corolla Altis Hybrid Premium 1.8" },
-        { codigo: 3, nome: "Corolla Cross XRE 2.0" },
-        { codigo: 4, nome: "Civic Touring 1.5 Turbo" },
-        { codigo: 5, nome: "Civic Si 2.0" },
-        { codigo: 6, nome: "Civic Type R 2.0 Turbo" },
-      ],
+  it.each([
+    ["Corolla", "Corolla Cross"],
+    ["Civic", "Civic Type R"],
+    ["Golf", "Golf Variant"],
+    ["C180", "C180 Coupé"],
+  ])("keeps %s separate from %s", (first, second) => {
+    const a = catalog.models.find((item) => item.name === first)!;
+    const b = catalog.models.find((item) => item.name === second)!;
+    expect(a.id).not.toBe(b.id);
+    expect(catalogKey(a.name)).not.toBe(catalogKey(b.name));
+    expect(catalog.versions.find((item) => item.modelId === a.id)?.id).not.toBe(
+      catalog.versions.find((item) => item.modelId === b.id)?.id,
+    );
+    const brand = catalog.brands.find((item) => item.id === a.brandId)!;
+    const [row] = normalizeReef(
+      {
+        listings: [
+          {
+            listing_id: 1,
+            url: "https://www.webmotors.com.br/comprar/test/1",
+            make: brand.name,
+            make_id: brand.references[0].id,
+            model: a.name,
+            model_id: b.references[0].id,
+            price: 100000,
+            seller: { state_code: "PR" },
+          },
+        ],
+      },
+      new Date().toISOString(),
+      catalog,
+    );
+    const selected = searchSchema.parse({
+      ...criteria,
+      brand: brand.name,
+      model: a.name,
+      catalog: {
+        provider: "carrouter",
+        revision: catalog.revision,
+        brandCode: brand.id,
+        brandName: brand.name,
+        modelCode: a.id,
+        modelName: a.name,
+      },
     });
-    expect(models.map((model) => model.name)).toEqual([
-      "Civic",
-      "Corolla",
-      "Corolla Cross",
-    ]);
-    expect(
-      models.find((model) => model.name === "Civic")?.versions,
-    ).toHaveLength(3);
-    expect(
-      models.find((model) => model.name === "Corolla")?.versions,
-    ).toHaveLength(2);
+    expect(row.model).toBe(b.name);
+    expect(eligibility(row, selected)).toContain(
+      "Modelo diferente ou não confirmado",
+    );
   });
-
-  it("does not mask malformed or empty responses as a successful empty catalog", () => {
-    for (const value of [
-      null,
-      {},
-      [],
-      { nome: "Volkswagen" },
-      [{ codigo: "bad", nome: "Volkswagen" }],
-    ])
-      expect(() => parseCatalogBrands(value)).toThrow();
-    for (const value of [null, [], {}, { modelos: null }, { modelos: [] }])
-      expect(() => parseCatalogModels(value)).toThrow();
-    expect(() => parseCatalogCities({})).toThrow();
+  it("does not slice unknown descriptions or turn a model into a version", () => {
+    const [row] = normalizeOlx(
+      {
+        items: [
+          {
+            id: "1",
+            url: "https://pr.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/test-1",
+            properties: [
+              { name: "vehicle_brand", value: "Toyota" },
+              {
+                name: "vehicle_model",
+                value: "Future Compound Model 1.6 Sport",
+              },
+            ],
+          },
+        ],
+      },
+      new Date().toISOString(),
+      catalog,
+    );
+    expect(row.model).toBe("Future Compound Model 1.6 Sport");
+    expect(row.version).toBeNull();
+    expect(row.versionOrigin).toBe("unknown");
+    expect(row.original?.model).toBe(row.model);
   });
-
-  it("accepts numeric/string IDs and deduplicates identities without creating entries", () => {
+  it("uses source IDs even when commercial descriptions differ, and rejects conflicting IDs", () => {
+    const raw = {
+      listing_id: 1,
+      url: "https://www.webmotors.com.br/comprar/test/1",
+      make: "Commercial brand",
+      model: "Different label",
+      trim: "Different description",
+      make_id: 35,
+      model_id: 1,
+      trim_id: 1,
+      price: 100000,
+      year_model: 2020,
+      seller: { state_code: "PR", city: "Curitiba" },
+      image: "https://image.webmotors.com.br/original.jpg",
+    };
+    const [row] = normalizeReef(
+      { listings: [raw] },
+      new Date().toISOString(),
+      catalog,
+    );
+    const selected = searchSchema.parse({
+      ...criteria,
+      version: catalog.versions[0].name,
+      catalog: {
+        provider: "carrouter",
+        revision: catalog.revision,
+        brandCode: catalog.brands[0].id,
+        brandName: "Toyota",
+        modelCode: catalog.models[0].id,
+        modelName: "Corolla",
+        versionCode: catalog.versions[0].id,
+        versionName: catalog.versions[0].name,
+      },
+    });
+    expect(eligibility(row, selected)).toEqual([]);
+    expect(row.original).toMatchObject({
+      brand: raw.make,
+      model: raw.model,
+      version: raw.trim,
+    });
+    expect(row.original?.fields).toMatchObject({
+      make_id: raw.make_id,
+      trim_id: raw.trim_id,
+      image: raw.image,
+      year_model: raw.year_model,
+    });
+    expect(row.imageUrl).toBe(raw.image);
+    const [wrong] = normalizeReef(
+      { listings: [{ ...raw, model: "Corolla", model_id: 999 }] },
+      row.observedAt,
+      catalog,
+    );
+    expect(eligibility(wrong, selected)).toContain(
+      "Modelo diferente ou não confirmado",
+    );
+  });
+  it("fails closed on ambiguous labels and conflicting parent/source identifiers", () => {
+    const data = structuredClone(catalog);
+    data.models[1].references[0].aliases.push("Corolla");
     expect(
-      parseCatalogCities([
-        { id: 4106902, nome: "Curitiba" },
-        { id: "4106902", nome: "Curitiba" },
-        { id: 1, nome: "" },
-        null,
-      ]),
-    ).toEqual([{ code: "4106902", name: "Curitiba" }]);
+      resolveCatalogVehicle(data, {
+        source: "webmotors",
+        brand: "Toyota",
+        model: "Corolla",
+      })?.model,
+    ).toBeUndefined();
+    data.models[0].brandId = "unknown";
+    expect(catalogSchema.safeParse(data).success).toBe(false);
+    const duplicate = structuredClone(catalog);
+    duplicate.models[1].references[0].id = duplicate.models[0].references[0].id;
+    expect(catalogSchema.safeParse(duplicate).success).toBe(false);
+  });
+  it("requires provenance, and never accepts FIPE descriptions as model identities", () => {
+    const data = structuredClone(catalog);
+    data.evidence = [];
+    expect(catalogSchema.safeParse(data).success).toBe(false);
+    const fipe = structuredClone(catalog);
+    fipe.models[0].references[0].source = "fipe";
+    expect(catalogSchema.safeParse(fipe).success).toBe(false);
+    expect(catalogSchema.parse(emptyCatalog).models).toEqual([]);
   });
 });
 
-describe("search catalog route", () => {
-  it("looks up models by brand code with a bounded timeout and daily data cache", async () => {
-    const fetcher = vi.fn().mockResolvedValue(Response.json(volkswagen));
-    vi.stubGlobal("fetch", fetcher);
-    const response = await GET(request("type=models&brand=59"));
-    expect(response.status).toBe(200);
-    expect(
-      (await response.json()).map((row: { name: string }) => row.name),
-    ).toEqual(["Golf", "Golf Variant", "New Beetle"]);
-    expect(fetcher).toHaveBeenCalledExactlyOnceWith(
-      "https://parallelum.com.br/fipe/api/v1/carros/marcas/59/modelos",
-      expect.objectContaining({
-        next: { revalidate: 86400 },
-        signal: expect.any(AbortSignal),
-      }),
-    );
-  });
-
-  it("loads brands and cities without consulting listings or credentials", async () => {
-    const fetcher = vi
-      .fn()
-      .mockResolvedValueOnce(Response.json([{ codigo: "25", nome: "Honda" }]))
-      .mockResolvedValueOnce(
-        Response.json([{ id: 4106902, nome: "Curitiba" }]),
-      );
-    vi.stubGlobal("fetch", fetcher);
-    expect(await (await GET(request("type=brands"))).json()).toEqual([
-      { code: "25", name: "Honda", searchName: "Honda" },
-    ]);
-    expect(await (await GET(request("type=cities&state=PR"))).json()).toEqual([
-      { code: "4106902", name: "Curitiba" },
-    ]);
-    expect(fetcher.mock.calls[1][0]).toBe(
-      "https://servicodados.ibge.gov.br/api/v1/localidades/estados/PR/municipios?orderBy=nome",
-    );
-    expect(fetcher.mock.calls[0][1].headers).toEqual({
-      Accept: "application/json",
+describe("catalog endpoints do not collect listings", () => {
+  it("serves brands, models and versions locally, regardless of year", async () => {
+    const fetcher = vi.fn(() => {
+      throw new Error("Network must not run");
     });
-  });
-
-  it.each([
-    "type=models&brand=Volkswagen",
-    "type=models&brand=../59",
-    "type=cities&state=XX",
-    "type=cities&state=",
-    "type=versions",
-  ])("rejects invalid lookup %s before a remote call", async (query) => {
-    const fetcher = vi.fn();
     vi.stubGlobal("fetch", fetcher);
-    expect((await GET(request(query))).status).toBe(400);
+    const brands = await (await GET(request("type=brands"))).json();
+    const models = await (
+      await GET(
+        request(
+          `type=models&brand=${brands.find((item: { name: string }) => item.name === "Toyota").code}`,
+        ),
+      )
+    ).json();
+    expect(models.map((item: { name: string }) => item.name)).toEqual([
+      "Corolla",
+      "Corolla Cross",
+    ]);
+    const query = `type=versions&brand=wm:brand:35&model=wm:model:1`;
+    expect(await (await GET(request(query))).json()).toEqual(
+      await (await GET(request(query + "&year=1901"))).json(),
+    );
     expect(fetcher).not.toHaveBeenCalled();
   });
-
-  it.each(["timeout", "http", "json", "shape", "empty"])(
-    "offers manual entry on %s failure without exposing upstream details",
-    async (failure) => {
-      const fetcher = vi.fn();
-      if (failure === "timeout")
-        fetcher.mockRejectedValue(new Error("upstream details"));
-      if (failure === "http")
-        fetcher.mockResolvedValue(new Response("down", { status: 502 }));
-      if (failure === "json")
-        fetcher.mockResolvedValue(new Response("not json"));
-      if (failure === "shape")
-        fetcher.mockResolvedValue(Response.json({ error: "upstream" }));
-      if (failure === "empty") fetcher.mockResolvedValue(Response.json([]));
-      vi.stubGlobal("fetch", fetcher);
-      const response = await GET(request("type=brands"));
-      expect(response.status).toBe(503);
-      expect(await response.json()).toEqual({
-        error: "Catálogo temporariamente indisponível; use a entrada manual.",
-      });
-    },
-  );
+  it("rejects a version request under another brand and obsolete year-catalog calls", async () => {
+    expect(
+      (await GET(request("type=versions&brand=wm:brand:25&model=wm:model:1")))
+        .status,
+    ).toBe(400);
+    expect((await GET(request("type=years&brand=35"))).status).toBe(400);
+  });
+  it("distinguishes missing catalog, empty versions and integration failure", async () => {
+    state.noVersions = true;
+    const empty = await GET(
+      request("type=versions&brand=wm:brand:35&model=wm:model:1"),
+    );
+    expect(empty.status).toBe(200);
+    expect(await empty.json()).toEqual([]);
+    state.empty = true;
+    expect((await GET(request("type=brands"))).status).toBe(503);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("IBGE unavailable")),
+    );
+    expect((await GET(request("type=cities&state=PR"))).status).toBe(503);
+  });
+  it("parses IBGE codes and rejects invalid states before fetching", async () => {
+    expect(parseCatalogCities([{ id: 4106902, nome: "Curitiba" }])).toEqual([
+      { code: "4106902", name: "Curitiba" },
+    ]);
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    expect((await GET(request("type=cities&state=INVALID"))).status).toBe(400);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
 });

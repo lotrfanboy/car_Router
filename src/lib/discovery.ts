@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { states } from "./vehicle";
-import { catalogBrandSearchName } from "./vehicle-catalog";
+import { catalogKey, type CatalogIdentity } from "./vehicle-catalog";
 
 export const sourceNames = { olx: "OLX", webmotors: "Webmotors" };
 export type Source = keyof typeof sourceNames;
@@ -11,14 +11,8 @@ export const normalized = (s: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
-export const canonicalBrand = (value: string) => {
-  const name = normalized(catalogBrandSearchName(value));
-  return name === "mercedes" || name === "mercedes benz"
-    ? "mercedes benz"
-    : name;
-};
-export const canonicalModel = (value: string) =>
-  normalized(value).replace(/^c 180\b/, "c180");
+export const canonicalBrand = catalogKey;
+export const canonicalModel = catalogKey;
 export function publicListingUrl(value: string, source: Source) {
   try {
     const url = new URL(value);
@@ -43,35 +37,60 @@ export const searchSchema = z
     name: z.string().trim().min(1).max(100),
     brand: z.string().trim().min(1).max(80),
     model: z.string().trim().min(1).max(200),
-    version: z.string().trim().max(120).optional(),
+    version: z.string().trim().max(200).optional(),
     // FIPE provenance is separate from the textual query and source attributes.
     // A family selection has a brand identity but no fabricated FIPE model ID.
     catalog: z
-      .object({
-        provider: z.literal("fipe"),
-        brandCode: z.string().regex(/^\d{1,4}$/),
-        brandName: z.string().trim().min(1).max(100),
-        // Local family-selector identity; never a FIPE model code or query term.
-        modelGroup: z
-          .string()
-          .trim()
-          .max(240)
-          .regex(/^family:.+/)
-          .optional(),
-        modelCode: z
-          .string()
-          .regex(/^\d{1,10}$/)
-          .optional(),
-        modelName: z.string().trim().min(1).max(200).optional(),
-      })
-      .refine(
-        (value) => Boolean(value.modelCode) === Boolean(value.modelName),
-        {
-          message: "Código e nome do catálogo devem ser informados juntos.",
-        },
-      )
+      .union([
+        z
+          .object({
+            provider: z.literal("fipe"),
+            brandCode: z.string().regex(/^\d{1,4}$/),
+            brandName: z.string().trim().min(1).max(100),
+            // Local family-selector identity; never a FIPE model code or query term.
+            modelGroup: z
+              .string()
+              .trim()
+              .max(240)
+              .regex(/^family:.+/)
+              .optional(),
+            modelCode: z
+              .string()
+              .regex(/^\d{1,10}$/)
+              .optional(),
+            modelName: z.string().trim().min(1).max(200).optional(),
+          })
+          .refine(
+            (value) => Boolean(value.modelCode) === Boolean(value.modelName),
+            {
+              message: "Código e nome do catálogo devem ser informados juntos.",
+            },
+          ),
+        z
+          .object({
+            provider: z.literal("carrouter"),
+            revision: z.string().min(1).max(240),
+            brandCode: z.string().min(1).max(240),
+            brandName: z.string().min(1).max(240),
+            modelCode: z.string().min(1).max(240).optional(),
+            modelName: z.string().min(1).max(240).optional(),
+            versionCode: z.string().min(1).max(240).optional(),
+            versionName: z.string().min(1).max(240).optional(),
+          })
+          .superRefine((value, ctx) => {
+            if (
+              Boolean(value.modelCode) !== Boolean(value.modelName) ||
+              Boolean(value.versionCode) !== Boolean(value.versionName) ||
+              (value.versionCode && !value.modelCode)
+            )
+              ctx.addIssue({
+                code: "custom",
+                message: "Identidade de catálogo incompleta.",
+              });
+          }),
+      ])
       .optional(),
-    locationMode: z.enum(["cities", "state"]).default("cities"),
+    locationMode: z.enum(["cities", "state"]).optional(),
     // `city` remains as the primary city for saved-search compatibility.
     city: z.string().trim().max(120).default(""),
     cities: z
@@ -95,13 +114,6 @@ export const searchSchema = z
     olxUrl: z.string().trim().max(2000).default(""),
   })
   .superRefine((s, ctx) => {
-    const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
-    if (s.locationMode === "cities" && !selectedCities.length)
-      ctx.addIssue({
-        code: "custom",
-        message: "Selecione ao menos uma cidade ou escolha o estado inteiro.",
-        path: ["cities"],
-      });
     if (s.yearMin && s.yearMax && s.yearMin > s.yearMax)
       ctx.addIssue({
         code: "custom",
@@ -129,6 +141,22 @@ export const searchSchema = z
         });
       }
     }
+  })
+  .transform((value) => {
+    const cities =
+      value.locationMode === "state"
+        ? []
+        : value.cities.length
+          ? value.cities
+          : value.city
+            ? [value.city]
+            : [];
+    return {
+      ...value,
+      cities,
+      city: cities[0] ?? "",
+      locationMode: cities.length ? ("cities" as const) : ("state" as const),
+    };
   });
 export type SearchCriteria = z.infer<typeof searchSchema>;
 export function criteriaLocation(criteria: SearchCriteria) {
@@ -150,6 +178,19 @@ export type Listing = {
   model: string | null;
   /** Original model attribute from this source, not a catalog identity. */
   sourceModel?: string | null;
+  identity?: CatalogIdentity;
+  sourceIdentity?: {
+    brandId: string | null;
+    modelId: string | null;
+    versionId: string | null;
+  };
+  original?: {
+    brand: string | null;
+    model: string | null;
+    version: string | null;
+    properties?: unknown[];
+    fields?: Record<string, unknown>;
+  };
   version?: string | null;
   versionOrigin?: "explicit" | "inferred" | "unknown";
   fuel?: string | null;
@@ -179,21 +220,32 @@ export type SourceResult = {
   locationCredits?: number;
   total: number | null;
   partial: boolean;
+  applied?: { remote: string[]; local: string[] };
+  received?: number;
+  normalizationDiscards?: Record<string, number>;
   listings: Listing[];
 };
 export type SearchResult = { sources: SourceResult[] };
 
 export function eligibility(row: Listing, s: SearchCriteria) {
   const reasons: string[] = [];
-  if (!row.brand || canonicalBrand(row.brand) !== canonicalBrand(s.brand))
-    reasons.push("Marca diferente ou desconhecida");
-  if (!row.model || canonicalModel(row.model) !== canonicalModel(s.model))
-    reasons.push("Modelo diferente ou não confirmado");
-  if (
-    s.version &&
-    (!row.version ||
-      !` ${normalized(row.version)} `.includes(` ${normalized(s.version)} `))
-  )
+  const selected = s.catalog?.provider === "carrouter" ? s.catalog : undefined;
+  const brandMatches = selected
+    ? row.identity?.brandId === selected.brandCode
+    : !!row.brand && canonicalBrand(row.brand) === canonicalBrand(s.brand);
+  if (!brandMatches) reasons.push("Marca diferente ou desconhecida");
+  const modelMatches = selected?.modelCode
+    ? row.identity?.modelId === selected.modelCode
+    : !!row.model && canonicalModel(row.model) === canonicalModel(s.model);
+  if (!modelMatches) reasons.push("Modelo diferente ou não confirmado");
+  const versionMatches = selected?.versionCode
+    ? row.identity?.versionId === selected.versionCode
+    : !!row.version &&
+      (catalogKey(row.version) === catalogKey(s.version ?? "") ||
+        ` ${normalized(row.version)} `.includes(
+          ` ${normalized(s.version ?? "")} `,
+        ));
+  if (s.version && !versionMatches)
     reasons.push("Versão diferente ou desconhecida");
   const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
   if (

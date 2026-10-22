@@ -6,16 +6,26 @@ import {
   eligibility,
   searchSchema,
   publicListingUrl,
-  canonicalBrand,
-  canonicalModel,
 } from "../src/lib/discovery";
-import { normalizeOlx, normalizeReef } from "../src/lib/discovery-providers";
+import {
+  normalizeOlx as normalizeOlxSource,
+  normalizeReef,
+} from "../src/lib/discovery-providers";
 import {
   buildOlxStateUrl,
   buildOlxUrl,
   regionCandidates,
 } from "../src/lib/olx-search";
-import { parseCatalogModels } from "../src/lib/vehicle-catalog";
+import fixture from "./fixtures/vehicle-catalog.json";
+import { catalogSchema } from "../src/lib/vehicle-catalog";
+const catalogFixture = catalogSchema.parse(fixture);
+const normalizeOlx = (value: unknown, observedAt: string) =>
+  normalizeOlxSource(value, observedAt, catalogFixture);
+vi.mock("../src/lib/catalog-store", async () => {
+  const { default: data } = await import("./fixtures/vehicle-catalog.json");
+  const { catalogSchema } = await import("../src/lib/vehicle-catalog");
+  return { readVehicleCatalog: async () => catalogSchema.parse(data) };
+});
 
 const root = mkdtempSync(path.join(process.env.RADAR_TEST_ROOT!, "searches-"));
 process.env.DATABASE_URL =
@@ -254,6 +264,7 @@ it("resolves a new city on demand, verifies its listings, and caches without ano
   const search = await store.saveSearch({
     ...criteria,
     city: "Joinville",
+    cities: ["Joinville"],
     state: "SC",
     olxUrl: "",
     sources: ["olx"],
@@ -275,6 +286,7 @@ it("does not invent a region or pass off national results as a city search", asy
   const search = await store.saveSearch({
     ...criteria,
     city: "Joinville",
+    cities: ["Joinville"],
     state: "SC",
     olxUrl: "",
     sources: ["olx"],
@@ -289,7 +301,14 @@ it("does not invent a region or pass off national results as a city search", asy
   await db.db.searchRun.updateMany({ data: { createdAt: new Date(0) } });
   await db.db.searchCache.deleteMany();
   const second = await store.executeSearch(search.id);
-  expect(second.sources[0]).toMatchObject({ status: "error", listings: [] });
+  expect(second.sources[0].status).toBe("ok");
+  expect(
+    second.sources[0].listings.every((row) =>
+      row.reasons.includes(
+        "Fora da abrangência selecionada ou localização desconhecida",
+      ),
+    ),
+  ).toBe(true);
   expect(await db.db.olxLocation.count()).toBe(0);
 });
 it("excludes unknown fields and Corolla Cross, preserves monetary units and strips seller contacts", () => {
@@ -334,85 +353,6 @@ it("keeps a Webmotors photo supplied in Reef media collections", () => {
   );
   expect(row.imageUrl).toBe("https://image.webmotors.com.br/c180.webp");
 });
-it("separates FIPE model labels from the textual query and normalized OLX attributes", () => {
-  const family = parseCatalogModels({
-    modelos: [
-      { codigo: 1, nome: "Corolla XEi 2.0 Flex 16V Aut." },
-      { codigo: 2, nome: "Corolla Cross XRE 2.0 16V Flex Aut." },
-    ],
-  }).find((option) => option.searchName === "Corolla")!;
-  const selected = searchSchema.parse({
-    ...criteria,
-    model: family.searchName,
-    version: "",
-    olxUrl: "",
-    catalog: {
-      provider: "fipe",
-      brandCode: "59",
-      brandName: "Toyota",
-      modelCode: family.versions[0].code,
-      modelName: family.versions[0].name,
-    },
-  });
-  const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
-  expect(
-    eligibility(row, { ...criteria, model: family.versions[0].name }),
-  ).toContain("Modelo diferente ou não confirmado");
-  expect(eligibility(row, selected)).toEqual([]);
-  expect(row).toMatchObject({
-    model: "Corolla",
-    sourceModel: "Corolla XEi 2.0",
-    version: "XEi 2.0",
-    versionOrigin: "inferred",
-  });
-  const url = new URL(buildOlxUrl(selected, "regiao-de-curitiba-e-paranagua"));
-  expect(url.searchParams.get("q")).toBe("Toyota Corolla");
-  expect(url.toString()).not.toContain("XEi");
-  expect(eligibility({ ...row, model: "Corolla Cross" }, selected)).toContain(
-    "Modelo diferente ou não confirmado",
-  );
-  expect(
-    searchSchema.safeParse({
-      ...selected,
-      catalog: { provider: "fipe", brandCode: "59", brandName: "Toyota" },
-    }).success,
-  ).toBe(true);
-  expect(
-    searchSchema.safeParse({
-      ...selected,
-      catalog: {
-        provider: "fipe",
-        brandCode: "59",
-        brandName: "Toyota",
-        modelCode: "1",
-      },
-    }).success,
-  ).toBe(false);
-});
-it("keeps known brand aliases and existing Mercedes C180 matching without broad model matches", () => {
-  const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
-  expect(canonicalBrand("Mercedes")).toBe(canonicalBrand("Mercedes-Benz"));
-  expect(canonicalModel("C 180")).toBe(canonicalModel("C180"));
-  const mercedes = { ...criteria, brand: "Mercedes-Benz", model: "C180" };
-  expect(
-    eligibility({ ...row, brand: "Mercedes", model: "C 180" }, mercedes),
-  ).toEqual([]);
-  expect(
-    eligibility({ ...row, brand: "Mercedes", model: "C180 Coupé" }, mercedes),
-  ).toContain("Modelo diferente ou não confirmado");
-  const chevrolet = { ...criteria, brand: "GM - Chevrolet", model: "Onix" };
-  expect(
-    eligibility({ ...row, brand: "Chevrolet", model: "Onix" }, chevrolet),
-  ).toEqual([]);
-  expect(
-    new URL(
-      buildOlxUrl(chevrolet, "regiao-de-curitiba-e-paranagua"),
-    ).searchParams.get("q"),
-  ).toBe("Chevrolet Onix");
-  expect(
-    eligibility({ ...row, brand: "GMC", model: "Onix" }, chevrolet),
-  ).toContain("Marca diferente ou desconhecida");
-});
 it("validates the optional local model-group identity separately from FIPE model codes", () => {
   const catalog = {
     provider: "fipe",
@@ -439,96 +379,6 @@ it("validates the optional local model-group identity separately from FIPE model
       }).success,
     ).toBe(false);
 });
-it.each([
-  ["Grand Cherokee Limited 3.6", "Grand Cherokee", "Limited 3.6"],
-  ["Onix Plus LT 1.0", "Onix Plus", "LT 1.0"],
-  ["Range Rover Sport 3.0", "Range Rover Sport", "3.0"],
-  ["C 180 CGI Avantgarde 1.6", "C 180", "CGI Avantgarde 1.6"],
-  ["C180 Avantgarde 1.6", "C180", "Avantgarde 1.6"],
-  ["Civic Touring 1.5", "Civic", "Touring 1.5"],
-  ["Future Compound Name 1.6", "Future Compound Name", "1.6"],
-])(
-  "preserves compound model identity and source text for %s",
-  (sourceModel, model, version) => {
-    const raw = {
-      ...olx(),
-      properties: olx().properties.map((property) =>
-        property.name === "vehicle_model"
-          ? { ...property, value: sourceModel }
-          : property,
-      ),
-    };
-    const row = normalizeOlx({ items: [raw] }, new Date().toISOString())[0];
-    expect(row).toMatchObject({
-      sourceModel,
-      model,
-      version,
-      versionOrigin: "inferred",
-    });
-    expect(row.imageUrl).toBe("https://img.olx.com.br/test-only-corolla.webp");
-  },
-);
-it.each([
-  [
-    "C 180 Coupé CGI Avantgarde 1.6",
-    "C 180 Coupé",
-    "C180 Coupe",
-    "CGI Avantgarde 1.6",
-  ],
-  ["C-180 Coupe Avantgarde 1.6", "C-180 Coupe", "C180 Coupé", "Avantgarde 1.6"],
-  [
-    "C180 Cabriolet Avantgarde 1.6",
-    "C180 Cabriolet",
-    "C 180 Cabriolet",
-    "Avantgarde 1.6",
-  ],
-  [
-    "C 180 Touring Avantgarde 1.6",
-    "C 180 Touring",
-    "C180 Touring",
-    "Avantgarde 1.6",
-  ],
-  ["C-180 SW Avantgarde 1.6", "C-180 SW", "C180 SW", "Avantgarde 1.6"],
-  [
-    "C-180 CGI Coupe Avantgarde 1.6",
-    "C-180 CGI Coupe",
-    "C180 CGI Coupé",
-    "Avantgarde 1.6",
-  ],
-])(
-  "does not turn the explicit Mercedes body %s into a sedan",
-  (sourceModel, model, query, version) => {
-    const raw = {
-      ...olx(),
-      properties: olx().properties.map((property) =>
-        property.name === "vehicle_model"
-          ? { ...property, value: sourceModel }
-          : property.name === "vehicle_brand"
-            ? { ...property, value: "Mercedes" }
-            : property,
-      ),
-    };
-    const row = normalizeOlx({ items: [raw] }, new Date().toISOString())[0];
-    expect(row).toMatchObject({
-      sourceModel,
-      model,
-      version,
-      versionOrigin: "inferred",
-    });
-    expect(
-      eligibility(row, { ...criteria, brand: "Mercedes-Benz", model: "C180" }),
-    ).toContain("Modelo diferente ou não confirmado");
-    expect(
-      eligibility(row, {
-        ...criteria,
-        brand: "Mercedes-Benz",
-        model: query,
-        version: "Avantgarde",
-      }),
-    ).toEqual([]);
-    expect(canonicalModel(model)).toBe(canonicalModel(query));
-  },
-);
 it("filters optional versions by whole words, without claiming unavailable attributes", () => {
   const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
   expect(eligibility(row, { ...criteria, version: "xei" })).toEqual([]);
@@ -704,4 +554,207 @@ it("requires Reef free-trial opt-in and prevents concurrent or cross-site execut
   );
   expect(res.status).toBe(403);
   expect(calls).toHaveLength(0);
+});
+
+it("keeps optional year bounds independent and rejects invalid values without adjustment", () => {
+  for (const [yearMin, yearMax] of [
+    [null, null],
+    [1901, null],
+    [null, 2099],
+    [1901, 1901],
+  ]) {
+    expect(searchSchema.parse({ ...criteria, yearMin, yearMax })).toMatchObject(
+      { yearMin, yearMax, brand: criteria.brand, model: criteria.model },
+    );
+  }
+  for (const [yearMin, yearMax] of [
+    [2025, 2020],
+    [2020.5, null],
+    ["2020", null],
+    [1899, null],
+    [null, 2101],
+  ]) {
+    expect(
+      searchSchema.safeParse({ ...criteria, yearMin, yearMax }).success,
+    ).toBe(false);
+  }
+  expect(calls).toHaveLength(0);
+});
+
+it("round-trips catalog IDs and optional cities, including legacy saved city searches", async () => {
+  const catalog = {
+    provider: "carrouter",
+    revision: catalogFixture.revision,
+    brandCode: catalogFixture.brands[0].id,
+    brandName: catalogFixture.brands[0].name,
+    modelCode: catalogFixture.models[0].id,
+    modelName: catalogFixture.models[0].name,
+    versionCode: catalogFixture.versions[0].id,
+    versionName: catalogFixture.versions[0].name,
+  };
+  for (const cities of [[], ["Curitiba"], ["Curitiba", "Londrina"]]) {
+    const saved = await store.saveSearch({
+      ...criteria,
+      city: "",
+      cities,
+      locationMode: undefined,
+      version: catalog.versionName,
+      catalog,
+    });
+    expect(searchSchema.parse(JSON.parse(saved.criteria))).toMatchObject({
+      catalog,
+      cities,
+      city: cities[0] ?? "",
+      locationMode: cities.length ? "cities" : "state",
+    });
+  }
+  expect(
+    searchSchema.parse({
+      ...criteria,
+      cities: undefined,
+      locationMode: undefined,
+    }),
+  ).toMatchObject({ cities: ["Curitiba"], locationMode: "cities" });
+  expect(
+    searchSchema.parse({
+      ...criteria,
+      cities: ["Londrina"],
+      locationMode: "state",
+    }),
+  ).toMatchObject({ city: "", cities: [], locationMode: "state" });
+  await expect(
+    store.saveSearch({
+      ...criteria,
+      catalog: { ...catalog, modelCode: catalogFixture.models[2].id },
+    }),
+  ).rejects.toThrow("catálogo");
+  await expect(
+    store.saveSearch({
+      ...criteria,
+      catalog: { ...catalog, brandName: "forged" },
+    }),
+  ).rejects.toThrow("catálogo");
+  expect(calls).toHaveLength(0);
+});
+
+it("translates catalog selections to source names and trim while preserving every requested filter", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  const model = catalogFixture.models[0],
+    brand = catalogFixture.brands[0],
+    version = catalogFixture.versions[0];
+  let body: Record<string, unknown> = {};
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (_url: string, init: RequestInit) => {
+      body = JSON.parse(String(init.body));
+      return Response.json({
+        ok: true,
+        data: { listings: [] },
+        meta: { total_results: 0, pagination: { has_more: false } },
+      });
+    }),
+  );
+  const selection = searchSchema.parse({
+    ...criteria,
+    version: version.name,
+    city: "",
+    cities: [],
+    locationMode: "state",
+    catalog: {
+      provider: "carrouter",
+      revision: catalogFixture.revision,
+      brandCode: brand.id,
+      brandName: brand.name,
+      modelCode: model.id,
+      modelName: model.name,
+      versionCode: version.id,
+      versionName: version.name,
+    },
+  });
+  const result = await fetchSource("webmotors", selection, vi.fn());
+  expect(body).toMatchObject({
+    make: brand.references[0].name,
+    model: model.references[0].name,
+    trim: version.references[0].name,
+    year_min: 2020,
+    year_max: 2020,
+    price_max: 120000,
+    mileage_max: 60000,
+    seller_type: "private",
+    location: "pr",
+  });
+  expect(result).toMatchObject({
+    status: "ok",
+    total: 0,
+    received: 0,
+    listings: [],
+    partial: false,
+  });
+  expect(result.applied?.remote).toContain("versão");
+  expect(result.applied?.local).toContain("ano");
+});
+
+it("accounts for invalid records, duplicates and eligibility rejections separately", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () =>
+      Response.json({
+        ok: true,
+        data: {
+          listings: [
+            reef,
+            reef,
+            { ...reef, listing_id: 2, url: "https://invalid.test/" },
+            { ...reef, listing_id: 3, year_model: 2019 },
+          ],
+          total_results: 4,
+          has_more: false,
+        },
+      }),
+    ),
+  );
+  const result = await fetchSource("webmotors", criteria, vi.fn());
+  expect(result).toMatchObject({
+    status: "ok",
+    received: 4,
+    partial: false,
+    normalizationDiscards: {
+      "Identificador ou URL de anúncio inválido": 1,
+      "Anúncio duplicado na resposta": 1,
+    },
+  });
+  expect(result.listings.filter((row) => !row.reasons.length)).toHaveLength(1);
+  expect(result.listings[1].reasons).toContain(
+    "Ano fora do intervalo ou desconhecido",
+  );
+  expect(result.applied?.remote).not.toContain("versão");
+});
+
+it("reports malformed integration data as failure and missing mappings before a billed call", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  const fetcher = vi.fn(async () => Response.json({ ok: true, data: {} }));
+  vi.stubGlobal("fetch", fetcher);
+  expect((await fetchSource("webmotors", criteria, vi.fn())).status).toBe(
+    "error",
+  );
+  fetcher.mockClear();
+  const reserve = vi.fn();
+  const result = await fetchSource(
+    "webmotors",
+    {
+      ...criteria,
+      catalog: {
+        provider: "carrouter",
+        revision: "missing",
+        brandCode: "unknown",
+        brandName: criteria.brand,
+      },
+    },
+    reserve,
+  );
+  expect(result.status).toBe("error");
+  expect(result.message).toContain("sem correspondência");
+  expect(fetcher).not.toHaveBeenCalled();
+  expect(reserve).not.toHaveBeenCalled();
 });

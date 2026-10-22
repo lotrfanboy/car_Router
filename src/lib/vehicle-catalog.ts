@@ -1,169 +1,196 @@
-/** FIPE identifies complete model/trim records, not the textual model query. */
-export type CatalogOption = { code: string; name: string };
-export type CatalogBrandOption = CatalogOption & { searchName: string };
-export type CatalogModelOption = CatalogOption & {
-  searchName: string;
-  versions: CatalogOption[];
-};
-export type CatalogYearOption = CatalogOption & { versions: CatalogOption[] };
+import { z } from "zod";
 
-const clean = (value: string) => value.trim().replace(/\s+/g, " ");
-const key = (value: string) =>
+/** Identity normalization only. No model/trim names or text-cutting rules. */
+export const catalogKey = (value: string) =>
   value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
+    .replace(/(\d),(?=\d)/g, "$1.")
+    .replace(/[^a-z0-9.]+/g, "");
+const id = z.string().trim().min(1).max(240);
+const name = z.string().trim().min(1).max(240);
+const reference = z.object({
+  source: z.enum(["webmotors", "olx", "fipe"]),
+  id,
+  name,
+  aliases: z.array(name).default([]),
+  evidenceId: id,
+});
+const entity = z.object({ id, name, references: z.array(reference).min(1) });
+export const catalogSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    revision: id,
+    evidence: z.array(
+      z.object({
+        id,
+        url: z.url(),
+        retrievedAt: z.iso.datetime(),
+        sha256: z.string().regex(/^[a-f0-9]{64}$/),
+        kind: z.enum(["catalog", "crosswalk"]),
+      }),
+    ),
+    brands: z.array(entity),
+    models: z.array(entity.extend({ brandId: id })),
+    versions: z.array(entity.extend({ modelId: id })),
+  })
+  .superRefine((data, ctx) => {
+    const fail = (message: string) => ctx.addIssue({ code: "custom", message });
+    const evidence = new Set(data.evidence.map((item) => item.id));
+    if (evidence.size !== data.evidence.length)
+      fail("Identificador de evidência duplicado.");
+    const brands = new Set(data.brands.map((item) => item.id));
+    const models = new Set(data.models.map((item) => item.id));
+    for (const rows of [data.brands, data.models, data.versions]) {
+      if (new Set(rows.map((item) => item.id)).size !== rows.length)
+        fail("Identificador de catálogo duplicado.");
+      const refs = new Set<string>();
+      for (const item of rows)
+        for (const ref of item.references) {
+          if (!evidence.has(ref.evidenceId))
+            fail("Correspondência sem evidência.");
+          const scope =
+            "brandId" in item
+              ? item.brandId
+              : "modelId" in item
+                ? item.modelId
+                : "";
+          const key = `${scope}:${ref.source}:${ref.id}`;
+          if (refs.has(key))
+            fail("Identificador da fonte associado a mais de uma entidade.");
+          refs.add(key);
+        }
+    }
+    for (const model of data.models) {
+      if (!brands.has(model.brandId)) fail("Modelo sem marca de catálogo.");
+      if (model.references.some((ref) => ref.source === "fipe"))
+        fail("Registro FIPE completo não é identidade de modelo.");
+    }
+    for (const version of data.versions)
+      if (!models.has(version.modelId)) fail("Versão sem modelo de catálogo.");
+  });
+export type VehicleCatalog = z.infer<typeof catalogSchema>;
+export const emptyCatalog: VehicleCatalog = {
+  schemaVersion: 1,
+  revision: "unconfigured",
+  evidence: [],
+  brands: [],
+  models: [],
+  versions: [],
+};
+export type CatalogEntity = VehicleCatalog["brands"][number];
+export type CatalogOption = {
+  code: string;
+  name: string;
+  provider?: "carrouter";
+  revision?: string;
+};
+export const catalogOption = (
+  entity: CatalogEntity,
+  revision: string,
+): CatalogOption => ({
+  code: entity.id,
+  name: entity.name,
+  provider: "carrouter",
+  revision,
+});
 
-/** Query aliases; callers retain the original FIPE name and code separately. */
-export function catalogBrandSearchName(name: string) {
-  const aliases: Record<string, string> = {
-    vw: "Volkswagen",
-    "vw volkswagen": "Volkswagen",
-    volkswagen: "Volkswagen",
-    gm: "Chevrolet",
-    "gm chevrolet": "Chevrolet",
-    chevrolet: "Chevrolet",
-    "kia motors": "Kia",
-    kia: "Kia",
-    mercedes: "Mercedes-Benz",
-    "mercedes benz": "Mercedes-Benz",
+/** Legacy text remains text, never a fabricated catalog identity. */
+export const catalogBrandSearchName = (value: string) =>
+  value.trim().replace(/\s+/g, " ");
+
+export type CatalogIdentity = {
+  brandId: string;
+  modelId?: string;
+  versionId?: string;
+};
+export type SourceVehicle = {
+  source: "olx" | "webmotors";
+  brand: string | null;
+  model: string | null;
+  version?: string | null;
+  brandId?: string | null;
+  modelId?: string | null;
+  versionId?: string | null;
+};
+function resolve(
+  rows: CatalogEntity[],
+  source: SourceVehicle["source"],
+  sourceId: string | null | undefined,
+  label: string | null | undefined,
+) {
+  const matches = rows.filter((entity) =>
+    entity.references.some(
+      (ref) =>
+        ref.source === source &&
+        (sourceId
+          ? ref.id === sourceId
+          : !!label &&
+            [ref.name, ...ref.aliases].some(
+              (value) => catalogKey(value) === catalogKey(label),
+            )),
+    ),
+  );
+  return matches.length === 1 ? matches[0] : undefined;
+}
+/** Resolve IDs first. Full source descriptions are joined only through explicit catalog records. */
+export function resolveCatalogVehicle(
+  catalog: VehicleCatalog,
+  row: SourceVehicle,
+) {
+  const brand = resolve(catalog.brands, row.source, row.brandId, row.brand);
+  if (!brand) return null;
+  const models = catalog.models.filter((item) => item.brandId === brand.id);
+  let model = resolve(models, row.source, row.modelId, row.model);
+  const versions = catalog.versions.filter((item) =>
+    models.some((parent) => parent.id === item.modelId),
+  );
+  const version = resolve(
+    model ? versions.filter((item) => item.modelId === model?.id) : versions,
+    row.source,
+    row.versionId,
+    row.version ?? (row.source === "olx" ? row.model : null),
+  );
+  if (!model && !row.modelId && version)
+    model = models.find(
+      (item) =>
+        item.id === (version as VehicleCatalog["versions"][number]).modelId,
+    );
+  return {
+    brand,
+    model,
+    version,
+    identity: {
+      brandId: brand.id,
+      ...(model ? { modelId: model.id } : {}),
+      ...(version && model ? { versionId: version.id } : {}),
+    },
   };
-  return aliases[key(name)] ?? clean(name);
 }
-
-// Parsing hints, not catalog options. Every returned name is derived from a
-// record received from the source. Unknown compound names remain intact until
-// a recognized specification/trim boundary; manual entry covers ambiguity.
-const compoundModel =
-  /^(?:corolla (?:cross|fielder)|onix plus|cruze sport6|palio weekend|duster oroch|etios cross|grand (?:vitara(?: xl-7)?|cherokee|livina|sc[eé]nic|saveiro)|range rover(?: (?:sport|evoque|velar))?|land cruiser(?: prado)?|new (?:beetle|civic|fiesta|march)|pajero (?:full|sport|tr4|io)|lancer sportback|outlander sport|eclipse cross|discovery sport|santa f[eé]|hb20(?:s|x)?|sandero stepway|clio sedan|m[eé]gane grand tour|golf variant|jetta variant|passat variant|tiguan allspace|up!|c4 (?:cactus|lounge|pallas|picasso)|c3 (?:aircross|picasso)|aircross|freelander 2|defender (?:90|110|130)|discovery [1-5]|dolphin (?:mini|plus)|song (?:plus|pro)|yuan (?:plus|pro)|haval h6|ora 03|tiggo (?:[2-9](?:x)?)(?: pro)?|arrizo [3-8])(?=$|\s)/i;
-const trimBoundary =
-  /^(?:(?:cd|cs|highline)\d[.,]|\d+[.,]\d|\d{3,4}(?:i|cc)?$|\d+v$|\d+p$|v[6-9]$|16v|8v|turbo$|diesel$|flex$|hybrid$|h[ií]brido$|el[eé]trico$|aut\.?$|mec\.?$|cv[t]?\.?$|(?:gl|gls|gli|glx|glt|gti|gts|cl|cli|clx|lx|lxl|ex|exl|exr|exs|xei|xli|xrs|xre|xrx|altis|se|sel|ses|sl|slt|sls|sr|srv|srx|lt|ltz|lts|le|xl|xls|xlt|xr|xs|xt|xsi|tsx|titanium|limited|laredo|longitude|overland|rubicon|sahara|sport|sporting|highline|trendline|comfortline|comfort\.?|comfor\.?|high\.?|hig\.?|highli\.?|sense|advance|active|allure|griffe|premier|premium|prestige|platinum|elegance|exclusive|expression|authentique|dynamique|intense|intens|iconic|zen|life|vibe|live|style|drive|attractive|essence|essencial|adventure|way|freedom|volcano|endurance|extreme|black|power|rallye|rally|trend|plus|prime|connect|xtreme|track|city|cab\.?|cd|cs|chassis|standard|furg[aã]o|lotação|escolar)(?:[./]|$))/i;
-// Touring can be a wagon identity on other makes, so do not strip it globally.
-const hondaTrim =
-  /^(civic|accord|fit|city|cr-v|hr-v|wr-v)\s+(?:touring|si|type[ -]r)(?=$|[\s./])/i;
-// A body label can follow a technical qualifier (for example CGI Coupé).
-// Keep the entire prefix through the body; removing interior words would invent
-// an equivalence and break the source trim slicing contract.
-const mercedesBody = /\s(?:coup[eé]|cabriolet|touring|sw)(?=$|\s)/i;
-const mercedesSeries =
-  /^(?:C|A|E|S|CL|CLA|CLK|CLS|SL|SLC|SLK|GLA|GLB|GLC|GLE|GLS|ML|GL)[ -]?\d{2,3}(?=$|\s)/i;
-
-/** Return a prefix of the whitespace-normalized source, so trim slicing is safe. */
-export function catalogModelFamily(name: string) {
-  const value = clean(name);
-  const compound = value.match(compoundModel)?.[0];
-  if (compound) return compound;
-  const series = value.match(mercedesSeries)?.[0];
-  if (series) {
-    const suffix = value.slice(series.length);
-    const body = suffix.match(mercedesBody);
-    return body
-      ? value.slice(0, series.length + body.index! + body[0].length)
-      : series;
-  }
-  const hondaModel = value.match(hondaTrim)?.[1];
-  if (hondaModel) return hondaModel;
-  const tokens = value.split(" ");
-  const boundary = tokens.findIndex(
-    (token, index) =>
-      index > 0 && (trimBoundary.test(token) || /^\(/.test(token)),
-  );
-  return tokens.slice(0, boundary < 0 ? tokens.length : boundary).join(" ");
-}
-
-// The C 180 / C-180 / C180 query equivalence already exists in the search layer.
-// Keep it here too without changing the prefix returned for source trim slicing.
-function modelSearchName(family: string) {
-  return family.replace(/^c[ -]?180(?=$|\s)/i, "C180");
-}
-
-type Row = Record<string, unknown>;
-function rows(value: unknown): Row[] {
-  if (!Array.isArray(value)) throw new Error("Formato de catálogo inválido.");
-  return value.filter((row): row is Row =>
-    Boolean(row && typeof row === "object" && !Array.isArray(row)),
-  );
-}
-function option(
-  row: Row,
-  codeKey: string,
-  nameKey: string,
-): CatalogOption | null {
-  const code = String(row[codeKey] ?? "");
-  const name = row[nameKey];
-  return /^\d{1,10}$/.test(code) && typeof name === "string" && name.trim()
-    ? { code, name: clean(name) }
-    : null;
-}
-function uniqueOptions(items: (CatalogOption | null)[]) {
-  const unique = new Map<string, CatalogOption>();
-  for (const item of items)
-    if (item && !unique.has(item.code)) unique.set(item.code, item);
-  if (!unique.size) throw new Error("O catálogo não retornou opções válidas.");
-  return [...unique.values()];
-}
-export function parseCatalogBrands(value: unknown): CatalogBrandOption[] {
-  return uniqueOptions(rows(value).map((row) => option(row, "codigo", "nome")))
-    .map((item) => ({ ...item, searchName: catalogBrandSearchName(item.name) }))
-    .sort((a, b) => a.searchName.localeCompare(b.searchName, "pt-BR"));
-}
-export function parseCatalogModels(value: unknown): CatalogModelOption[] {
-  if (!value || typeof value !== "object" || !("modelos" in value))
-    throw new Error("Formato de catálogo inválido.");
-  const versions = uniqueOptions(
-    rows(value.modelos).map((row) => option(row, "codigo", "nome")),
-  );
-  const families = new Map<string, CatalogModelOption>();
-  for (const version of versions) {
-    const name = catalogModelFamily(version.name);
-    const searchName = modelSearchName(name);
-    // A family key is UI identity only, never a FIPE model code.
-    const code = `family:${key(searchName)}`;
-    const existing = families.get(code);
-    if (existing) existing.versions.push(version);
-    else families.set(code, { code, name, searchName, versions: [version] });
-  }
-  return [...families.values()]
-    .map((family) => ({
-      ...family,
-      versions: family.versions.sort((a, b) =>
-        a.name.localeCompare(b.name, "pt-BR"),
-      ),
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+export function sourceCatalogName(
+  entity: CatalogEntity | undefined,
+  source: SourceVehicle["source"],
+) {
+  const references = entity?.references.filter((ref) => ref.source === source);
+  // Sending one arbitrary filter would hide the other source identities.
+  return references?.length === 1 ? references[0].name : undefined;
 }
 export function parseCatalogCities(value: unknown): CatalogOption[] {
-  return uniqueOptions(
-    rows(value).map((row) => option(row, "id", "nome")),
-  ).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
-}
-
-export function parseCatalogYears(
-  values: { model: CatalogOption; value: unknown }[],
-): CatalogYearOption[] {
-  const years = new Map<string, CatalogYearOption>();
-  for (const { model, value } of values) {
-    for (const row of rows(value)) {
-      const code = String(row.codigo ?? "");
-      const name = typeof row.nome === "string" ? clean(row.nome) : "";
-      const year = name.match(/^(\d{4})\b/)?.[1];
-      if (!/^\d{4}-\d+$/.test(code) || !year) continue;
-      const existing = years.get(year);
-      if (existing) {
-        if (!existing.versions.some((version) => version.code === model.code))
-          existing.versions.push(model);
-      } else years.set(year, { code: year, name: year, versions: [model] });
-    }
-  }
-  if (!years.size) throw new Error("O catálogo não retornou anos válidos.");
-  return [...years.values()]
-    .map((year) => ({
-      ...year,
-      versions: year.versions.sort((a, b) =>
-        a.name.localeCompare(b.name, "pt-BR"),
-      ),
-    }))
-    .sort((a, b) => Number(b.code) - Number(a.code));
+  const rows = z
+    .array(
+      z.object({
+        id: z.union([z.string().regex(/^\d+$/), z.number().int().positive()]),
+        nome: name,
+      }),
+    )
+    .parse(value);
+  return [
+    ...new Map(
+      rows.map((item) => [
+        String(item.id),
+        { code: String(item.id), name: item.nome },
+      ]),
+    ).values(),
+  ].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 }

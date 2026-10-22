@@ -2,7 +2,13 @@
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 
-export type SearchOption = { code: string; name: string; searchName?: string };
+export type SearchOption = {
+  code: string;
+  name: string;
+  searchName?: string;
+  provider?: "carrouter";
+  revision?: string;
+};
 
 const key = (value: string) =>
   value
@@ -51,9 +57,8 @@ export function SearchCombobox({
   const filtered = useMemo(() => {
     const seen = new Set<string>();
     const unique = options.filter((option) => {
-      const labelKey = key(option.name);
-      if (!labelKey || seen.has(labelKey)) return false;
-      seen.add(labelKey);
+      if (!key(option.name) || seen.has(option.code)) return false;
+      seen.add(option.code);
       return true;
     });
     const query = selectedCode ? "" : key(value);
@@ -185,7 +190,10 @@ export function SearchCombobox({
             <p role="status">Carregando opções…</p>
           ) : error ? (
             <p role="status">
-              Catálogo indisponível. Digite manualmente.{" "}
+              Catálogo indisponível.{" "}
+              {onManual
+                ? "Digite e confirme a entrada manual."
+                : "Tente novamente para selecionar uma opção."}{" "}
               {onRetry && (
                 <button
                   type="button"
@@ -197,7 +205,12 @@ export function SearchCombobox({
               )}
             </p>
           ) : filtered.length === 0 ? (
-            <p>Nenhuma opção. Digite manualmente.</p>
+            <p>
+              Nenhuma opção.
+              {onManual
+                ? " Digite e confirme a entrada manual."
+                : " Tente outro nome."}
+            </p>
           ) : (
             <ul id={`${id}-options`} role="listbox" aria-label={label}>
               {filtered.map((option, index) => (

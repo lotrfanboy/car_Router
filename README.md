@@ -1,5 +1,7 @@
 # Radar Automotivo
 
+**Busca — 22/10/2026:** ano independente, cidades opcionais e critérios/descartes explícitos. A árvore de veículos agora exige dados identificados; o catálogo real está pendente, com entrada manual temporária. Veja o [levantamento Reef/Carpedia, custos e restrições de adoção](docs/search-catalog-review.md) e a [validação desta etapa](docs/VALIDACAO-BUSCA-GENERICA-2026-10-22.md).
+
 O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento exige agendador no servidor, armazenamento persistente e canal de e-mail configurados; sem essas dependências a interface indica configuração pendente. Esta entrega é local, sem publicação automática.
 
 Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
