@@ -10,6 +10,12 @@ export const normalized = (s: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+export const canonicalBrand = (value: string) => {
+  const name = normalized(value);
+  return name === "mercedes" || name === "mercedes benz" ? "mercedes benz" : name;
+};
+export const canonicalModel = (value: string) =>
+  normalized(value).replace(/^c 180\b/, "c180");
 export function publicListingUrl(value: string, source: Source) {
   try {
     const url = new URL(value);
@@ -33,7 +39,7 @@ export const searchSchema = z
   .object({
     name: z.string().trim().min(1).max(100),
     brand: z.string().trim().min(1).max(80),
-    model: z.string().trim().min(1).max(100),
+    model: z.string().trim().min(1).max(200),
     version: z.string().trim().max(120).optional(),
     city: z.string().trim().min(1).max(120),
     state: z.enum(states as [string, ...string[]]),
@@ -121,9 +127,9 @@ export type SearchResult = { sources: SourceResult[] };
 
 export function eligibility(row: Listing, s: SearchCriteria) {
   const reasons: string[] = [];
-  if (!row.brand || normalized(row.brand) !== normalized(s.brand))
+  if (!row.brand || canonicalBrand(row.brand) !== canonicalBrand(s.brand))
     reasons.push("Marca diferente ou desconhecida");
-  if (!row.model || normalized(row.model) !== normalized(s.model))
+  if (!row.model || canonicalModel(row.model) !== canonicalModel(s.model))
     reasons.push("Modelo diferente ou não confirmado");
   if (
     s.version &&
