@@ -1,7 +1,7 @@
 import { readFileSync, mkdtempSync } from "node:fs";
 
 import path from "node:path";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/prisma-sqlite";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
 import { expect, it } from "vitest";
 
@@ -21,7 +21,7 @@ it("adds a current-price baseline to an existing database without changing vehic
         await client.$executeRawUnsafe(statement);
       }
     };
-    await apply("prisma/migrations/20261021000000_init/migration.sql");
+    await apply("prisma/sqlite/migrations/20261021000000_init/migration.sql");
     await client.$executeRawUnsafe(
       `INSERT INTO Vehicle (id, brand, model, manufactureYear, modelYear, mileage, priceCents, source, favorite, createdAt, updatedAt) VALUES ('old', 'Toyota', 'Corolla', 2020, 2021, 50000, 9000000, 'Manual', true, '2020-01-01', '2020-01-01')`,
     );
@@ -42,7 +42,9 @@ it("adds a current-price baseline to an existing database without changing vehic
       where: { id: "old" },
       select: legacySelect,
     });
-    await apply("prisma/migrations/20261021010000_price_history/migration.sql");
+    await apply(
+      "prisma/sqlite/migrations/20261021010000_price_history/migration.sql",
+    );
     expect(
       await client.vehicle.findUnique({
         where: { id: "old" },
@@ -59,7 +61,9 @@ it("adds a current-price baseline to an existing database without changing vehic
     expect(history[0].observedAt.getTime()).toBeGreaterThan(
       new Date("2020-01-02").getTime(),
     );
-    await apply("prisma/migrations/20261021020000_discovery/migration.sql");
+    await apply(
+      "prisma/sqlite/migrations/20261021020000_discovery/migration.sql",
+    );
     expect(
       await client.vehicle.findUnique({
         where: { id: "old" },
@@ -68,7 +72,9 @@ it("adds a current-price baseline to an existing database without changing vehic
     ).toEqual(before);
     expect(await client.vehiclePrice.findMany()).toEqual(history);
     expect(await client.savedSearch.count()).toBe(0);
-    await apply("prisma/migrations/20261021030000_olx_locations/migration.sql");
+    await apply(
+      "prisma/sqlite/migrations/20261021030000_olx_locations/migration.sql",
+    );
     expect(
       await client.vehicle.findUnique({
         where: { id: "old" },
@@ -112,7 +118,7 @@ it("adds a current-price baseline to an existing database without changing vehic
       data: { provider: "fixture", credits: 1 },
     });
     await apply(
-      "prisma/migrations/20261021040000_catalog_searches/migration.sql",
+      "prisma/sqlite/migrations/20261021040000_catalog_searches/migration.sql",
     );
     expect(
       await client.vehicle.findUnique({
@@ -144,14 +150,16 @@ it("adds a current-price baseline to an existing database without changing vehic
     expect(await client.providerSpend.findMany()).toEqual([spend]);
     expect(await client.catalogSearch.count()).toBe(0);
     await apply(
-      "prisma/migrations/20261021050000_vehicle_seller_type/migration.sql",
+      "prisma/sqlite/migrations/20261021050000_vehicle_seller_type/migration.sql",
     );
     const migratedVehicle = await client.vehicle.findUniqueOrThrow({
       where: { id: "old" },
     });
     expect(migratedVehicle.source).toBe("Manual");
     expect(migratedVehicle.sellerType).toBeNull();
-    await apply("prisma/migrations/20261021060000_search_focus/migration.sql");
+    await apply(
+      "prisma/sqlite/migrations/20261021060000_search_focus/migration.sql",
+    );
     expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
       migratedVehicle,
     );

@@ -20,7 +20,7 @@ Não há agendamento, mensagens, importação automática no catálogo manual, F
 
 ## Executar localmente
 
-Após instalar dependências, configurar `DATABASE_URL` no `.env` conforme `.env.example` e executar `npm run setup`. As migrações são aditivas; não recriam Vehicle ou seu histórico. `npm run dev` atende somente em 127.0.0.1. Para versão compilada: `npm run build` e `npm run start`.
+Após instalar dependências, configure `DATABASE_URL` e `DIRECT_URL` no `.env` conforme `.env.example` e execute `npm run setup`. As migrações de produção ficam em `supabase/migrations` e são aplicadas separadamente com `npm run db:migrate`. `npm run dev` atende somente em 127.0.0.1. Para versão compilada: `npm run build` e `npm run start`.
 
 Configuração exclusivamente no servidor, arquivos ignorados pelo Git:
 
@@ -35,7 +35,7 @@ Salvar/carregar buscas, recarregar a página e abrir histórico **não consultam
 
 - Gecko: antes da extração, verificar plano `free`, saldo entre 1 e 100 e custo de 1 crédito no catálogo autenticado. Alteração de plano/custo suspende a consulta.
 - Reef: consulta documentada de 2 créditos. O teste público não estabeleceu endpoint autenticado de saldo/plano: exige confirmação local explícita de créditos gratuitos via `REEF_FREE_TRIAL=true`. Essa opção não verifica faturamento no fornecedor; nunca habilitar para conta paga sob a autorização atual.
-- SQLite registra reserva **antes** da extração. Limite de 10 créditos/dia UTC por fornecedor e teto cumulativo deste MVP de 20 Gecko / 40 Reef. Falhas ambíguas continuam reservadas, pois um timeout pode ter sido cobrado. Não é saldo oficial nem reconciliação financeira, e não inclui testes anteriores ao MVP.
+- PostgreSQL registra a reserva **antes** da extração e serializa concorrentes por fornecedor. Limite de 10 créditos/dia UTC por fornecedor e teto cumulativo deste MVP de 20 Gecko / 40 Reef. Falhas ambíguas continuam reservadas, pois um timeout pode ter sido cobrado. Não é saldo oficial nem reconciliação financeira, e não inclui testes anteriores ao MVP.
 - Uma consulta global simultânea, trava persistida por até cinco minutos se o processo cair; intervalo mínimo de um minuto por busca; até 30 buscas salvas. Nenhum código compra, recarrega ou assina serviço.
 
 ## Critérios e qualidade

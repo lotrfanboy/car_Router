@@ -4,14 +4,14 @@ services:
     runtime: node
     plan: free
     buildCommand: npm ci --no-audit --no-fund && npm run db:generate && npm run build
-    startCommand: npm run db:migrate && node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port $PORT
+    startCommand: node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port $PORT
     healthCheckPath: /
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: 24.19.0
       - key: DATABASE_URL
-        value: file:/tmp/radar-automotivo-preview.db
+        sync: false
       - key: GECKO_API_KEY
         sync: false
       - key: REEF_API_KEY
@@ -20,3 +20,13 @@ services:
         sync: false
       - key: RADAR_SCHEDULER_ENABLED
         value: "false"
+      - key: RADAR_CRON_SECRET
+        sync: false
+      - key: RADAR_APP_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RADAR_EMAIL_FROM
+        sync: false
+      - key: RADAR_EMAIL_TO
+        sync: false

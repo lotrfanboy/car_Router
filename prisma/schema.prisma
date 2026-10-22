@@ -1,11 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "client"
+  output     = "../src/generated/prisma-postgres"
 }
+
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model Vehicle {
   id              String   @id @default(cuid())
   brand           String
@@ -47,19 +50,19 @@ model VehiclePrice {
 }
 
 model SavedSearch {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   name      String
   criteria  String
-  createdAt DateTime @default(now())
-  queryKey  String?  @unique
+  createdAt DateTime    @default(now())
+  queryKey  String?     @unique
   runs      SearchRun[]
   radars    Radar[]
 }
 
 model SearchRun {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   searchId  String
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
   result    String
   search    SavedSearch @relation(fields: [searchId], references: [id], onDelete: Cascade)
 
@@ -67,76 +70,83 @@ model SearchRun {
 }
 
 model DiscoveredListing {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   source     String
   externalId String
   payload    String
-  firstSeen  DateTime @default(now())
-  lastSeen   DateTime @default(now())
+  firstSeen  DateTime       @default(now())
+  lastSeen   DateTime       @default(now())
   savedAt    DateTime?
   prices     ListingPrice[]
 
   @@unique([source, externalId])
+  @@index([lastSeen])
+  @@index([savedAt])
 }
 
 model SearchCache {
-  id        String @id
+  id        String   @id
   result    String
   updatedAt DateTime @default(now())
 }
 
 model Radar {
-  id           String @id @default(cuid())
-  searchId     String
-  name         String
-  minPercent   Float
-  intervalHours Int @default(24)
-  enabled      Boolean @default(false)
-  lastRunAt    DateTime?
-  nextRunAt    DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  search       SavedSearch @relation(fields: [searchId], references: [id], onDelete: Restrict)
-  runs         RadarRun[]
-  notices      RadarNotice[]
+  id            String        @id @default(cuid())
+  searchId      String
+  name          String
+  minPercent    Float
+  intervalHours Int           @default(24)
+  enabled       Boolean       @default(false)
+  lastRunAt     DateTime?
+  nextRunAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  search        SavedSearch   @relation(fields: [searchId], references: [id], onDelete: Restrict)
+  runs          RadarRun[]
+  notices       RadarNotice[]
+
+  @@index([searchId])
+  @@index([enabled, nextRunAt])
 }
 
 model RadarRun {
-  id         String @id @default(cuid())
+  id         String    @id @default(cuid())
   radarId    String
-  startedAt  DateTime @default(now())
+  startedAt  DateTime  @default(now())
   finishedAt DateTime?
   status     String
   message    String
-  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
   @@index([radarId, startedAt])
 }
 
 model RadarNotice {
-  id         String @id @default(cuid())
+  id         String    @id @default(cuid())
   radarId    String
   listingKey String
   priceCents Int
-  eventKey   String @unique
+  eventKey   String    @unique
   status     String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
   sentAt     DateTime?
-  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
   @@index([radarId, listingKey])
 }
 
 model ListingPrice {
-  id         Int @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   listingId  String
   priceCents Int
-  observedAt DateTime @default(now())
+  observedAt DateTime          @default(now())
   listing    DiscoveredListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([listingId, id])
 }
 
 model ProviderSpend {
-  id        Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   provider  String
   credits   Int
   createdAt DateTime @default(now())
@@ -145,12 +155,14 @@ model ProviderSpend {
 }
 
 model SearchLock {
-  id        String @id
+  id        String   @id
   expiresAt DateTime
+
+  @@index([expiresAt])
 }
 
 model OlxLocation {
-  id         String @id
+  id         String   @id
   region     String
   verifiedAt DateTime @default(now())
 }

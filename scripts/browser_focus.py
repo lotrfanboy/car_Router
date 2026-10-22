@@ -10,7 +10,7 @@ artifacts.mkdir(parents=True,exist_ok=True)
 with tempfile.TemporaryDirectory(prefix='car-router-ui-') as folder:
  dbpath=Path(folder)/'test.db'
  conn=sqlite3.connect(dbpath)
- for migration in sorted((repo/'prisma'/'migrations').glob('*/migration.sql')):
+ for migration in sorted((repo/'prisma'/'sqlite'/'migrations').glob('*/migration.sql')):
   conn.executescript(migration.read_text())
  now=datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z')
  criteria=dict(name='TESTE ISOLADO · Corolla',brand='Toyota',model='Corolla',version='XEi',city='Curitiba',state='PR',yearMin=2021,yearMax=2021,priceMax=110000,mileageMax=70000,privateOnly=False,sources=['olx'],olxUrl='')

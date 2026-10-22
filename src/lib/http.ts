@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma-postgres";
 export function apiError(error: unknown) {
   if (error instanceof ZodError)
     return NextResponse.json(
@@ -12,10 +12,15 @@ export function apiError(error: unknown) {
     );
   if (error instanceof SyntaxError)
     return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === "P2025"
-  )
+  const prismaCode =
+    error instanceof Prisma.PrismaClientKnownRequestError
+      ? error.code
+      : error instanceof Error &&
+          "code" in error &&
+          typeof error.code === "string"
+        ? error.code
+        : null;
+  if (prismaCode === "P2025")
     return NextResponse.json(
       { error: "Anúncio não encontrado." },
       { status: 404 },

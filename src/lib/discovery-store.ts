@@ -26,6 +26,16 @@ export async function reserveCredits(provider: string, credits: number) {
   if (!(provider in trialLimit) || credits < 1)
     throw new SearchError("Orçamento inválido.");
   await db.$transaction(async (tx) => {
+    // The upsert takes a row lock for the transaction. PostgreSQL can otherwise
+    // let concurrent requests both pass the aggregate checks before inserting.
+    await tx.searchLock.upsert({
+      where: { id: `provider-budget:${provider}` },
+      create: {
+        id: `provider-budget:${provider}`,
+        expiresAt: new Date(Date.now() + 86400000),
+      },
+      update: { expiresAt: new Date(Date.now() + 86400000) },
+    });
     const day = new Date();
     day.setUTCHours(0, 0, 0, 0);
     const [today, all] = await Promise.all([

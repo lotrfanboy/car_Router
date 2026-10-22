@@ -51,7 +51,7 @@ def seed(db_path):
                     yearMax=2021, priceMax=110000, mileageMax=70000,
                     privateOnly=False, sources=["olx"], olxUrl="")
     with sqlite3.connect(db_path) as db:
-        for migration in sorted((REPO / "prisma" / "migrations").glob("*/migration.sql")):
+        for migration in sorted((REPO / "prisma" / "sqlite" / "migrations").glob("*/migration.sql")):
             db.executescript(migration.read_text())
         rows = []
         for i in range(7):

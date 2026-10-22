@@ -15,7 +15,11 @@ try {
     ["node_modules/vitest/vitest.mjs", "run", ...process.argv.slice(2)],
     {
       stdio: "inherit",
-      env: { ...process.env, RADAR_TEST_ROOT: root },
+      env: {
+        ...process.env,
+        RADAR_TEST_ROOT: root,
+        PRISMA_SCHEMA: "prisma/sqlite/schema.prisma",
+      },
     },
   );
   if (result.error) throw result.error;

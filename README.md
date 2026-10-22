@@ -4,7 +4,7 @@
 
 O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento exige agendador no servidor, armazenamento persistente e canal de e-mail configurados; sem essas dependências a interface indica configuração pendente. Esta entrega é local, sem publicação automática.
 
-Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. SQLite persistente, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
+Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. A persistência de produção usa PostgreSQL no Supabase, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
 ## Executar no Windows
 
@@ -17,6 +17,7 @@ git clone https://github.com/lotrfanboy/car_Router.git
 cd car_Router
 git switch main
 Copy-Item .env.example .env
+# Preencha DATABASE_URL e DIRECT_URL no .env com as conexões do Supabase
 npm ci
 npm run setup
 npm run build
@@ -25,7 +26,7 @@ npm start
 
 Abra **http://127.0.0.1:3000**. Para parar, pressione Ctrl+C. Se o PowerShell bloquear o script `npm.ps1`, execute os mesmos comandos com `npm.cmd`.
 
-Depois da primeira instalação, basta executar `npm start`. Não apague `prisma/radar.db`: esse arquivo contém seus anúncios e favoritos. Nenhum banco com dados de usuários é versionado.
+Depois da primeira instalação, basta executar `npm start`. Anúncios, buscas salvas, históricos e configuração do Radar ficam no projeto Supabase. Nenhuma credencial ou dado de usuário é versionado.
 
 Para desenvolvimento:
 
@@ -52,25 +53,28 @@ Valores monetários são armazenados em **centavos inteiros**. A diferença é `
 ## Arquitetura
 
 - Next.js 16 (App Router), React 19, TypeScript e Tailwind CSS 4.
-- Prisma 6.19, adaptador oficial `@prisma/adapter-libsql` e SQLite **em arquivo local**. Não é usado Turso ou qualquer serviço remoto.
+- Prisma 6.19 com `@prisma/adapter-pg` e PostgreSQL 17 no Supabase. SQLite/libSQL permanece somente nos testes isolados e nos roteiros locais legados.
 - Validação compartilhada com Zod; ícones Lucide; Vitest.
 - `src/lib/vehicle.ts`: validação, filtros, ordenações e cálculo.
 - `src/lib/repository.ts`: persistência com Prisma.
 - `src/app/api/vehicles`: API JSON e tratamento de erros.
 - `src/components`: componentes, formulário e estado da interface.
-- `prisma/schema.prisma` e `prisma/migrations`: modelo e migração versionada.
+- `prisma/schema.prisma`: modelo PostgreSQL usado pela aplicação.
+- `supabase/migrations`: migrações de produção, com RLS e permissões versionadas.
+- `prisma/sqlite`: modelo e migrações preservados para testes isolados.
 
 Vehicle reúne os dados do anúncio neste MVP; VehiclePrice mantém as observações locais de preço. IDs, campos obrigatórios e índices estão no banco; limites, URLs HTTP/HTTPS, enumerações e coerência de anos são validados no servidor. Futuras integrações poderão chamar a camada de persistência/validação sem depender da interface.
 
-A instalação usa o motor JavaScript do Prisma. O **adaptador de migrações no Prisma 6 é experimental** e está fixado na versão 6.19. O motor nativo não pôde ser baixado na nuvem por restrição de rede; a alternativa JavaScript foi efetivamente validada com migrações e testes. Webpack é usado explicitamente para evitar a dependência de sockets internos do Turbopack neste ambiente.
+O cliente de produção usa o adaptador PostgreSQL do Prisma. As migrações são executadas pelo Supabase CLI e não durante a inicialização do servidor. Webpack é usado explicitamente para evitar a dependência de sockets internos do Turbopack neste ambiente.
 
-O caminho em `.env` é relativo à raiz do projeto:
+Use no `.env` a conexão de runtime indicada pelo Supabase para o ambiente hospedado e uma conexão direta ou em Session mode para tarefas administrativas:
 
 ```dotenv
-DATABASE_URL="file:./prisma/radar.db"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/postgres"
+DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/postgres"
 ```
 
-Para atualizar um banco existente, execute `npm run setup`: gera o cliente e aplica apenas migrações pendentes. Não execute comandos de reset em um banco com dados importantes. Para backup, pare a aplicação e copie o arquivo SQLite e eventuais arquivos auxiliares de journal/WAL junto dele.
+`npm run setup` gera os clientes Prisma. Para aplicar migrações, vincule o Supabase CLI ao projeto correto e execute `npm run db:migrate` em uma etapa controlada de deploy. Não execute comandos de reset em um banco com dados importantes. O Supabase mantém backups conforme o plano do projeto; exportações adicionais podem ser feitas com `pg_dump` usando a conexão administrativa.
 
 ## Testar
 
@@ -107,7 +111,7 @@ Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [
 
 - **Não exponha publicamente sem autenticação, autorização, HTTPS e medidas de segurança adicionais.** Não há autenticação; a checagem de origem nas mutações não substitui controle de acesso.
 - O catálogo é carregado integralmente e filtrado no navegador; o radar pagina 12 anúncios por vez. Filtragem/paginação no servidor continuam necessárias para volumes grandes.
-- Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no SQLite.
+- Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no PostgreSQL do Supabase.
 - Imagens são URLs externas carregadas pelo navegador, sem upload, cache ou garantia de disponibilidade; não há busca de imagens pelo servidor.
 - Não há sincronização, múltiplos usuários, envio de notificações ou coleta automática. O monitoramento mostra mudanças já registradas nos favoritos; novas observações dependem de edição ou consulta manual.
 - Instalação inicial requer acesso ao npm; depois de instalado, o núcleo funciona sem serviços externos.
@@ -117,7 +121,7 @@ Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [
 
 A pesquisa, já integrada à `main`, acrescentou histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
 
-Depois de atualizar o código, use `npm run setup` para gerar o cliente e aplicar a migração aditiva. Faça backup antes de atualizar seu banco de uso. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e agora aparece nos detalhes do veículo; não há coleta automática.
+Depois de atualizar o código, use `npm run setup` para gerar os clientes. Aplique novas migrações com `npm run db:migrate` em uma etapa controlada e faça backup antes de alterações estruturais. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e aparece nos detalhes do veículo; não há coleta automática.
 
 Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
 
@@ -140,7 +144,7 @@ A área `/buscar` permite salvar critérios e consultar manualmente OLX via Geck
 Esta implementação parte da `main` em `5626b17`. O [relatório de entrega](docs/ENTREGA.md) reúne funcionalidades, arquitetura, limitações e próximos passos. [Auditoria e plano](docs/TRANSFORMACAO.md), [metodologia](docs/METODOLOGIA.md) e [validação da transformação](docs/VALIDACAO-TRANSFORMACAO.md) registram a base encontrada, decisões e resultados.
 
 - `/`: visão geral editorial, medianas, reduções reais, destaques e cobertura do catálogo.
-- `/veiculos`: filtros compartilháveis pela URL, chips, ordenações, paginação de 12 registros, três visualizações e colunas configuráveis. Filtros salvos no SQLite podem ser reabertos sem consultar fornecedores.
+- `/veiculos`: filtros compartilháveis pela URL, chips, ordenações, paginação de 12 registros, três visualizações e colunas configuráveis. Filtros salvos no Supabase podem ser reabertos sem consultar fornecedores.
 - `/veiculos/:id`: imagem cadastrada ampliável, referência **manual**, comparáveis estritos, histórico completo preservado e simulação ajustável de compra/custos/venda/margem. `updatedAt` não determina recência financeira.
 - `/mercado`: filtros, distribuição de preços, dispersão preço × quilometragem, tabelas acessíveis, agrupamentos por modelo e CSV. A amostra é o catálogo cadastrado, não todas as descobertas dos portais nem o mercado nacional.
 - `/comparar`: até quatro veículos, filtro para diferenças, referências e histórico recente.
@@ -148,16 +152,16 @@ Esta implementação parte da `main` em `5626b17`. O [relatório de entrega](doc
 - `/configuracoes`: estado não secreto dos conectores, limites de uso, dados locais e metodologia.
 - `/buscar`: conectores e fluxos existentes mantidos; nenhum fornecedor é consultado automaticamente ao navegar.
 
-As migrações `20261021040000_catalog_searches` e `20261021050000_vehicle_seller_type` são aditivas: criam a tabela de filtros salvos e separam opcionalmente o tipo de vendedor do texto legado de origem. O histórico de preços, os identificadores e todos os valores anteriores são preservados. As APIs de veículos passam a retornar os dois últimos registros de preço e `priceRecordedAt`; o endpoint `/prices` continua oferecendo o histórico completo. Faça backup e use `npm run setup` para aplicar as migrações à sua instalação.
+As migrações SQLite históricas `20261021040000_catalog_searches` e `20261021050000_vehicle_seller_type` foram preservadas para validar upgrades legados. No PostgreSQL, o estado consolidado está em `supabase/migrations`. As APIs de veículos retornam os dois últimos registros de preço e `priceRecordedAt`; o endpoint `/prices` continua oferecendo o histórico completo.
 
 **Não há integração FIPE nesta versão.** O valor de referência do cadastro não possui código/mês/combustível/versão verificados. Uma fonte licenciada e um fluxo de correspondência são necessários antes de chamar esse dado de FIPE. Descobertas de OLX/Webmotors não são promovidas automaticamente a veículos normalizados: faltam atributos para análises equivalentes e confirmação de direitos das fotografias.
 
 As classificações usam critérios determinísticos e configuráveis em `OPPORTUNITY_RULES`, sem pontuação arbitrária. Exigem ao menos cinco comparáveis recentes e equivalentes. Reduções, suficiência amostral e limitações aparecem nos detalhes; condições do veículo e lucro de revenda nunca são garantidos. Os indicadores de redução usam a última mudança registrada, e não inventam séries temporais agregadas.
 
-Não há novas dependências de runtime, cobrança ou publicação. O arquivo SQLite de uso pessoal e as chaves de conectores não são versionados. As imagens de validação com veículos usam exclusivamente registros temporários de teste; a aplicação inicia vazia em um banco novo.
+Credenciais do Supabase e chaves de conectores não são versionadas. As imagens de validação com veículos usam exclusivamente registros temporários de teste; a aplicação inicia vazia em um banco novo.
 
 ## Preview hospedado para avaliação
 
-O `render.yaml` executa este mesmo projeto Next.js, aplica as migrações Prisma e inicia um banco SQLite isolado em `/tmp`. O ambiente começa vazio, não recebe credenciais dos conectores e não consulta fornecedores automaticamente. No plano gratuito, os registros do preview podem ser apagados quando o serviço for recriado ou reiniciado; ele serve para avaliação, não como banco de produção.
+O `render.yaml` executa este projeto Next.js e solicita `DATABASE_URL` como segredo. O banco é o Supabase compartilhado pelo ambiente e as migrações devem ser aplicadas antes do deploy; a inicialização do servidor não altera o schema. As credenciais dos conectores continuam opcionais e nenhuma fonte é consultada automaticamente.
 
 [Criar preview no Render](https://render.com/deploy?repo=https://github.com/lotrfanboy/car_Router)
