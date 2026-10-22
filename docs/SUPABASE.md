@@ -17,10 +17,10 @@ As mudanças do banco ficam em `supabase/migrations`. Para um projeto novo ou pa
 ```sh
 npx supabase login
 npx supabase link --project-ref SEU_PROJECT_REF
-npm run db:migrate
+npm run db:migrate:apply
 ```
 
-O deploy da aplicação não executa migrações automaticamente. Isso evita duas instâncias tentando alterar o schema ao mesmo tempo e impede que um reinício comum faça mudanças administrativas.
+O deploy da aplicação não executa migrações automaticamente. `npm run db:migrate` é uma verificação somente leitura, mantida para compatibilidade com comandos antigos de inicialização; a aplicação falha cedo se a conexão ou as tabelas obrigatórias estiverem ausentes. Isso evita duas instâncias tentando alterar o schema ao mesmo tempo e impede que um reinício comum faça mudanças administrativas.
 
 ## Segurança
 

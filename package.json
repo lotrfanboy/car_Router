@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/test.mjs",
     "db:generate": "prisma generate --schema prisma/schema.prisma && prisma generate --schema prisma/sqlite/schema.prisma",
-    "db:migrate": "supabase db push",
+    "db:migrate": "node scripts/verify-database.mjs",
+    "db:migrate:apply": "supabase db push",
     "setup": "npm run db:generate",
     "format": "prettier --write ."
   },

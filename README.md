@@ -74,7 +74,7 @@ DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/postgres"
 DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/postgres"
 ```
 
-`npm run setup` gera os clientes Prisma. Para aplicar migrações, vincule o Supabase CLI ao projeto correto e execute `npm run db:migrate` em uma etapa controlada de deploy. Não execute comandos de reset em um banco com dados importantes. O Supabase mantém backups conforme o plano do projeto; exportações adicionais podem ser feitas com `pg_dump` usando a conexão administrativa.
+`npm run setup` gera os clientes Prisma. `npm run db:migrate` apenas verifica a conexão e o schema, sem executar DDL, portanto pode permanecer em comandos antigos de inicialização. Para aplicar migrações, vincule o Supabase CLI ao projeto correto e execute `npm run db:migrate:apply` em uma etapa administrativa controlada. Não execute comandos de reset em um banco com dados importantes. O Supabase mantém backups conforme o plano do projeto; exportações adicionais podem ser feitas com `pg_dump` usando a conexão administrativa.
 
 ## Testar
 
@@ -121,7 +121,7 @@ Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [
 
 A pesquisa, já integrada à `main`, acrescentou histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
 
-Depois de atualizar o código, use `npm run setup` para gerar os clientes. Aplique novas migrações com `npm run db:migrate` em uma etapa controlada e faça backup antes de alterações estruturais. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e aparece nos detalhes do veículo; não há coleta automática.
+Depois de atualizar o código, use `npm run setup` para gerar os clientes. Aplique novas migrações com `npm run db:migrate:apply` em uma etapa controlada e faça backup antes de alterações estruturais. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e aparece nos detalhes do veículo; não há coleta automática.
 
 Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
 

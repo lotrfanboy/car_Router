@@ -20,7 +20,7 @@ Não há agendamento, mensagens, importação automática no catálogo manual, F
 
 ## Executar localmente
 
-Após instalar dependências, configure `DATABASE_URL` e `DIRECT_URL` no `.env` conforme `.env.example` e execute `npm run setup`. As migrações de produção ficam em `supabase/migrations` e são aplicadas separadamente com `npm run db:migrate`. `npm run dev` atende somente em 127.0.0.1. Para versão compilada: `npm run build` e `npm run start`.
+Após instalar dependências, configure `DATABASE_URL` e `DIRECT_URL` no `.env` conforme `.env.example` e execute `npm run setup`. As migrações de produção ficam em `supabase/migrations` e são aplicadas separadamente com `npm run db:migrate:apply`; `npm run db:migrate` apenas verifica a conexão e o schema. `npm run dev` atende somente em 127.0.0.1. Para versão compilada: `npm run build` e `npm run start`.
 
 Configuração exclusivamente no servidor, arquivos ignorados pelo Git:
 

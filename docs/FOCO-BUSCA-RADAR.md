@@ -56,7 +56,7 @@ Antes de aplicar em um banco de uso:
 
 1. Pare escritas e confirme o projeto apontado por `DATABASE_URL` e pelo Supabase CLI.
 2. Faça backup/exportação do PostgreSQL antes de uma mudança estrutural com dados existentes.
-3. Gere os clients com `npm run setup` e aplique `npm run db:migrate` no ambiente correto, depois valide tabelas, RLS, grants e registros. Nunca use `reset` em produção.
+3. Gere os clients com `npm run setup` e aplique `npm run db:migrate:apply` no ambiente correto, depois valide tabelas, RLS, grants e registros. `npm run db:migrate` apenas verifica o schema. Nunca use `reset` em produção.
 4. Para recuperar, pare aplicação e agendador, restaure o backup no Supabase e volte a versão compatível do código antes de reabrir escritas.
 
 As chaves fornecidas nesta conversa foram guardadas somente em `.env.gecko.local` e `.env.reef.local`, modo 0600, ignoradas pelo Git. Não aparecem nesta documentação, no navegador nem em logs. O carregador prioriza variáveis do processo; arquivos locais são fallback. O opt-in `REEF_FREE_TRIAL` continua falso/ausente até confirmar o saldo promocional, preservando o contrato existente. Não alteramos a configuração de produção.
