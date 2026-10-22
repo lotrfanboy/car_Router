@@ -22,6 +22,18 @@ const requiredTables = [
   "SearchLock",
   "OlxLocation",
   "CatalogSearch",
+  "CatalogRevision",
+  "CatalogState",
+  "CatalogSource",
+  "CatalogEvidence",
+  "CatalogBrand",
+  "CatalogModel",
+  "CatalogVersion",
+  "CatalogBrandEvidence",
+  "CatalogModelEvidence",
+  "CatalogVersionEvidence",
+  "CatalogIdentityCrosswalk",
+  "CatalogSourceMapping",
 ];
 
 const client = new Client({ connectionString });
@@ -40,7 +52,27 @@ try {
   if (missing.length > 0) {
     throw new Error(`Schema incompleto. Tabelas ausentes: ${missing.join(", ")}`);
   }
-  console.log("Banco PostgreSQL acessível e schema do Radar pronto.");
+  const catalog = await client.query(
+    `select r.id, r.status, r."brandCount", r."modelCount", r."versionCount",
+            (select count(*)::int from "CatalogBrand" b where b."revisionId"=r.id) as brands,
+            (select count(*)::int from "CatalogModel" m where m."revisionId"=r.id) as models,
+            (select count(*)::int from "CatalogVersion" v where v."revisionId"=r.id) as versions
+       from "CatalogState" s
+       join "CatalogRevision" r on r.id=s."activeRevisionId"
+      where s.id='vehicle-catalog'`,
+  );
+  const active = catalog.rows[0];
+  if (
+    !active ||
+    active.status !== "active" ||
+    active.brands !== active.brandCount ||
+    active.models !== active.modelCount ||
+    active.versions !== active.versionCount
+  )
+    throw new Error("Nenhuma revisão íntegra do catálogo está ativa.");
+  console.log(
+    `Banco e catálogo prontos: ${active.brands} marcas, ${active.models} modelos, ${active.versions} versões.`,
+  );
 } finally {
   await client.end();
 }

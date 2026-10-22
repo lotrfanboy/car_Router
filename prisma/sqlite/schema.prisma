@@ -3,12 +3,14 @@ generator client {
   engineType = "client"
   output     = "../../src/generated/prisma-sqlite"
 }
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
 model Vehicle {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   brand           String
   model           String
   version         String?
@@ -26,9 +28,9 @@ model Vehicle {
   originalUrl     String?
   imageUrl        String?
   notes           String?
-  favorite        Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  favorite        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   priceHistory    VehiclePrice[]
 
   @@index([brand, model])
@@ -48,19 +50,19 @@ model VehiclePrice {
 }
 
 model SavedSearch {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   name      String
   criteria  String
-  createdAt DateTime @default(now())
-  queryKey  String?  @unique
+  createdAt DateTime    @default(now())
+  queryKey  String?     @unique
   runs      SearchRun[]
   radars    Radar[]
 }
 
 model SearchRun {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   searchId  String
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
   result    String
   search    SavedSearch @relation(fields: [searchId], references: [id], onDelete: Cascade)
 
@@ -68,12 +70,12 @@ model SearchRun {
 }
 
 model DiscoveredListing {
-  id         String   @id @default(cuid())
+  id         String         @id @default(cuid())
   source     String
   externalId String
   payload    String
-  firstSeen  DateTime @default(now())
-  lastSeen   DateTime @default(now())
+  firstSeen  DateTime       @default(now())
+  lastSeen   DateTime       @default(now())
   savedAt    DateTime?
   prices     ListingPrice[]
 
@@ -83,66 +85,68 @@ model DiscoveredListing {
 }
 
 model SearchCache {
-  id        String @id
+  id        String   @id
   result    String
   updatedAt DateTime @default(now())
 }
 
 model Radar {
-  id           String @id @default(cuid())
-  searchId     String
-  name         String
-  minPercent   Float
-  intervalHours Int @default(24)
-  enabled      Boolean @default(false)
-  lastRunAt    DateTime?
-  nextRunAt    DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  search       SavedSearch @relation(fields: [searchId], references: [id], onDelete: Restrict)
-  runs         RadarRun[]
-  notices      RadarNotice[]
+  id            String        @id @default(cuid())
+  searchId      String
+  name          String
+  minPercent    Float
+  intervalHours Int           @default(24)
+  enabled       Boolean       @default(false)
+  lastRunAt     DateTime?
+  nextRunAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  search        SavedSearch   @relation(fields: [searchId], references: [id], onDelete: Restrict)
+  runs          RadarRun[]
+  notices       RadarNotice[]
 
   @@index([searchId])
   @@index([enabled, nextRunAt])
 }
 
 model RadarRun {
-  id         String @id @default(cuid())
+  id         String    @id @default(cuid())
   radarId    String
-  startedAt  DateTime @default(now())
+  startedAt  DateTime  @default(now())
   finishedAt DateTime?
   status     String
   message    String
-  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
   @@index([radarId, startedAt])
 }
 
 model RadarNotice {
-  id         String @id @default(cuid())
+  id         String    @id @default(cuid())
   radarId    String
   listingKey String
   priceCents Int
-  eventKey   String @unique
+  eventKey   String    @unique
   status     String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
   sentAt     DateTime?
-  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
   @@index([radarId, listingKey])
 }
 
 model ListingPrice {
-  id         Int @id @default(autoincrement())
+  id         Int               @id @default(autoincrement())
   listingId  String
   priceCents Int
-  observedAt DateTime @default(now())
+  observedAt DateTime          @default(now())
   listing    DiscoveredListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@index([listingId, id])
 }
 
 model ProviderSpend {
-  id        Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   provider  String
   credits   Int
   createdAt DateTime @default(now())
@@ -151,14 +155,14 @@ model ProviderSpend {
 }
 
 model SearchLock {
-  id        String @id
+  id        String   @id
   expiresAt DateTime
 
   @@index([expiresAt])
 }
 
 model OlxLocation {
-  id         String @id
+  id         String   @id
   region     String
   verifiedAt DateTime @default(now())
 }
@@ -171,4 +175,188 @@ model CatalogSearch {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+model CatalogRevision {
+  id                   String                     @id
+  schemaVersion        String
+  sourceSha256         String                     @unique
+  status               String
+  brandCount           Int
+  modelCount           Int
+  versionCount         Int
+  evidenceCount        Int
+  modelsWithoutVersion Int
+  createdAt            DateTime                   @default(now())
+  validatedAt          DateTime?
+  activatedAt          DateTime?
+  states               CatalogState[]
+  sources              CatalogSource[]
+  evidence             CatalogEvidence[]
+  brands               CatalogBrand[]
+  models               CatalogModel[]
+  versions             CatalogVersion[]
+  identityCrosswalks   CatalogIdentityCrosswalk[]
+  sourceMappings       CatalogSourceMapping[]
+}
+
+model CatalogState {
+  id               String           @id
+  activeRevisionId String?
+  updatedAt        DateTime         @updatedAt
+  activeRevision   CatalogRevision? @relation(fields: [activeRevisionId], references: [id], onDelete: Restrict)
+}
+
+model CatalogSource {
+  revisionId          String
+  id                  String
+  publisher           String
+  url                 String
+  sha256              String
+  publicationCycle    Int
+  cycleIsNotModelYear Boolean
+  revision            CatalogRevision   @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  evidence            CatalogEvidence[]
+
+  @@id([revisionId, id])
+}
+
+model CatalogEvidence {
+  revisionId   String
+  id           String
+  sourceId     String
+  status       String
+  payload      String
+  revision     CatalogRevision          @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  source       CatalogSource            @relation(fields: [revisionId, sourceId], references: [revisionId, id], onDelete: Restrict)
+  brandLinks   CatalogBrandEvidence[]
+  modelLinks   CatalogModelEvidence[]
+  versionLinks CatalogVersionEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, sourceId])
+  @@index([revisionId, status])
+}
+
+model CatalogBrand {
+  revisionId          String
+  id                  String
+  name                String
+  sourceIds           String
+  sourceLabels        String
+  identityDecisionIds String
+  revision            CatalogRevision        @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  models              CatalogModel[]
+  evidenceLinks       CatalogBrandEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, name])
+}
+
+model CatalogModel {
+  revisionId          String
+  id                  String
+  brandId             String
+  name                String
+  sourceIds           String
+  sourceLabels        String
+  versionsPending     Boolean
+  hasAcceptedVersions Boolean
+  revision            CatalogRevision        @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  brand               CatalogBrand           @relation(fields: [revisionId, brandId], references: [revisionId, id], onDelete: Restrict)
+  versions            CatalogVersion[]
+  evidenceLinks       CatalogModelEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, brandId, name])
+}
+
+model CatalogVersion {
+  revisionId    String
+  id            String
+  modelId       String
+  name          String
+  engine        String
+  transmission  String
+  sourceIds     String
+  sourceLabels  String
+  revision      CatalogRevision          @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  model         CatalogModel             @relation(fields: [revisionId, modelId], references: [revisionId, id], onDelete: Restrict)
+  evidenceLinks CatalogVersionEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, modelId, name])
+}
+
+model CatalogBrandEvidence {
+  revisionId String
+  brandId    String
+  evidenceId String
+  brand      CatalogBrand    @relation(fields: [revisionId, brandId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, brandId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogModelEvidence {
+  revisionId String
+  modelId    String
+  evidenceId String
+  model      CatalogModel    @relation(fields: [revisionId, modelId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, modelId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogVersionEvidence {
+  revisionId String
+  versionId  String
+  evidenceId String
+  version    CatalogVersion  @relation(fields: [revisionId, versionId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, versionId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogIdentityCrosswalk {
+  revisionId          String
+  entityType          String
+  previousIdentityId  String
+  canonicalIdentityId String
+  revision            CatalogRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@id([revisionId, entityType, previousIdentityId])
+  @@index([revisionId, entityType, canonicalIdentityId])
+}
+
+model CatalogSourceMapping {
+  revisionId          String
+  id                  String
+  source              String
+  level               String
+  status              String
+  sourceBrand         String?
+  sourceBrandId       String?
+  sourceModelId       String?
+  sourceModelLabel    String?
+  sourceVersionId     String?
+  sourceVersionLabel  String?
+  canonicalBrandId    String?
+  canonicalModelId    String?
+  canonicalVersionId  String?
+  notCanonicalModelId String?
+  candidateVersionIds String
+  scope               String
+  rationale           String
+  evidence            String
+  reviewedAt          String?
+  revision            CatalogRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@id([revisionId, id])
+  @@index([revisionId, source, level, status])
+  @@index([revisionId, canonicalModelId])
+  @@index([revisionId, notCanonicalModelId])
 }

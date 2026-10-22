@@ -10,7 +10,7 @@ datasource db {
 }
 
 model Vehicle {
-  id              String   @id @default(cuid())
+  id              String         @id @default(cuid())
   brand           String
   model           String
   version         String?
@@ -28,9 +28,9 @@ model Vehicle {
   originalUrl     String?
   imageUrl        String?
   notes           String?
-  favorite        Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  favorite        Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
   priceHistory    VehiclePrice[]
 
   @@index([brand, model])
@@ -175,4 +175,190 @@ model CatalogSearch {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// Vehicle catalog revisions are immutable. CatalogState switches the active
+// revision only after a complete import has passed validation.
+model CatalogRevision {
+  id                   String                     @id
+  schemaVersion        String
+  sourceSha256         String                     @unique
+  status               String
+  brandCount           Int
+  modelCount           Int
+  versionCount         Int
+  evidenceCount        Int
+  modelsWithoutVersion Int
+  createdAt            DateTime                   @default(now())
+  validatedAt          DateTime?
+  activatedAt          DateTime?
+  states               CatalogState[]
+  sources              CatalogSource[]
+  evidence             CatalogEvidence[]
+  brands               CatalogBrand[]
+  models               CatalogModel[]
+  versions             CatalogVersion[]
+  identityCrosswalks   CatalogIdentityCrosswalk[]
+  sourceMappings       CatalogSourceMapping[]
+}
+
+model CatalogState {
+  id               String           @id
+  activeRevisionId String?
+  updatedAt        DateTime         @updatedAt
+  activeRevision   CatalogRevision? @relation(fields: [activeRevisionId], references: [id], onDelete: Restrict)
+}
+
+model CatalogSource {
+  revisionId          String
+  id                  String
+  publisher           String
+  url                 String
+  sha256              String
+  publicationCycle    Int
+  cycleIsNotModelYear Boolean
+  revision            CatalogRevision   @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  evidence            CatalogEvidence[]
+
+  @@id([revisionId, id])
+}
+
+model CatalogEvidence {
+  revisionId   String
+  id           String
+  sourceId     String
+  status       String
+  payload      String
+  revision     CatalogRevision          @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  source       CatalogSource            @relation(fields: [revisionId, sourceId], references: [revisionId, id], onDelete: Restrict)
+  brandLinks   CatalogBrandEvidence[]
+  modelLinks   CatalogModelEvidence[]
+  versionLinks CatalogVersionEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, sourceId])
+  @@index([revisionId, status])
+}
+
+model CatalogBrand {
+  revisionId          String
+  id                  String
+  name                String
+  sourceIds           String
+  sourceLabels        String
+  identityDecisionIds String
+  revision            CatalogRevision        @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  models              CatalogModel[]
+  evidenceLinks       CatalogBrandEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, name])
+}
+
+model CatalogModel {
+  revisionId          String
+  id                  String
+  brandId             String
+  name                String
+  sourceIds           String
+  sourceLabels        String
+  versionsPending     Boolean
+  hasAcceptedVersions Boolean
+  revision            CatalogRevision        @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  brand               CatalogBrand           @relation(fields: [revisionId, brandId], references: [revisionId, id], onDelete: Restrict)
+  versions            CatalogVersion[]
+  evidenceLinks       CatalogModelEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, brandId, name])
+}
+
+model CatalogVersion {
+  revisionId    String
+  id            String
+  modelId       String
+  name          String
+  engine        String
+  transmission  String
+  sourceIds     String
+  sourceLabels  String
+  revision      CatalogRevision          @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  model         CatalogModel             @relation(fields: [revisionId, modelId], references: [revisionId, id], onDelete: Restrict)
+  evidenceLinks CatalogVersionEvidence[]
+
+  @@id([revisionId, id])
+  @@index([revisionId, modelId, name])
+}
+
+model CatalogBrandEvidence {
+  revisionId String
+  brandId    String
+  evidenceId String
+  brand      CatalogBrand    @relation(fields: [revisionId, brandId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, brandId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogModelEvidence {
+  revisionId String
+  modelId    String
+  evidenceId String
+  model      CatalogModel    @relation(fields: [revisionId, modelId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, modelId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogVersionEvidence {
+  revisionId String
+  versionId  String
+  evidenceId String
+  version    CatalogVersion  @relation(fields: [revisionId, versionId], references: [revisionId, id], onDelete: Cascade)
+  evidence   CatalogEvidence @relation(fields: [revisionId, evidenceId], references: [revisionId, id], onDelete: Cascade)
+
+  @@id([revisionId, versionId, evidenceId])
+  @@index([revisionId, evidenceId])
+}
+
+model CatalogIdentityCrosswalk {
+  revisionId          String
+  entityType          String
+  previousIdentityId  String
+  canonicalIdentityId String
+  revision            CatalogRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@id([revisionId, entityType, previousIdentityId])
+  @@index([revisionId, entityType, canonicalIdentityId])
+}
+
+model CatalogSourceMapping {
+  revisionId          String
+  id                  String
+  source              String
+  level               String
+  status              String
+  sourceBrand         String?
+  sourceBrandId       String?
+  sourceModelId       String?
+  sourceModelLabel    String?
+  sourceVersionId     String?
+  sourceVersionLabel  String?
+  canonicalBrandId    String?
+  canonicalModelId    String?
+  canonicalVersionId  String?
+  notCanonicalModelId String?
+  candidateVersionIds String
+  scope               String
+  rationale           String
+  evidence            String
+  reviewedAt          String?
+  revision            CatalogRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@id([revisionId, id])
+  @@index([revisionId, source, level, status])
+  @@index([revisionId, canonicalModelId])
+  @@index([revisionId, notCanonicalModelId])
 }

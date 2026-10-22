@@ -1,0 +1,119 @@
+{
+  "catalog": {
+    "schemaVersion": 1,
+    "revision": "package-r2-fixture",
+    "evidence": [],
+    "brands": [
+      {
+        "id": "brand_27df9ed9a477af0fcfe3",
+        "name": "BMW",
+        "references": []
+      }
+    ],
+    "models": [
+      {
+        "id": "model_d3f670f7cce4a655e2d0",
+        "brandId": "brand_27df9ed9a477af0fcfe3",
+        "name": "320i",
+        "versionsPending": true,
+        "hasAcceptedVersions": true,
+        "references": []
+      }
+    ],
+    "versions": [
+      {
+        "id": "version_e09b273d9a99fc22bd6e",
+        "modelId": "model_d3f670f7cce4a655e2d0",
+        "name": "M Sport Flex",
+        "engine": "2.0 - 16V",
+        "transmission": "A-8",
+        "references": []
+      },
+      {
+        "id": "version_e541d830866513ade4c1",
+        "modelId": "model_d3f670f7cce4a655e2d0",
+        "name": "M Sport Flex (MY25)",
+        "engine": "2.0 - 16V",
+        "transmission": "A-8",
+        "references": []
+      }
+    ],
+    "mappings": [
+      {
+        "id": "model-map-positive-olx",
+        "source": "olx",
+        "level": "model",
+        "status": "confirmed",
+        "sourceBrand": "BMW",
+        "sourceModelLabel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+        "canonicalBrandId": "brand_27df9ed9a477af0fcfe3",
+        "canonicalModelId": "model_d3f670f7cce4a655e2d0",
+        "candidateVersionIds": []
+      },
+      {
+        "id": "model-map-divergent-olx",
+        "source": "olx",
+        "level": "model",
+        "status": "divergent",
+        "sourceBrand": "BMW",
+        "sourceModelLabel": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+        "notCanonicalModelId": "model_d3f670f7cce4a655e2d0",
+        "candidateVersionIds": []
+      },
+      {
+        "id": "model-map-positive-webmotors",
+        "source": "webmotors",
+        "level": "model",
+        "status": "confirmed",
+        "sourceBrand": "BMW",
+        "sourceBrandId": "10",
+        "sourceModelId": "2020",
+        "sourceModelLabel": "320i",
+        "canonicalBrandId": "brand_27df9ed9a477af0fcfe3",
+        "canonicalModelId": "model_d3f670f7cce4a655e2d0",
+        "candidateVersionIds": []
+      },
+      {
+        "id": "version-map-pending-webmotors",
+        "source": "webmotors",
+        "level": "version",
+        "status": "pending",
+        "sourceBrandId": "10",
+        "sourceModelId": "2020",
+        "sourceVersionId": "348587",
+        "sourceVersionLabel": "2.0 16V TURBO FLEX M SPORT AUTOMÁTICO",
+        "canonicalModelId": "model_d3f670f7cce4a655e2d0",
+        "candidateVersionIds": [
+          "version_e09b273d9a99fc22bd6e",
+          "version_e541d830866513ade4c1"
+        ]
+      }
+    ]
+  },
+  "observations": {
+    "confirmed": {
+      "id": "obs_b84e42c5f3288760f4a3",
+      "source": "olx",
+      "brand": "BMW",
+      "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+      "version": null,
+      "sourceIdentity": { "brandId": null, "modelId": null, "versionId": null }
+    },
+    "divergent": {
+      "id": "obs_89e3a07f6fda5457e067",
+      "source": "olx",
+      "brand": "BMW",
+      "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+      "version": null,
+      "sourceIdentity": { "brandId": null, "modelId": null, "versionId": null }
+    },
+    "pendingVersion": {
+      "id": "obs_bbaaff9aa395950f1401",
+      "source": "webmotors",
+      "brand": "BMW",
+      "model": "320i",
+      "version": "2.0 16V TURBO FLEX M SPORT AUTOMÁTICO",
+      "sourceIdentity": { "brandId": "10", "modelId": "2020", "versionId": "348587" }
+    }
+  }
+}

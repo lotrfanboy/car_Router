@@ -296,11 +296,24 @@ export function SearchWorkspace({
       )
       .map((source) => ({ previous, source })),
   );
-  const resultRows =
+  const currentRows =
     run?.sources
       .filter((source) => source.status === "ok")
-      .flatMap((source) => source.listings)
-      .filter((row) => !row.reasons.length) ?? [];
+      .flatMap((source) => source.listings) ?? [];
+  const resultRows = currentRows.filter((row) => !row.reasons.length);
+  const unclassifiedRows = currentRows.filter((row) => {
+    const model = row.catalogResolution?.model;
+    const version = row.catalogResolution?.version;
+    return (
+      model === "unresolved" ||
+      model === "pending" ||
+      model === "ambiguous" ||
+      (!!display?.criteria.version &&
+        (version === "unresolved" ||
+          version === "pending" ||
+          version === "ambiguous"))
+    );
+  });
   const hasValidComparison = resultRows.some(
     (row) => row.comparison?.status === "valid",
   );
@@ -409,7 +422,8 @@ export function SearchWorkspace({
             modelCode: modelChoice?.code,
             modelName: modelChoice?.name,
             versionCode: versionChoice?.code,
-            versionName: versionChoice?.name,
+            versionName:
+              versionChoice?.searchName ?? versionChoice?.name,
           }
         : undefined,
       yearMin: optional(draft.yearMin),
@@ -669,7 +683,10 @@ export function SearchWorkspace({
                           (item) => item.code === event.target.value,
                         ) ?? null;
                       setVersionChoice(choice);
-                      change("version", choice?.name ?? "");
+                      change(
+                        "version",
+                        choice?.searchName ?? choice?.name ?? "",
+                      );
                     }}
                   >
                     <option value="">Todas as versões</option>
@@ -1003,9 +1020,23 @@ export function SearchWorkspace({
                   {s.received ?? s.listings.length} recebidos ·{" "}
                   {s.listings.filter((row) => !row.reasons.length).length}{" "}
                   aprovados ·{" "}
+                  {s.listings.filter((row) => {
+                    const model = row.catalogResolution?.model;
+                    const version = row.catalogResolution?.version;
+                    return (
+                      model === "unresolved" ||
+                      model === "pending" ||
+                      model === "ambiguous" ||
+                      (!!display?.criteria.version &&
+                        (version === "unresolved" ||
+                          version === "pending" ||
+                          version === "ambiguous"))
+                    );
+                  }).length}{" "}
+                  não classificados ·{" "}
                   {(s.received ?? s.listings.length) -
                     s.listings.filter((row) => !row.reasons.length).length}{" "}
-                  descartados.
+                  com alguma restrição.
                 </small>
                 <ul aria-label="Descartes por motivo">
                   {Object.entries(
@@ -1023,9 +1054,7 @@ export function SearchWorkspace({
                     </li>
                   ))}
                 </ul>
-                <small>
-                  Um anúncio pode ter mais de um motivo de descarte.
-                </small>
+                <small>Um anúncio pode ter mais de uma classificação ou restrição.</small>
               </details>
             ))}
           </div>
@@ -1122,6 +1151,26 @@ export function SearchWorkspace({
                   observada. Confira condição e disponibilidade no anúncio
                   original.
                 </p>
+              )}
+              {unclassifiedRows.length > 0 && (
+                <details className="previous-results">
+                  <summary>
+                    {unclassifiedRows.length} resultado
+                    {unclassifiedRows.length === 1 ? "" : "s"} ainda não
+                    classificado{unclassifiedRows.length === 1 ? "" : "s"}
+                  </summary>
+                  <p>
+                    Estes anúncios continuam visíveis para revisão, mas não
+                    entram na contagem de correspondências exatas.
+                  </p>
+                  {unclassifiedRows.map((row) => (
+                    <ListingCard
+                      key={`unclassified:${row.source}:${row.externalId}`}
+                      listing={row}
+                      searchId={display?.searchId}
+                    />
+                  ))}
+                </details>
               )}
             </>
           )}

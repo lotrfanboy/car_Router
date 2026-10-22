@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { states } from "./vehicle";
-import { catalogKey, type CatalogIdentity } from "./vehicle-catalog";
+import {
+  catalogKey,
+  type CatalogIdentity,
+  type CatalogResolutionStatus,
+} from "./vehicle-catalog";
 
 export const sourceNames = { olx: "OLX", webmotors: "Webmotors" };
 export type Source = keyof typeof sourceNames;
@@ -179,6 +183,11 @@ export type Listing = {
   /** Original model attribute from this source, not a catalog identity. */
   sourceModel?: string | null;
   identity?: CatalogIdentity;
+  catalogResolution?: {
+    model: CatalogResolutionStatus;
+    version: CatalogResolutionStatus;
+    targetModelId?: string;
+  };
   sourceIdentity?: {
     brandId: string | null;
     modelId: string | null;
@@ -237,7 +246,27 @@ export function eligibility(row: Listing, s: SearchCriteria) {
   const modelMatches = selected?.modelCode
     ? row.identity?.modelId === selected.modelCode
     : !!row.model && canonicalModel(row.model) === canonicalModel(s.model);
-  if (!modelMatches) reasons.push("Modelo diferente ou não confirmado");
+  if (!modelMatches) {
+    const resolution = row.catalogResolution;
+    if (
+      selected?.modelCode &&
+      resolution?.model === "divergent" &&
+      resolution.targetModelId === selected.modelCode
+    )
+      reasons.push("Modelo comprovadamente diferente");
+    else if (
+      selected?.modelCode &&
+      resolution?.model === "confirmed" &&
+      !!row.identity?.modelId
+    )
+      reasons.push("Modelo comprovadamente diferente");
+    else if (resolution?.model === "pending")
+      reasons.push("Modelo com correspondência pendente");
+    else if (resolution?.model === "ambiguous")
+      reasons.push("Modelo com correspondência ambígua");
+    else if (selected?.modelCode) reasons.push("Modelo não classificado");
+    else reasons.push("Modelo diferente ou não confirmado");
+  }
   const versionMatches = selected?.versionCode
     ? row.identity?.versionId === selected.versionCode
     : !!row.version &&
@@ -245,8 +274,21 @@ export function eligibility(row: Listing, s: SearchCriteria) {
         ` ${normalized(row.version)} `.includes(
           ` ${normalized(s.version ?? "")} `,
         ));
-  if (s.version && !versionMatches)
-    reasons.push("Versão diferente ou desconhecida");
+  if (s.version && !versionMatches) {
+    const status = row.catalogResolution?.version;
+    if (
+      selected?.versionCode &&
+      status === "confirmed" &&
+      !!row.identity?.versionId
+    )
+      reasons.push("Versão comprovadamente diferente");
+    else if (status === "pending")
+      reasons.push("Versão com correspondência pendente");
+    else if (status === "ambiguous")
+      reasons.push("Versão com correspondência ambígua");
+    else if (selected?.versionCode) reasons.push("Versão não classificada");
+    else reasons.push("Versão diferente ou desconhecida");
+  }
   const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
   if (
     row.state !== s.state ||

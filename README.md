@@ -76,6 +76,21 @@ DIRECT_URL="postgresql://USER:PASSWORD@HOST:PORT/postgres"
 
 `npm run setup` gera os clientes Prisma. `npm run db:migrate` apenas verifica a conexão e o schema, sem executar DDL, portanto pode permanecer em comandos antigos de inicialização. Para aplicar migrações, vincule o Supabase CLI ao projeto correto e execute `npm run db:migrate:apply` em uma etapa administrativa controlada. Não execute comandos de reset em um banco com dados importantes. O Supabase mantém backups conforme o plano do projeto; exportações adicionais podem ser feitas com `pg_dump` usando a conexão administrativa.
 
+O catálogo veicular fica no PostgreSQL em revisões imutáveis. Informe a pasta
+descompactada do pacote por `CATALOG_PACKAGE_DIR` e valide antes de carregar:
+
+```sh
+CATALOG_PACKAGE_DIR=/caminho/catalogo npm run catalog:dry-run
+CATALOG_PACKAGE_DIR=/caminho/catalogo npm run catalog:rollback-probe
+CATALOG_PACKAGE_DIR=/caminho/catalogo npm run catalog:import
+```
+
+A importação valida a cadeia marca–modelo–versão, evidências, IDs anteriores e
+correspondências por origem. A revisão ativa só muda no fim da transação; uma
+falha conserva a revisão válida anterior. Reexecutar o comando valida a revisão
+já ativa sem duplicar registros. O suplemento do fabricante e as filas de
+revisão não são promovidos automaticamente.
+
 ## Testar
 
 ```powershell

@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import fixture from "./fixtures/vehicle-catalog.json";
+import resolverFixture from "./fixtures/catalog-resolver-observations.json";
 import {
   catalogSchema,
   catalogKey,
@@ -126,7 +127,7 @@ describe("catalog relationships are data, not model-name rules", () => {
     });
     expect(row.model).toBe(b.name);
     expect(eligibility(row, selected)).toContain(
-      "Modelo diferente ou não confirmado",
+      "Modelo comprovadamente diferente",
     );
   });
   it("does not slice unknown descriptions or turn a model into a version", () => {
@@ -207,7 +208,7 @@ describe("catalog relationships are data, not model-name rules", () => {
       catalog,
     );
     expect(eligibility(wrong, selected)).toContain(
-      "Modelo diferente ou não confirmado",
+      "Modelo não classificado",
     );
   });
   it("fails closed on ambiguous labels and conflicting parent/source identifiers", () => {
@@ -234,6 +235,96 @@ describe("catalog relationships are data, not model-name rules", () => {
     fipe.models[0].references[0].source = "fipe";
     expect(catalogSchema.safeParse(fipe).success).toBe(false);
     expect(catalogSchema.parse(emptyCatalog).models).toEqual([]);
+  });
+});
+
+describe("reviewed source observations", () => {
+  const reviewedCatalog = catalogSchema.parse(resolverFixture.catalog);
+  const selected = searchSchema.parse({
+    ...criteria,
+    brand: "BMW",
+    model: "320i",
+    version: "M Sport Flex",
+    catalog: {
+      provider: "carrouter",
+      revision: reviewedCatalog.revision,
+      brandCode: reviewedCatalog.brands[0].id,
+      brandName: reviewedCatalog.brands[0].name,
+      modelCode: reviewedCatalog.models[0].id,
+      modelName: reviewedCatalog.models[0].name,
+      versionCode: reviewedCatalog.versions[0].id,
+      versionName: reviewedCatalog.versions[0].name,
+    },
+  });
+  const resolveObservation = (
+    row: (typeof resolverFixture.observations)[keyof typeof resolverFixture.observations],
+  ) =>
+    resolveCatalogVehicle(reviewedCatalog, {
+      source: row.source as "olx" | "webmotors",
+      brand: row.brand,
+      model: row.model,
+      version: row.version,
+      brandId: row.sourceIdentity.brandId,
+      modelId: row.sourceIdentity.modelId,
+      versionId: row.sourceIdentity.versionId,
+    });
+
+  it("resolves an approved complete source label under its reviewed parent", () => {
+    const resolved = resolveObservation(resolverFixture.observations.confirmed);
+    expect(resolved.classification.model).toBe("confirmed");
+    expect(resolved.identity?.modelId).toBe(reviewedCatalog.models[0].id);
+  });
+
+  it("keeps a reviewed negative scoped to its target model", () => {
+    const resolved = resolveObservation(resolverFixture.observations.divergent);
+    expect(resolved.classification).toMatchObject({
+      model: "divergent",
+      targetModelId: reviewedCatalog.models[0].id,
+    });
+    expect(resolved.identity?.modelId).toBeUndefined();
+  });
+
+  it("does not resolve the same saved label under the wrong brand", () => {
+    const row = resolverFixture.observations.confirmed;
+    const resolved = resolveCatalogVehicle(reviewedCatalog, {
+      source: "olx",
+      brand: "Outra marca",
+      model: row.model,
+    });
+    expect(resolved.classification.model).toBe("unresolved");
+    expect(resolved.identity).toBeUndefined();
+  });
+
+  it("keeps a reviewed version candidate pending and out of exact results", () => {
+    const source = resolverFixture.observations.pendingVersion;
+    const resolved = resolveObservation(source);
+    expect(resolved.classification).toMatchObject({
+      model: "confirmed",
+      version: "pending",
+    });
+    expect(resolved.identity?.versionId).toBeUndefined();
+    const row = {
+      source: "webmotors" as const,
+      externalId: source.id,
+      url: "https://www.webmotors.com.br/comprar/test/1",
+      title: "Fixture salva",
+      brand: resolved.brand?.name ?? source.brand,
+      model: resolved.model?.name ?? source.model,
+      version: source.version,
+      identity: resolved.identity,
+      catalogResolution: resolved.classification,
+      modelYear: 2026,
+      priceCents: 10000000,
+      mileage: 1000,
+      city: "Curitiba",
+      state: "PR",
+      sellerType: "professional" as const,
+      observedAt: "2026-10-22T15:04:15.307Z",
+      reasons: [],
+    };
+    expect(eligibility(row, selected)).toContain(
+      "Versão com correspondência pendente",
+    );
   });
 });
 

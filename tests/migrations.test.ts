@@ -175,6 +175,22 @@ it("adds a current-price baseline to an existing database without changing vehic
     expect(await client.olxLocation.findMany()).toEqual([location]);
     expect(await client.providerSpend.findMany()).toEqual([spend]);
     expect(await client.radar.count()).toBe(0);
+    await apply(
+      "prisma/sqlite/migrations/20261022172202_vehicle_catalog_revisions/migration.sql",
+    );
+    expect(await client.vehicle.findUnique({ where: { id: "old" } })).toEqual(
+      migratedVehicle,
+    );
+    expect(await client.savedSearch.findMany()).toEqual([
+      { ...search, queryKey: null },
+    ]);
+    expect(await client.searchRun.findMany()).toEqual([run]);
+    expect(await client.discoveredListing.findMany()).toEqual([
+      { ...discovered, savedAt: null },
+    ]);
+    expect(await client.olxLocation.findMany()).toEqual([location]);
+    expect(await client.catalogRevision.count()).toBe(0);
+    expect(await client.catalogState.count()).toBe(0);
   } finally {
     await client.$disconnect();
   }
