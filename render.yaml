@@ -19,7 +19,7 @@ services:
       - key: REEF_FREE_TRIAL
         sync: false
       - key: RADAR_SCHEDULER_ENABLED
-        value: "false"
+        value: "true"
       - key: RADAR_CRON_SECRET
         sync: false
       - key: RADAR_APP_URL

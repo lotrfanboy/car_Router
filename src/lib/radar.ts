@@ -144,7 +144,7 @@ async function sendEmail(row: Listing, eventKey: string) {
 }
 export async function tickRadars() {
   const infrastructure = radarInfrastructure();
-  if (!infrastructure.ready)
+  if (!infrastructure.scheduler || !infrastructure.link)
     throw new SearchError(
       `Configuração pendente: ${infrastructure.missing.join("; ")}.`,
       409,
@@ -157,6 +157,10 @@ export async function tickRadars() {
     },
     update: { expiresAt: new Date(Date.now() + 3600000) },
   });
+  // Keep scheduler health independent from the notification provider. Without
+  // a delivery channel there is no useful reason to spend provider credits.
+  if (!infrastructure.email)
+    return { processed: 0, skipped: "email-unavailable" as const };
   const expiresAt = new Date(Date.now() + 30 * 60000);
   try {
     await db.$transaction(async (tx) => {

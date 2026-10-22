@@ -535,6 +535,27 @@ it("marks missing infrastructure pending and never simulates an active radar", a
   expect(state.calls).toHaveLength(0);
   expect(deliveries).toHaveLength(0);
 });
+it("records scheduler health without spending credits when email is unavailable", async () => {
+  const row = await createRadar();
+  vi.stubEnv("RESEND_API_KEY", "");
+  expect(await radar.tickRadars()).toEqual({
+    processed: 0,
+    skipped: "email-unavailable",
+  });
+  expect(state.calls).toHaveLength(0);
+  expect(deliveries).toHaveLength(0);
+  expect(await db.providerSpend.count()).toBe(0);
+  expect((await db.radar.findUnique({ where: { id: row.id } }))?.lastRunAt).toBeNull();
+  expect(
+    (await db.searchLock.findUnique({ where: { id: "radar-heartbeat" } }))
+      ?.expiresAt.getTime(),
+  ).toBeGreaterThan(Date.now());
+  expect((await radar.listRadars()).radars[0]).toMatchObject({
+    state: "pending",
+    nextRunAt: null,
+    missing: expect.arrayContaining([expect.stringContaining("e-mail")]),
+  });
+});
 it("runs server-side, records the real send contract, avoids repeats and notifies on a new qualifying price drop", async () => {
   const row = await createRadar();
   expect((await radar.listRadars()).radars[0].state).toBe("pending");

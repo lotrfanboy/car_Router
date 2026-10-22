@@ -1,6 +1,6 @@
 # Buscar carros, comparar preços e acompanhar
 
-Este documento nasceu na entrega local sobre `main` em `c275c50`. Em 22/10/2026, a persistência foi migrada para PostgreSQL e a estrutura inicial foi aplicada ao projeto Supabase; a aplicação hospedada e o scheduler continuam etapas separadas. Não reutilizar números de validações anteriores como evidência da migração atual.
+Este documento nasceu na entrega local sobre `main` em `c275c50`. Em 22/10/2026, a persistência e o catálogo foram migrados para PostgreSQL, a aplicação foi publicada no Render e o scheduler foi ativado no Supabase. Não reutilizar números de validações anteriores como evidência da implantação atual.
 
 ## Trabalho aproveitado
 
@@ -10,7 +10,7 @@ O trabalho local descrito no chat “Unificar busca e oportunidades” não esta
 
 ## Uso
 
-1. Abra `/buscar` (também é a página inicial). Informe marca, modelo, cidade/UF, anos e km; versão e orçamento são opcionais. As sugestões de marca/modelo vêm do catálogo existente e aceitam entrada manual. Não existe catálogo externo de versões configurado.
+1. Abra `/buscar` (também é a página inicial). Selecione marca e modelo do catálogo persistido e informe cidade/UF, anos e km; versão e orçamento são opcionais. Modelos sem versão aceita continuam disponíveis para pesquisa somente por modelo.
 2. Clique em **Buscar agora**. Uma página por fonte; erros e fontes desconectadas são diferentes de sucesso sem candidatos. O orçamento filtra apenas candidatos. Não são feitas duas buscas pagas separadas: a coleta ampliada abastece candidatos e referência.
 3. Os anúncios com comparação válida vêm primeiro pelo percentual abaixo da média. Também é possível ordenar por preço ou pela data em que foram observados (a fonte não garante data de publicação).
 4. **Conferir semelhantes** abre `/anuncios/[source]/[id]`, com os preços, links, período, critérios e limitações. **Salvar** funciona mesmo com dados incompletos, preservando as informações fornecidas. `/salvos` mantém esses anúncios e os favoritos anteriores.
@@ -36,17 +36,17 @@ Cliques simultâneos são bloqueados na interface e existe trava compartilhada n
 
 ## Radar e aviso
 
-`POST /api/radars/tick` executa no servidor com Bearer `RADAR_CRON_SECRET` (mínimo de 32 caracteres), separado do navegador. `scripts/radar-tick.mjs` é o cliente para um cron externo. Use a cada **30 minutos**; cada Radar só consulta quando vence a sua frequência de 24 ou 168 horas. Cada tick processa até três radares. A trava do scheduler dura 30 minutos; o processamento por Radar reserva a próxima execução antes da consulta e registra execução/falha.
+`POST /api/radars/tick` executa no servidor com Bearer `RADAR_CRON_SECRET` (mínimo de 32 caracteres), separado do navegador. Em produção, `pg_cron` e `pg_net` no Supabase chamam essa rota a cada **30 minutos**; a URL e o Bearer ficam cifrados no Vault. `scripts/radar-tick.mjs` continua disponível como cliente para outro cron. Cada Radar só consulta quando vence a sua frequência de 24 ou 168 horas. Cada tick processa até três radares. A trava do scheduler dura 30 minutos; o processamento por Radar reserva a próxima execução antes da consulta e registra execução/falha.
 
-O serviço só mostra **Ativo** quando existem fonte configurada, configuração completa do agendador/canal e um heartbeat real do scheduler nos últimos 60 minutos. Sem isso, mostra **Configuração pendente**; pausados não consultam. O mesmo `executeSearch` e o mesmo motor de média são usados na busca manual e no Radar.
+O serviço só mostra **Ativo** quando existem fonte configurada, configuração completa do agendador/canal e um heartbeat real do scheduler nos últimos 60 minutos. O heartbeat é registrado mesmo sem e-mail, mas nesse estado o tick termina sem consultar fontes nem gastar créditos e a interface mostra **Configuração pendente**; pausados não consultam. O mesmo `executeSearch` e o mesmo motor de média são usados na busca manual e no Radar.
 
 Não havia canal de aviso no projeto. Foi preparado um adaptador opcional de **e-mail via Resend**, ainda não conectado nem usado para envio real. WhatsApp não foi integrado. Configuração em `.env.radar.example`; localmente copie para `.env.radar.local`, ignorado pelo Git. Na hospedagem use as variáveis do serviço. Não cria conta, plano ou cobrança automaticamente.
 
 O e-mail contém carro, preço, média, percentual, localização e link do detalhe. Só registra envio aceito após resposta com ID do provedor; isso não comprova entrega na caixa postal. Em timeout/erro, o estado é não confirmado, sem reenvio automático. Chave idempotente por Radar/anúncio/preço e registro antes do envio previnem repetição. Uma queda de ao menos 1% que continue/comece a satisfazer o limite pode gerar novo aviso. Até dez avisos por Radar/execução limitam duração; demais correspondências continuam elegíveis para a próxima execução.
 
-Dependências da hospedagem: processo Next persistente, PostgreSQL no Supabase, cron externo autorizado e conta/canal de e-mail. O `render.yaml` recebe `DATABASE_URL` como segredo e mantém o scheduler desligado até cron, segredo e e-mail serem configurados. Proteger o app com o controle de acesso existente no ambiente antes de hospedar; o projeto continua pessoal, sem autenticação multiusuário.
+Dependências da hospedagem: processo Next persistente, PostgreSQL no Supabase, cron autorizado e conta/canal de e-mail. O `render.yaml` recebe `DATABASE_URL` e `RADAR_CRON_SECRET` como segredos. A migração do scheduler depende dos segredos `radar_app_url` e `radar_cron_secret` no Supabase Vault. Proteger o app com o controle de acesso existente no ambiente antes de hospedar; o projeto continua pessoal, sem autenticação multiusuário.
 
-No preview do Render, o Blueprint solicita `DATABASE_URL`, `GECKO_API_KEY` e `REEF_API_KEY` como segredos, sem versioná-las. Para testar Webmotors, altere `REEF_FREE_TRIAL` para `true` somente depois de confirmar que a conta possui créditos promocionais e não fará cobrança automática. `RADAR_SCHEDULER_ENABLED` permanece `false`, portanto o preview não se apresenta como monitoramento ativo.
+No preview do Render, o Blueprint solicita `DATABASE_URL`, `GECKO_API_KEY`, `REEF_API_KEY` e as variáveis privadas do Radar, sem versioná-las. Para testar Webmotors, altere `REEF_FREE_TRIAL` para `true` somente depois de confirmar que a conta possui créditos promocionais e não fará cobrança automática. O scheduler só se apresenta como ativo depois de receber um heartbeat real e confirmar também a configuração do canal de e-mail.
 
 ## Dados, recuperação e credenciais
 

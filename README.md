@@ -1,8 +1,8 @@
 # Radar Automotivo
 
-**Busca — 22/10/2026:** ano independente, cidades opcionais e critérios/descartes explícitos. A árvore de veículos agora exige dados identificados; o catálogo real está pendente, com entrada manual temporária. Veja o [levantamento Reef/Carpedia, custos e restrições de adoção](docs/search-catalog-review.md) e a [validação desta etapa](docs/VALIDACAO-BUSCA-GENERICA-2026-10-22.md).
+**Busca — 22/10/2026:** ano independente, cidades opcionais e critérios/descartes explícitos. Marca, modelo e versão são lidos da revisão ativa do catálogo persistido no Supabase; versão continua opcional e modelos sem versão aceita permanecem pesquisáveis. Veja o [levantamento Reef/Carpedia, custos e restrições de adoção](docs/search-catalog-review.md) e a [validação desta etapa](docs/VALIDACAO-BUSCA-GENERICA-2026-10-22.md).
 
-O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento exige agendador no servidor, armazenamento persistente e canal de e-mail configurados; sem essas dependências a interface indica configuração pendente. Esta entrega é local, sem publicação automática.
+O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento usa o agendador persistido no Supabase; sem um canal de e-mail configurado, a interface indica configuração pendente. A aplicação publicada está em [radar-automotivo-preview.onrender.com](https://radar-automotivo-preview.onrender.com).
 
 Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. A persistência de produção usa PostgreSQL no Supabase, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
@@ -128,7 +128,7 @@ Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [
 - O catálogo é carregado integralmente e filtrado no navegador; o radar pagina 12 anúncios por vez. Filtragem/paginação no servidor continuam necessárias para volumes grandes.
 - Seleção para comparar é uma preferência da aba; anúncios e favoritos ficam no PostgreSQL do Supabase.
 - Imagens são URLs externas carregadas pelo navegador, sem upload, cache ou garantia de disponibilidade; não há busca de imagens pelo servidor.
-- Não há sincronização, múltiplos usuários, envio de notificações ou coleta automática. O monitoramento mostra mudanças já registradas nos favoritos; novas observações dependem de edição ou consulta manual.
+- Não há múltiplos usuários. Radares habilitados são verificados pelo scheduler do Supabase a cada 30 minutos e respeitam sua frequência diária ou semanal; avisos por e-mail dependem das variáveis do Resend configuradas no servidor.
 - Instalação inicial requer acesso ao npm; depois de instalado, o núcleo funciona sem serviços externos.
 - A execução foi validada em Linux na nuvem; as instruções Windows são fornecidas, mas não houve máquina Windows disponível para verificação.
 
@@ -136,7 +136,7 @@ Veja os [resultados desta transformação](docs/VALIDACAO-TRANSFORMACAO.md), a [
 
 A pesquisa, já integrada à `main`, acrescentou histórico de preços local, registrado nas criações e nas edições que alteram o preço. Favoritar ou repetir o mesmo valor não cria evento. Anúncios de um banco anterior recebem apenas um snapshot do valor atual no momento da nova migração, identificado como `baseline`; não há reconstrução de preços passados.
 
-Depois de atualizar o código, use `npm run setup` para gerar os clientes. Aplique novas migrações com `npm run db:migrate:apply` em uma etapa controlada e faça backup antes de alterações estruturais. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e aparece nos detalhes do veículo; não há coleta automática.
+Depois de atualizar o código, use `npm run setup` para gerar os clientes. Aplique novas migrações com `npm run db:migrate:apply` em uma etapa controlada e faça backup antes de alterações estruturais. O histórico pode ser consultado em `GET /api/vehicles/:id/prices` e aparece nos detalhes do veículo; novas observações também podem ser coletadas por radares habilitados.
 
 Os testes agora rodam por `scripts/test.mjs`, que cria um diretório temporário próprio e o remove depois que os processos de teste terminam. Isso evita bloqueio dos arquivos SQLite no Windows. Use `npm test` em vez de chamar Vitest diretamente.
 
