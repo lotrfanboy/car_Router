@@ -31,6 +31,19 @@ const photoUrl = (v: unknown) => {
     return null;
   }
 };
+// Gecko's OLX payload carries the listing's own photos in images[].
+// Keep only a URL actually supplied with this listing.
+const listingPhoto = (row: Row) => {
+  const images = Array.isArray(row.images) ? row.images : [];
+  return (
+    photoUrl(row.image_url) ??
+    images.map((value) => {
+      const image = obj(value);
+      return photoUrl(image.url) ?? photoUrl(image.webpUrl);
+    }).find((value) => value !== null) ??
+    null
+  );
+};
 const num = (v: unknown) =>
   (typeof v === "number" || typeof v === "string") &&
   v !== "" &&
@@ -181,7 +194,7 @@ export function normalizeOlx(value: unknown, observedAt: string): Listing[] {
         fuel: str(attrs.fuel),
         transmission: str(attrs.gearbox),
         engine: str(attrs.motorpower),
-        imageUrl: photoUrl(r.image_url),
+        imageUrl: listingPhoto(r),
         modelYear: integer(attrs.regdate),
         priceCents: price(r.price),
         mileage: integer(attrs.mileage),

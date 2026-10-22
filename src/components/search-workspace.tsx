@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
   searchSchema,
+  canonicalBrand,
   sourceNames,
   type SearchCriteria,
   type SearchResult,
@@ -12,6 +13,7 @@ import {
 import { sortListings } from "@/lib/listing-comparison";
 import { states } from "@/lib/vehicle";
 import { ListingCard, observedWhen } from "./listing-card";
+import { SearchCombobox, type SearchOption } from "./search-combobox";
 import { useWorkspace } from "./workspace";
 type Run = SearchResult & {
   id: string;
@@ -29,7 +31,6 @@ type Integration = {
   dailyLimit: number;
   lastSuccessfulAt: string | null;
 };
-type SearchOption = { code: string; name: string };
 export function SearchWorkspace({
   initialSearchId = "",
 }: {
@@ -42,7 +43,7 @@ export function SearchWorkspace({
     [loading, setLoading] = useState(true),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
-    [sort, setSort] = useState<"discount" | "price" | "recent">("discount");
+    [sort, setSort] = useState<"discount" | "price" | "recent">("recent");
   const pending = useRef(false);
   const { vehicles } = useWorkspace();
   const [brand, setBrand] = useState("");
@@ -54,7 +55,15 @@ export function SearchWorkspace({
   const [brandOptions, setBrandOptions] = useState<SearchOption[]>([]);
   const [modelOptions, setModelOptions] = useState<SearchOption[]>([]);
   const [cityOptions, setCityOptions] = useState<SearchOption[]>([]);
+  const [modelOptionsBrand, setModelOptionsBrand] = useState("");
+  const [cityOptionsState, setCityOptionsState] = useState("");
   const [catalogNotice, setCatalogNotice] = useState("");
+  const [brandStatus, setBrandStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [modelStatus, setModelStatus] = useState<"loading" | "ready" | "error">("ready");
+  const [cityStatus, setCityStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [brandRetry, setBrandRetry] = useState(0);
+  const [modelRetry, setModelRetry] = useState(0);
+  const [cityRetry, setCityRetry] = useState(0);
   const refresh = useCallback(async () => {
     const res = await fetch("/api/searches", { cache: "no-store" });
     if (!res.ok) throw new Error("Não foi possível carregar suas buscas.");
@@ -78,47 +87,66 @@ export function SearchWorkspace({
   }, [refresh]);
   useEffect(() => {
     let cancelled = false;
+    // Fetch lifecycle intentionally updates the catalog status.
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setBrandStatus("loading");
+    /* eslint-enable react-hooks/set-state-in-effect */
     fetch("/api/search-options?type=brands")
       .then((response) => {
         if (!response.ok) throw new Error();
         return response.json() as Promise<SearchOption[]>;
       })
       .then((options) => {
-        if (!cancelled) setBrandOptions(options);
+        if (!cancelled) { setBrandOptions(options); setBrandStatus("ready"); }
       })
       .catch(() => {
-        if (!cancelled)
+        if (!cancelled) {
+          setBrandStatus("error");
           setCatalogNotice("Catálogo FIPE indisponível; digitação manual liberada.");
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [brandRetry]);
   useEffect(() => {
     let cancelled = false;
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setCityStatus("loading");
+    /* eslint-enable react-hooks/set-state-in-effect */
     fetch(`/api/search-options?type=cities&state=${encodeURIComponent(state)}`)
       .then((response) => {
         if (!response.ok) throw new Error();
         return response.json() as Promise<SearchOption[]>;
       })
       .then((options) => {
-        if (!cancelled) setCityOptions(options);
+        if (!cancelled) { setCityOptions(options); setCityOptionsState(state); setCityStatus("ready"); }
       })
       .catch(() => {
-        if (!cancelled)
+        if (!cancelled) {
+          setCityStatus("error");
           setCatalogNotice("Catálogo de municípios indisponível; digitação manual liberada.");
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, [state]);
+  }, [state, cityRetry]);
   useEffect(() => {
     let cancelled = false;
     const selectedBrand = brandOptions.find(
       (option) =>
-        option.name.localeCompare(brand, "pt-BR", { sensitivity: "base" }) === 0,
+        canonicalBrand(option.name) === canonicalBrand(brand),
     );
-    if (!selectedBrand) return;
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (!selectedBrand) {
+      setModelOptions([]);
+      setModelOptionsBrand("");
+      setModelStatus("ready");
+      return;
+    }
+    setModelStatus("loading");
+    /* eslint-enable react-hooks/set-state-in-effect */
     fetch(
       `/api/search-options?type=models&brand=${encodeURIComponent(selectedBrand.code)}`,
     )
@@ -127,16 +155,18 @@ export function SearchWorkspace({
         return response.json() as Promise<SearchOption[]>;
       })
       .then((options) => {
-        if (!cancelled) setModelOptions(options);
+        if (!cancelled) { setModelOptions(options); setModelOptionsBrand(selectedBrand.code); setModelStatus("ready"); }
       })
       .catch(() => {
-        if (!cancelled)
+        if (!cancelled) {
+          setModelStatus("error");
           setCatalogNotice("Modelos FIPE indisponíveis; digitação manual liberada.");
+        }
       });
     return () => {
       cancelled = true;
     };
-  }, [brand, brandOptions]);
+  }, [brand, brandOptions, modelRetry]);
   const active = saved.find((s) => s.id === selected),
     criteria = active?.criteria,
     run = active?.latest;
@@ -180,31 +210,21 @@ export function SearchWorkspace({
     const same = (a: string | null | undefined, b: string) =>
       !b || a?.localeCompare(b, "pt-BR", { sensitivity: "base" }) === 0;
     return {
-      brands: unique([...brandOptions.map((option) => option.name), ...rows.map((r) => r.brand)]),
-      models: unique(
-        [
-          ...modelOptions.map((option) => option.name),
-          ...rows.filter((r) => same(r.brand, brand)).map((r) => r.model),
-        ],
-      ),
       versions: unique(
         rows
           .filter((r) => same(r.brand, brand) && same(r.model, model))
           .map((r) => r.version),
       ),
-      cities: unique([
-        ...cityOptions.map((option) => option.name),
-        ...rows.filter((r) => same(r.state, state)).map((r) => r.city),
-      ]),
     };
-  }, [brand, brandOptions, cityOptions, model, modelOptions, saved, state, vehicles]);
-  const candidates = sortListings(
-    run?.sources
+  }, [brand, model, saved, vehicles]);
+  const resultRows = run?.sources
       .filter((s) => s.status === "ok")
       .flatMap((s) => s.listings)
-      .filter((row) => !row.reasons.length) ?? [],
-    sort,
-  );
+      .filter((row) => !row.reasons.length) ?? [];
+  const hasValidComparison = resultRows.some((row) => row.comparison?.status === "valid");
+  const selectedBrandCode = brandOptions.find((option) => canonicalBrand(option.name) === canonicalBrand(brand))?.code;
+  const effectiveSort = sort === "discount" && !hasValidComparison ? "recent" : sort;
+  const candidates = sortListings(resultRows, effectiveSort);
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending.current) return;
@@ -241,6 +261,12 @@ export function SearchWorkspace({
     const saveOnly =
       (event.nativeEvent as SubmitEvent).submitter?.getAttribute("value") ===
       "save";
+    if (!saveOnly && !parsed.data.sources.some((source) =>
+      integrations.some((integration) => integration.source === source && integration.configured),
+    )) {
+      setError("Nenhuma fonte selecionada está configurada. Salve os critérios sem consultar ou conecte uma fonte em Configurações.");
+      return;
+    }
     pending.current = true;
     setBusy(true);
     try {
@@ -322,59 +348,16 @@ export function SearchWorkspace({
             <SlidersHorizontal size={17} /> O que você procura?
           </h2>
           <form
-            key={`${selected}:${active ? "loaded" : "new"}`}
+            key={`${selected}:${active ? "loaded" : "new"}:${integrations.map((item) => `${item.source}-${item.configured}`).join(",")}`}
             onSubmit={submit}
             className="discovery-form"
           >
             <div className="form-grid two">
-              <label>
-                Marca
-                <input
-                  name="brand"
-                  list="known-brands"
-                  required
-                  maxLength={80}
-                  placeholder="Toyota"
-                  value={brand}
-                  autoComplete="off"
-                  onChange={(event) => {
-                    setBrand(event.target.value);
-                    setModel("");
-                    setVersion("");
-                    setModelOptions([]);
-                  }}
-                />
-              </label>
-              <label>
-                Modelo
-                <input
-                  name="model"
-                  list="known-models"
-                  required
-                  maxLength={100}
-                  placeholder="Corolla"
-                  value={model}
-                  autoComplete="off"
-                  onChange={(event) => {
-                    setModel(event.target.value);
-                    setVersion("");
-                  }}
-                />
-              </label>
+              <SearchCombobox label="Marca" name="brand" required maxLength={80} placeholder="Toyota" value={brand} options={brandOptions} loading={brandStatus === "loading"} error={brandStatus === "error"} onRetry={() => setBrandRetry((n) => n + 1)} onChange={(value) => { setBrand(value); setModel(""); setVersion(""); setModelOptions([]); setModelOptionsBrand(""); setModelStatus("ready"); }} />
+              <SearchCombobox label="Modelo/versão FIPE" name="model" required maxLength={200} placeholder="Digite o modelo ou selecione a descrição FIPE" value={model} options={selectedBrandCode === modelOptionsBrand ? modelOptions : []} loading={modelStatus === "loading"} error={modelStatus === "error"} onRetry={() => setModelRetry((n) => n + 1)} onChange={(value) => { setModel(value); setVersion(""); }} />
             </div>
-            <datalist id="known-brands">
-              {suggestions.brands.map((x) => (
-                <option key={x} value={x} />
-              ))}
-            </datalist>
-            <datalist id="known-models">
-              {suggestions.models.map((x) => (
-                <option key={x} value={x} />
-              ))}
-            </datalist>
             <p className="discovery-help muted">
-              Escolha no catálogo FIPE. Se um item não aparecer, digite
-              manualmente. Os modelos acompanham a marca escolhida.
+              A FIPE fornece descrições completas de modelo e versão. Selecione uma descrição ou digite o modelo manualmente; a correspondência com anúncios pode variar entre fontes. Se usar a descrição completa, deixe a versão opcional em branco.
             </p>
             <label>
               Versão{" "}
@@ -406,6 +389,7 @@ export function SearchWorkspace({
                     setState(event.target.value);
                     setCity("");
                     setCityOptions([]);
+                    setCityOptionsState("");
                   }}
                 >
                   {states.map((x) => (
@@ -413,24 +397,7 @@ export function SearchWorkspace({
                   ))}
                 </select>
               </label>
-              <label>
-                Cidade
-                <input
-                  name="city"
-                  list="known-cities"
-                  required
-                  maxLength={120}
-                  placeholder="Escolha a UF primeiro"
-                  value={city}
-                  autoComplete="off"
-                  onChange={(event) => setCity(event.target.value)}
-                />
-                <datalist id="known-cities">
-                  {suggestions.cities.map((x) => (
-                    <option key={x} value={x} />
-                  ))}
-                </datalist>
-              </label>
+              <SearchCombobox label="Cidade" name="city" required maxLength={120} placeholder={`Cidade em ${state}`} value={city} options={cityOptionsState === state ? cityOptions : []} loading={cityStatus === "loading"} error={cityStatus === "error"} onRetry={() => setCityRetry((n) => n + 1)} onChange={setCity} />
             </div>
             {catalogNotice && (
               <p className="discovery-warning" role="status">
@@ -509,29 +476,32 @@ export function SearchWorkspace({
                     value={source}
                     type="checkbox"
                     defaultChecked={
-                      criteria ? criteria.sources.includes(source) : true
+                      criteria ? criteria.sources.includes(source) : !integrations.some((item) => item.configured) || !!integrations.find((item) => item.source === source)?.configured
                     }
                   />
-                  {sourceNames[source]}
+                  {sourceNames[source]}{!integrations.find((item) => item.source === source)?.configured ? " · configuração pendente" : ""}
                 </label>
               ))}
             </fieldset>
-            <button
-              className="button primary"
-              type="submit"
-              disabled={busy || loading}
-            >
-              <Search size={17} />
-              {busy ? "Consultando fontes…" : "Buscar agora"}
-            </button>
-            <button
-              className="text-button"
-              type="submit"
-              value="save"
-              disabled={busy || loading}
-            >
-              Salvar critérios sem consultar
-            </button>
+            <p className="discovery-help muted">Fontes sem conexão podem ser salvas nos critérios para consultar depois de configuradas.</p>
+            <div className="discovery-actions">
+              <button
+                className="button primary"
+                type="submit"
+                disabled={busy || loading}
+              >
+                <Search size={17} />
+                {busy ? "Consultando fontes…" : "Buscar agora"}
+              </button>
+              <button
+                className="text-button"
+                type="submit"
+                value="save"
+                disabled={busy || loading}
+              >
+                Salvar critérios sem consultar
+              </button>
+            </div>
             <details className="search-costs">
               <summary>Consumo desta busca</summary>
               <p>
@@ -651,12 +621,10 @@ export function SearchWorkspace({
                 <label>
                   Ordenar por
                   <select
-                    value={sort}
+                    value={effectiveSort}
                     onChange={(e) => setSort(e.target.value as typeof sort)}
                   >
-                    <option value="discount">
-                      Maior percentual abaixo da média
-                    </option>
+                    {hasValidComparison && <option value="discount">Maior percentual abaixo da média</option>}
                     <option value="price">Menor preço</option>
                     <option value="recent">Observados mais recentemente</option>
                   </select>

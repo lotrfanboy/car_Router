@@ -139,8 +139,80 @@ input[type="checkbox"] {
   gap: 16px;
 }
 .focus-workspace label {
-  font-size: 12px;
+  font-size: 14px;
   color: #333943;
+}
+.search-combobox {
+  position: relative;
+  min-width: 0;
+}
+.search-combobox > label {
+  display: block;
+  margin-bottom: 6px;
+}
+.search-combobox-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid #c9cdd2;
+  border-radius: 5px;
+  background: #fff;
+}
+.search-combobox-input:focus-within {
+  outline: 2px solid #245bcc;
+  outline-offset: 1px;
+}
+.search-combobox-input input {
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  outline: 0;
+}
+.search-combobox-input button {
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+.search-combobox-popup {
+  position: absolute;
+  z-index: 20;
+  inset-inline: 0;
+  top: calc(100% + 4px);
+  max-height: min(280px, 50vh);
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #bfc4ca;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+.search-combobox-popup ul {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+}
+.search-combobox-popup li button {
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+  color: #22252a;
+  cursor: pointer;
+}
+.search-combobox-popup li[aria-selected="true"] button,
+.search-combobox-popup li button:hover {
+  background: #e9edf5;
+}
+.search-combobox-popup p {
+  margin: 0;
+  padding: 12px;
+  font-size: 13px;
+}
+.search-combobox-popup p button {
+  display: block;
+  margin-top: 8px;
 }
 .focus-workspace label small {
   font-size: 10px;
@@ -149,12 +221,16 @@ input[type="checkbox"] {
 }
 .focus-workspace .discovery-help {
   margin: 0;
-  font-size: 11px;
+  font-size: 13px;
 }
 .focus-workspace .discovery-form .button {
   width: 100%;
   min-height: 44px;
   justify-content: center;
+}
+.discovery-actions {
+  display: grid;
+  gap: 10px;
 }
 .focus-workspace .discovery-form input,
 .focus-workspace .discovery-form select {
@@ -243,6 +319,111 @@ summary {
   display: block;
   background: #eeeff0;
   min-height: 160px;
+}
+.listing-photo-unavailable {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #59616b;
+  font-size: 14px;
+  text-align: center;
+}
+.saved-compare-controls,
+.saved-compare-picker {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.saved-compare-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 8px;
+}
+.saved-compare-picker label {
+  display: grid;
+  gap: 6px;
+  min-width: min(100%, 330px);
+}
+.saved-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+  gap: 16px;
+}
+.saved-compare-card h2 {
+  font-size: 18px;
+  line-height: 1.35;
+}
+.saved-compare-card dl {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(0, 1.4fr);
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+.saved-compare-card dt {
+  color: #59616b;
+}
+.saved-compare-card dd {
+  margin: 0;
+  font-weight: 600;
+}
+.saved-charts {
+  margin-bottom: 20px;
+}
+.saved-chart-filters,
+.saved-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 16px;
+}
+.saved-chart-filters label {
+  display: grid;
+  gap: 6px;
+}
+.saved-chart-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+  margin-top: 20px;
+}
+.saved-price-band summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+.saved-price-band summary span:first-child {
+  min-width: 145px;
+}
+.saved-price-bar {
+  display: block;
+  height: 12px;
+  background: #65758c;
+  min-width: 8px;
+  max-width: 120px;
+}
+.saved-price-band ul {
+  padding-left: 18px;
+}
+.saved-scatter {
+  position: relative;
+  height: 210px;
+  margin-top: 12px;
+  border-left: 1px solid #a6adb6;
+  border-bottom: 1px solid #a6adb6;
+  background: linear-gradient(#eef0f3 1px, transparent 1px) 0 0 / 100% 25%;
+}
+.saved-scatter-point {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, 50%);
+  border-radius: 50%;
+  background: #245bcc;
+  box-shadow: 0 0 0 2px #fff;
 }
 .listing-photo img {
   width: 100%;
@@ -470,13 +651,24 @@ summary {
   .discovery-form > .search-costs {
     grid-column: 1/-1;
   }
+  .discovery-form > .discovery-actions {
+    grid-column: 1/-1;
+  }
 }
 @media (max-width: 600px) {
   .focus-workspace .discovery-form {
     grid-template-columns: 1fr;
   }
   .focus-workspace .form-grid.two {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+  .discovery-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
   }
   .listing-card.with-photo {
     grid-template-columns: 1fr;

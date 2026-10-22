@@ -31,6 +31,7 @@ const criteria = searchSchema.parse({
 const olx = (price = 108000) => ({
   id: "123",
   title: "Toyota Corolla XEi 2020",
+  images: [{ webpUrl: "https://img.olx.com.br/test-only-corolla.webp" }],
   url: "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/corolla-123",
   price,
   professionalAd: false,
@@ -290,7 +291,11 @@ it("persists observations and only changed prices, survives reconnect, and enfor
   expect(first.sources[0]).toMatchObject({
     status: "ok",
     partial: true,
-    listings: [{ isNew: true, priceCents: 10800000 }],
+    listings: [{
+      isNew: true,
+      priceCents: 10800000,
+      imageUrl: "https://img.olx.com.br/test-only-corolla.webp",
+    }],
   });
   expect(first.sources[1].listings[0].reasons).toEqual([]);
   expect(await store.integrationStatus()).toEqual(
@@ -323,6 +328,18 @@ it("persists observations and only changed prices, survives reconnect, and enfor
   expect(
     (await store.listSearches())[0].latest.sources[0].listings[0].priceCents,
   ).toBe(10300000);
+  const listings = await import("../src/lib/listings-store");
+  expect((await listings.getListing("olx", "123"))?.imageUrl).toBe(
+    "https://img.olx.com.br/test-only-corolla.webp",
+  );
+  await db.db.discoveredListing.update({
+    where: { source_externalId: { source: "olx", externalId: "123" } },
+    data: { savedAt: new Date() },
+  });
+  await db.db.$disconnect();
+  expect((await listings.savedListings())[0].imageUrl).toBe(
+    "https://img.olx.com.br/test-only-corolla.webp",
+  );
 });
 it("preserves successful source on partial failure and never leaks provider diagnostics", async () => {
   reefFails = true;

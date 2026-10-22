@@ -6,6 +6,7 @@ import { providerConfig, secret } from "./discovery-providers";
 import { searchSchema, type Listing } from "./discovery";
 import { listingKey } from "./listing-comparison";
 import { money } from "./vehicle";
+import { radarState } from "./radar-state";
 
 const setting = (name: string) => secret(name, ".env.radar.local");
 export const radarSchema = z.object({
@@ -82,13 +83,13 @@ export async function listRadars() {
         ...row,
         search: undefined,
         criteria,
-        state: !row.enabled
-          ? "paused"
-          : !infrastructure.ready || !schedulerSeen || !connected
-            ? "pending"
-            : row.runs[0]?.status === "error"
-              ? "error"
-              : "active",
+        state: radarState({
+          enabled: row.enabled,
+          ready: infrastructure.ready,
+          schedulerSeen,
+          connected,
+          latest: row.runs[0],
+        }),
         nextRunAt:
           row.enabled && infrastructure.ready && schedulerSeen && connected
             ? row.nextRunAt
