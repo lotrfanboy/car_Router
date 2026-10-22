@@ -5,9 +5,13 @@ import { type Listing } from "@/lib/discovery";
 import { ListingCard } from "@/components/listing-card";
 import { useWorkspace } from "@/components/workspace";
 import { money } from "@/lib/vehicle";
+import { listingKey } from "@/lib/listing-comparison";
+import { readListingSelection, toggleListingSelection, writeListingSelection } from "@/lib/listing-selection";
+import { SavedListingCharts } from "@/components/saved-listing-charts";
 export default function Page() {
   const [rows, setRows] = useState<Listing[] | null>(null),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [comparison, setComparison] = useState<string[]>(readListingSelection);
   const { vehicles } = useWorkspace();
   const favorites = vehicles.filter((v) => v.favorite);
   useEffect(() => {
@@ -55,23 +59,24 @@ export default function Page() {
           <p>Use Salvar nos resultados ou no detalhe de um anúncio.</p>
         </div>
       )}
+      {!!rows?.length && <SavedListingCharts rows={rows} />}
       <div className="saved-listings">
+        {!!rows?.length && <div className="saved-compare-controls"><span>{comparison.length}/4 anúncios selecionados</span><Link className="button" href="/comparar-anuncios">Comparar anúncios salvos</Link></div>}
         {rows?.map((row) => (
-          <ListingCard
-            key={`${row.source}:${row.externalId}`}
-            listing={row}
-            onSavedChange={(saved) => {
-              if (!saved)
-                setRows(
-                  (previous) =>
-                    previous?.filter(
-                      (x) =>
-                        x.source !== row.source ||
-                        x.externalId !== row.externalId,
-                    ) ?? [],
-                );
-            }}
-          />
+          <div key={listingKey(row)}>
+            <label className="saved-compare-toggle"><input type="checkbox" checked={comparison.includes(listingKey(row))} disabled={comparison.length >= 4 && !comparison.includes(listingKey(row))} onChange={() => { const next = toggleListingSelection(comparison, row); setComparison(next); writeListingSelection(next); }} /> Comparar este anúncio</label>
+            <ListingCard
+              listing={row}
+              onSavedChange={(saved) => {
+                if (!saved) {
+                  setRows((previous) => previous?.filter((x) => listingKey(x) !== listingKey(row)) ?? []);
+                  const next = comparison.filter((key) => key !== listingKey(row));
+                  setComparison(next);
+                  writeListingSelection(next);
+                }
+              }}
+            />
+          </div>
         ))}
       </div>
       {favorites.length > 0 && (

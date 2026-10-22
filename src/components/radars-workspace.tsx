@@ -10,12 +10,12 @@ type Radar = {
   minPercent: number;
   intervalHours: 24 | 168;
   enabled: boolean;
-  state: "paused" | "pending" | "error" | "active";
+  state: "paused" | "pending" | "scheduled" | "running" | "success" | "error";
   missing: string[];
   lastRunAt: string | null;
   nextRunAt: string | null;
   criteria: SearchCriteria;
-  runs: { id: string; status: string; message: string; startedAt: string }[];
+  runs: { id: string; status: string; message: string; startedAt: string; finishedAt: string | null }[];
 };
 export function RadarsWorkspace({
   initialSearchId = "",
@@ -256,7 +256,9 @@ export function RadarsWorkspace({
                       paused: "Pausado",
                       pending: "Configuração pendente",
                       error: "Falha na última execução",
-                      active: "Ativo",
+                      scheduled: "Agendado; aguardando primeira execução",
+                      running: "Execução em andamento",
+                      success: "Última execução concluída",
                     }[row.state]
                   }
                 </strong>
@@ -268,8 +270,8 @@ export function RadarsWorkspace({
               </p>
               <p className="muted">
                 Última execução:{" "}
-                {row.lastRunAt
-                  ? observedWhen(row.lastRunAt)
+                {row.runs[0]
+                  ? `${observedWhen(row.runs[0].startedAt)} · ${row.runs[0].status === "running" ? "em andamento" : row.runs[0].status === "ok" ? "concluída" : "falhou"}`
                   : "ainda não executado"}
                 <br />
                 Próxima execução:{" "}
