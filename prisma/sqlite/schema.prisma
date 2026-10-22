@@ -1,0 +1,174 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+  output     = "../../src/generated/prisma-sqlite"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model Vehicle {
+  id              String   @id @default(cuid())
+  brand           String
+  model           String
+  version         String?
+  manufactureYear Int
+  modelYear       Int
+  mileage         Int
+  priceCents      Int
+  referenceCents  Int?
+  city            String?
+  state           String?
+  fuel            String?
+  transmission    String?
+  source          String
+  sellerType      String?
+  originalUrl     String?
+  imageUrl        String?
+  notes           String?
+  favorite        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  priceHistory    VehiclePrice[]
+
+  @@index([brand, model])
+  @@index([createdAt])
+  @@index([favorite])
+}
+
+model VehiclePrice {
+  id         Int      @id @default(autoincrement())
+  vehicleId  String
+  priceCents Int
+  observedAt DateTime @default(now())
+  reason     String
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId, id])
+}
+
+model SavedSearch {
+  id        String   @id @default(cuid())
+  name      String
+  criteria  String
+  createdAt DateTime @default(now())
+  queryKey  String?  @unique
+  runs      SearchRun[]
+  radars    Radar[]
+}
+
+model SearchRun {
+  id        String   @id @default(cuid())
+  searchId  String
+  createdAt DateTime @default(now())
+  result    String
+  search    SavedSearch @relation(fields: [searchId], references: [id], onDelete: Cascade)
+
+  @@index([searchId, createdAt])
+}
+
+model DiscoveredListing {
+  id         String   @id @default(cuid())
+  source     String
+  externalId String
+  payload    String
+  firstSeen  DateTime @default(now())
+  lastSeen   DateTime @default(now())
+  savedAt    DateTime?
+  prices     ListingPrice[]
+
+  @@unique([source, externalId])
+  @@index([lastSeen])
+  @@index([savedAt])
+}
+
+model SearchCache {
+  id        String @id
+  result    String
+  updatedAt DateTime @default(now())
+}
+
+model Radar {
+  id           String @id @default(cuid())
+  searchId     String
+  name         String
+  minPercent   Float
+  intervalHours Int @default(24)
+  enabled      Boolean @default(false)
+  lastRunAt    DateTime?
+  nextRunAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  search       SavedSearch @relation(fields: [searchId], references: [id], onDelete: Restrict)
+  runs         RadarRun[]
+  notices      RadarNotice[]
+
+  @@index([searchId])
+  @@index([enabled, nextRunAt])
+}
+
+model RadarRun {
+  id         String @id @default(cuid())
+  radarId    String
+  startedAt  DateTime @default(now())
+  finishedAt DateTime?
+  status     String
+  message    String
+  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  @@index([radarId, startedAt])
+}
+
+model RadarNotice {
+  id         String @id @default(cuid())
+  radarId    String
+  listingKey String
+  priceCents Int
+  eventKey   String @unique
+  status     String
+  createdAt  DateTime @default(now())
+  sentAt     DateTime?
+  radar      Radar @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  @@index([radarId, listingKey])
+}
+
+model ListingPrice {
+  id         Int @id @default(autoincrement())
+  listingId  String
+  priceCents Int
+  observedAt DateTime @default(now())
+  listing    DiscoveredListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, id])
+}
+
+model ProviderSpend {
+  id        Int @id @default(autoincrement())
+  provider  String
+  credits   Int
+  createdAt DateTime @default(now())
+
+  @@index([provider, createdAt])
+}
+
+model SearchLock {
+  id        String @id
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model OlxLocation {
+  id         String @id
+  region     String
+  verifiedAt DateTime @default(now())
+}
+
+// Saved local catalog filters are separate from provider searches and never consume credits.
+model CatalogSearch {
+  id        String   @id @default(cuid())
+  name      String
+  query     String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

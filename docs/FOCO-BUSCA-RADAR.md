@@ -1,10 +1,10 @@
 # Buscar carros, comparar preços e acompanhar
 
-Entrega local sobre `main` em `c275c50`, branch `codex/foco-busca-media-radar`. Sem push, merge, publicação ou alteração de banco de uso. Não reutilizar números de validações anteriores como evidência desta entrega.
+Este documento nasceu na entrega local sobre `main` em `c275c50`. Em 22/10/2026, a persistência foi migrada para PostgreSQL e a estrutura inicial foi aplicada ao projeto Supabase; a aplicação hospedada e o scheduler continuam etapas separadas. Não reutilizar números de validações anteriores como evidência da migração atual.
 
 ## Trabalho aproveitado
 
-Next.js 16, React, TypeScript, Prisma/libSQL/SQLite, cadastro e validação de veículos, rotas antigas, favoritos, comparação de veículos e históricos foram mantidos. Os conectores OLX/Gecko e Webmotors/Reef, verificação de custo Gecko, limite local de 10 créditos/dia por fornecedor e teto de avaliação (20 Gecko/40 Reef), resolução de cidade, histórico de descoberta e proteção de concorrência foram preservados.
+Next.js 16, React, TypeScript, Prisma, cadastro e validação de veículos, rotas antigas, favoritos, comparação de veículos e históricos foram mantidos. A persistência de produção agora usa PostgreSQL 17 no Supabase; SQLite/libSQL permanece nos testes isolados. Os conectores OLX/Gecko e Webmotors/Reef, verificação de custo Gecko, limite local de 10 créditos/dia por fornecedor e teto de avaliação (20 Gecko/40 Reef), resolução de cidade, histórico de descoberta e proteção de concorrência foram preservados.
 
 O trabalho local descrito no chat “Unificar busca e oportunidades” não estava neste ambiente nem no GitHub. Seu checkout não foi alterado. Reaproveitamos a abordagem de preservar URL/fonte/foto e deduplicar cliques; o novo fluxo salva diretamente `DiscoveredListing`, sem exigir inventar os campos obrigatórios de `Vehicle`. O catálogo manual continua acessível e seus favoritos aparecem também em Salvos. A análise legada por mediana fica nas ferramentas secundárias, identificada como análise do catálogo.
 
@@ -32,7 +32,7 @@ Ano-modelo da consulta de referência é ampliado em ±1. Orçamento, km máximo
 
 ## Consumo e concorrência
 
-Cliques simultâneos são bloqueados na interface e existe trava compartilhada no SQLite, com prazo de dez minutos e liberação condicionada ao proprietário temporal. Critérios equivalentes reaproveitam buscas existentes, incluindo registros legados sem chave. Uma coleta equivalente pode ser reutilizada por 60 segundos mesmo que o orçamento mude; respostas reutilizadas conservam a data original de observação e não cobram créditos. Não há paginação automática ou retry silencioso de extrações.
+Cliques simultâneos são bloqueados na interface e existe trava compartilhada no PostgreSQL, com prazo de dez minutos e liberação condicionada ao proprietário temporal. A reserva de créditos também serializa concorrentes por fornecedor antes de conferir os tetos. Critérios equivalentes reaproveitam buscas existentes, incluindo registros legados sem chave. Uma coleta equivalente pode ser reutilizada por 60 segundos mesmo que o orçamento mude; respostas reutilizadas conservam a data original de observação e não cobram créditos. Não há paginação automática ou retry silencioso de extrações.
 
 ## Radar e aviso
 
@@ -44,20 +44,20 @@ Não havia canal de aviso no projeto. Foi preparado um adaptador opcional de **e
 
 O e-mail contém carro, preço, média, percentual, localização e link do detalhe. Só registra envio aceito após resposta com ID do provedor; isso não comprova entrega na caixa postal. Em timeout/erro, o estado é não confirmado, sem reenvio automático. Chave idempotente por Radar/anúncio/preço e registro antes do envio previnem repetição. Uma queda de ao menos 1% que continue/comece a satisfazer o limite pode gerar novo aviso. Até dez avisos por Radar/execução limitam duração; demais correspondências continuam elegíveis para a próxima execução.
 
-Dependências da hospedagem: processo Next persistente, **SQLite em volume persistente**, cron externo autorizado e conta/canal de e-mail. O `render.yaml` existente é um preview gratuito com SQLite em `/tmp`, sem cron e sem credenciais; foi preservado. Ele não é uma base adequada para monitoramento durável. Não criamos nem publicamos serviços. Proteger o app com o controle de acesso existente no ambiente antes de hospedar; o projeto continua pessoal, sem autenticação multiusuário.
+Dependências da hospedagem: processo Next persistente, PostgreSQL no Supabase, cron externo autorizado e conta/canal de e-mail. O `render.yaml` recebe `DATABASE_URL` como segredo e mantém o scheduler desligado até cron, segredo e e-mail serem configurados. Proteger o app com o controle de acesso existente no ambiente antes de hospedar; o projeto continua pessoal, sem autenticação multiusuário.
 
-No preview do Render, o Blueprint solicita `GECKO_API_KEY` e `REEF_API_KEY` como segredos, sem versioná-las. Para testar Webmotors, altere `REEF_FREE_TRIAL` para `true` somente depois de confirmar que a conta possui créditos promocionais e não fará cobrança automática. O plano gratuito usa SQLite em `/tmp`: buscas, salvos e históricos podem desaparecer após reinício ou recriação do serviço. `RADAR_SCHEDULER_ENABLED` permanece `false`, portanto o preview não se apresenta como monitoramento ativo.
+No preview do Render, o Blueprint solicita `DATABASE_URL`, `GECKO_API_KEY` e `REEF_API_KEY` como segredos, sem versioná-las. Para testar Webmotors, altere `REEF_FREE_TRIAL` para `true` somente depois de confirmar que a conta possui créditos promocionais e não fará cobrança automática. `RADAR_SCHEDULER_ENABLED` permanece `false`, portanto o preview não se apresenta como monitoramento ativo.
 
 ## Dados, recuperação e credenciais
 
-A migração `20261021060000_search_focus` apenas acrescenta campos/tabelas/índices. Não apaga, redefine IDs ou recria tabelas antigas. `savedAt` marca descobertas salvas; `queryKey` é inicialmente nulo para registros antigos. Históricos, favoritos, buscas, locais e gastos permanecem intactos. Migrações foram aplicadas somente em bancos temporários de teste.
+A migração inicial versionada em `supabase/migrations` consolida o modelo PostgreSQL, incluindo Radar, históricos, travas e orçamento. Todas as 14 tabelas têm RLS habilitado e nenhum grant para os papéis da Data API. O backend acessa o banco por conexão PostgreSQL no servidor.
 
 Antes de aplicar em um banco de uso:
 
-1. Pare escritas e identifique o `DATABASE_URL` efetivo. Não confunda preview `/tmp` com produção.
-2. Para SQLite local: `python scripts/backup-sqlite.py /caminho/banco.db /caminho/backup-novo.db`. O backup consistente inclui dados confirmados no WAL, valida integridade e recusa sobrescrever o destino. Armazene fora do diretório público.
-3. Gere o client e aplique `npm run db:migrate` no ambiente correto, depois valide os registros. Nunca use `reset`.
-4. Para recuperar: pare aplicação e agendador, preserve o arquivo pós-migração para diagnóstico e restaure o backup junto da versão anterior do código. Evite arquivos WAL antigos ao restaurar; use um novo caminho de banco e atualize `DATABASE_URL` no servidor de forma controlada.
+1. Pare escritas e confirme o projeto apontado por `DATABASE_URL` e pelo Supabase CLI.
+2. Faça backup/exportação do PostgreSQL antes de uma mudança estrutural com dados existentes.
+3. Gere os clients com `npm run setup` e aplique `npm run db:migrate` no ambiente correto, depois valide tabelas, RLS, grants e registros. Nunca use `reset` em produção.
+4. Para recuperar, pare aplicação e agendador, restaure o backup no Supabase e volte a versão compatível do código antes de reabrir escritas.
 
 As chaves fornecidas nesta conversa foram guardadas somente em `.env.gecko.local` e `.env.reef.local`, modo 0600, ignoradas pelo Git. Não aparecem nesta documentação, no navegador nem em logs. O carregador prioriza variáveis do processo; arquivos locais são fallback. O opt-in `REEF_FREE_TRIAL` continua falso/ausente até confirmar o saldo promocional, preservando o contrato existente. Não alteramos a configuração de produção.
 

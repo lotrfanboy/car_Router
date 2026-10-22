@@ -26,6 +26,7 @@ checks = []
 lab_metrics = []
 with tempfile.TemporaryDirectory(prefix="radar-browser-") as temp:
     env["DATABASE_URL"] = "file:" + str(Path(temp) / "browser.db")
+    env["PRISMA_SCHEMA"] = "prisma/sqlite/schema.prisma"
     subprocess.run(["node", "node_modules/prisma/build/index.js", "migrate", "deploy"], cwd=ROOT, env=env, check=True)
     log = open(Path(temp) / "server.log", "w+")
     server = subprocess.Popen(["node", "node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", str(PORT)], cwd=ROOT, env=env, stdout=log, stderr=log)
