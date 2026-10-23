@@ -17,6 +17,8 @@ const requiredTables = [
   "Radar",
   "RadarRun",
   "RadarNotice",
+  "RadarSourceState",
+  "RadarObservation",
   "ListingPrice",
   "ProviderSpend",
   "SearchLock",
@@ -50,8 +52,34 @@ try {
   const present = new Set(result.rows.map((row) => row.table_name));
   const missing = requiredTables.filter((table) => !present.has(table));
   if (missing.length > 0) {
-    throw new Error(`Schema incompleto. Tabelas ausentes: ${missing.join(", ")}`);
+    throw new Error(
+      `Schema incompleto. Tabelas ausentes: ${missing.join(", ")}`,
+    );
   }
+  const radarColumns = await client.query(
+    `select table_name, column_name from information_schema.columns
+      where table_schema = 'public' and table_name in ('Radar', 'RadarNotice')`,
+  );
+  const presentColumns = new Set(
+    radarColumns.rows.map((row) => `${row.table_name}.${row.column_name}`),
+  );
+  const requiredRadarColumns = [
+    "Radar.mode",
+    "Radar.channel",
+    "Radar.runsRemaining",
+    "RadarNotice.kind",
+    "RadarNotice.channel",
+    "RadarNotice.matchStatus",
+    "RadarNotice.payload",
+    "RadarNotice.previousPriceCents",
+  ];
+  const missingColumns = requiredRadarColumns.filter(
+    (name) => !presentColumns.has(name),
+  );
+  if (missingColumns.length)
+    throw new Error(
+      `Schema de alertas incompleto. Colunas ausentes: ${missingColumns.join(", ")}`,
+    );
   const catalog = await client.query(
     `select r.id, r.status, r."brandCount", r."modelCount", r."versionCount",
             (select count(*)::int from "CatalogBrand" b where b."revisionId"=r.id) as brands,

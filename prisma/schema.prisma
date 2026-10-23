@@ -95,6 +95,9 @@ model Radar {
   searchId      String
   name          String
   minPercent    Float
+  mode          String        @default("discount")
+  channel       String        @default("email")
+  runsRemaining Int?
   intervalHours Int           @default(24)
   enabled       Boolean       @default(false)
   lastRunAt     DateTime?
@@ -104,6 +107,8 @@ model Radar {
   search        SavedSearch   @relation(fields: [searchId], references: [id], onDelete: Restrict)
   runs          RadarRun[]
   notices       RadarNotice[]
+  sourceStates  RadarSourceState[]
+  observations  RadarObservation[]
 
   @@index([searchId])
   @@index([enabled, nextRunAt])
@@ -122,17 +127,43 @@ model RadarRun {
 }
 
 model RadarNotice {
-  id         String    @id @default(cuid())
-  radarId    String
-  listingKey String
-  priceCents Int
-  eventKey   String    @unique
-  status     String
-  createdAt  DateTime  @default(now())
-  sentAt     DateTime?
-  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  id                 String    @id @default(cuid())
+  radarId            String
+  listingKey         String
+  priceCents         Int
+  eventKey           String    @unique
+  status             String
+  kind               String    @default("discount")
+  channel            String    @default("email")
+  matchStatus        String    @default("confirmed")
+  payload            String?
+  previousPriceCents Int?
+  createdAt          DateTime  @default(now())
+  sentAt             DateTime?
+  radar              Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
 
   @@index([radarId, listingKey])
+}
+
+model RadarSourceState {
+  radarId       String
+  source        String
+  initializedAt DateTime @default(now())
+  radar         Radar    @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
+  @@id([radarId, source])
+}
+
+model RadarObservation {
+  radarId                String
+  listingKey             String
+  priceCents             Int?
+  lastNotifiedPriceCents  Int?
+  firstSeenAt            DateTime @default(now())
+  lastSeenAt             DateTime @default(now())
+  radar                  Radar    @relation(fields: [radarId], references: [id], onDelete: Cascade)
+
+  @@id([radarId, listingKey])
 }
 
 model ListingPrice {
