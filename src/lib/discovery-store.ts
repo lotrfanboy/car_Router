@@ -11,20 +11,6 @@ import {
 import { fetchSource, providerConfig } from "./discovery-providers";
 import { enrichResult } from "./listings-store";
 import { readVehicleCatalog } from "./catalog-store";
-import { catalogKey } from "./vehicle-catalog";
-import {
-  normalizeCatalogCriteria,
-  validCatalogCriteria,
-} from "./commercial-models";
-
-export async function currentSearchCriteria(
-  input: unknown,
-): Promise<SearchCriteria> {
-  const criteria = searchSchema.parse(input);
-  return criteria.catalog?.provider === "carrouter"
-    ? normalizeCatalogCriteria(await readVehicleCatalog(), criteria)
-    : criteria;
-}
 
 export class SearchError extends Error {
   constructor(
@@ -128,7 +114,7 @@ export async function listSearches() {
   });
   return Promise.all(
     rows.map(async (row) => {
-      const criteria = await currentSearchCriteria(JSON.parse(row.criteria));
+      const criteria = searchSchema.parse(JSON.parse(row.criteria));
       const latest = row.runs[0]
         ? {
             id: row.runs[0].id,
@@ -137,7 +123,6 @@ export async function listSearches() {
               JSON.parse(row.runs[0].result) as SearchResult & {
                 interrupted?: boolean;
               },
-              criteria,
             )),
           }
         : null;
@@ -160,7 +145,6 @@ export async function listSearches() {
                 ? failedSources
                 : [...new Set([...criteria.sources, ...failedSources])],
               partialFailure ? failedSources : [],
-              criteria,
             )
           : { lastSuccessful: null, previousSourceRuns: [] };
       return {
@@ -184,7 +168,6 @@ async function recoverSearchRuns(
   latestId: string,
   recoverySources: Source[],
   lastSuccessfulSources: Source[],
-  criteria: SearchCriteria,
 ) {
   let cursor = latestId;
   let lastSuccessful: HistoricalRun | null = null;
@@ -220,7 +203,7 @@ async function recoverSearchRuns(
           const enriched = {
             id: run.id,
             createdAt: run.createdAt,
-            ...(await enrichResult(result, criteria)),
+            ...(await enrichResult(result)),
           };
           if (isLastSuccessful) lastSuccessful = enriched;
           if (recoveredSources.length) {
@@ -272,13 +255,13 @@ function criteriaKey(
             criteria.catalog?.provider === "carrouter"
               ? criteria.catalog
               : undefined,
-          collectionVersion: 4,
+          collectionVersion: 3,
         }
       : {}),
     name: "",
     brand: normalized(criteria.brand),
-    model: catalogKey(criteria.model),
-    version: catalogKey(criteria.version ?? ""),
+    model: normalized(criteria.model),
+    version: normalized(criteria.version ?? ""),
     city: normalized(criteria.city),
     ...(legacyLocation
       ? {}
@@ -305,14 +288,36 @@ function criteriaKey(
     .digest("hex");
 }
 export async function saveSearch(input: unknown) {
-  const data = await currentSearchCriteria(input);
-  if (
-    data.catalog?.provider === "carrouter" &&
-    !validCatalogCriteria(await readVehicleCatalog(), data)
-  )
-    throw new SearchError(
-      "Seleção de catálogo desatualizada ou incompatível. Selecione novamente ou confirme a entrada manual.",
+  const data = searchSchema.parse(input);
+  if (data.catalog?.provider === "carrouter") {
+    const catalog = await readVehicleCatalog();
+    const selection = data.catalog;
+    const brand = catalog.brands.find(
+      (item) => item.id === selection.brandCode,
     );
+    const model = catalog.models.find(
+      (item) => item.id === selection.modelCode && item.brandId === brand?.id,
+    );
+    const version = catalog.versions.find(
+      (item) => item.id === selection.versionCode && item.modelId === model?.id,
+    );
+    if (
+      !brand ||
+      (selection.modelCode && !model) ||
+      (selection.versionCode && !version) ||
+      selection.revision !== catalog.revision ||
+      data.brand !== brand.name ||
+      selection.brandName !== brand.name ||
+      (model &&
+        (data.model !== model.name || selection.modelName !== model.name)) ||
+      (version &&
+        (data.version !== version.name ||
+          selection.versionName !== version.name))
+    )
+      throw new SearchError(
+        "Seleção de catálogo desatualizada ou incompatível. Selecione novamente ou confirme a entrada manual.",
+      );
+  }
   const queryKey = criteriaKey(data);
   const existing = await db.savedSearch.findUnique({ where: { queryKey } });
   if (existing) return existing;
@@ -323,14 +328,14 @@ export async function saveSearch(input: unknown) {
   if (previous) return previous;
   // Recompute persisted identities after schema evolution rather than orphaning
   // run history when a single legacy city becomes `cities: [city]`.
-  const legacy = await db.savedSearch.findMany();
+  const legacy = await db.savedSearch.findMany({ where: { queryKey: null } });
   for (const row of legacy) {
     try {
-      const parsed = await currentSearchCriteria(JSON.parse(row.criteria));
-      if (criteriaKey(parsed) === queryKey) {
+      const parsed = searchSchema.safeParse(JSON.parse(row.criteria));
+      if (parsed.success && criteriaKey(parsed.data) === queryKey) {
         return await db.savedSearch.update({
           where: { id: row.id },
-          data: { queryKey, criteria: JSON.stringify(data) },
+          data: { queryKey },
         });
       }
     } catch {
@@ -351,7 +356,7 @@ export async function executeSearch(
 ) {
   const search = await db.savedSearch.findUnique({ where: { id } });
   if (!search) throw new SearchError("Busca não encontrada.", 404);
-  const criteria = await currentSearchCriteria(JSON.parse(search.criteria));
+  const criteria = searchSchema.parse(JSON.parse(search.criteria));
   if (!criteria.sources.some((source) => providerConfig(source).configured))
     throw new SearchError(
       "Nenhuma fonte selecionada está configurada. Revise as integrações antes de consultar.",
@@ -373,7 +378,7 @@ export async function executeSearch(
       return {
         id: last.id,
         createdAt: last.createdAt,
-        ...(await enrichResult(result, criteria)),
+        ...(await enrichResult(result)),
         cached: true,
       };
   }
@@ -433,7 +438,7 @@ export async function executeSearch(
       return {
         id: run.id,
         createdAt: run.createdAt,
-        ...(await enrichResult(result, criteria)),
+        ...(await enrichResult(result)),
         cached: true,
       };
     }
@@ -505,7 +510,7 @@ export async function executeSearch(
     return {
       id: run.id,
       createdAt: run.createdAt,
-      ...(await enrichResult(result, criteria)),
+      ...(await enrichResult(result)),
     };
   } finally {
     await db.searchLock.deleteMany({

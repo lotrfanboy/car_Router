@@ -7,7 +7,7 @@ export const catalogKey = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/(\d),(?=\d)/g, "$1.")
-    .replace(/[^a-z0-9.+]+/g, "");
+    .replace(/[^a-z0-9.]+/g, "");
 const id = z.string().trim().min(1).max(240);
 const name = z.string().trim().min(1).max(240);
 const reference = z.object({
@@ -17,11 +17,7 @@ const reference = z.object({
   aliases: z.array(name).default([]),
   evidenceId: id,
 });
-const entity = z.object({
-  id,
-  name,
-  references: z.array(reference).default([]),
-});
+const entity = z.object({ id, name, references: z.array(reference).default([]) });
 const sourceMapping = z.object({
   id,
   source: z.enum(["webmotors", "olx"]),
@@ -38,8 +34,6 @@ const sourceMapping = z.object({
   canonicalVersionId: id.nullable().optional(),
   notCanonicalModelId: id.nullable().optional(),
   candidateVersionIds: z.array(id).default([]),
-  configurationId: id.optional(),
-  doors: z.number().int().min(2).max(5).optional(),
 });
 export const catalogSchema = z
   .object({
@@ -60,15 +54,6 @@ export const catalogSchema = z
         brandId: id,
         versionsPending: z.boolean().optional(),
         hasAcceptedVersions: z.boolean().optional(),
-        configurations: z
-          .array(
-            z.object({
-              id,
-              name,
-              doors: z.number().int().min(2).max(5).optional(),
-            }),
-          )
-          .optional(),
       }),
     ),
     versions: z.array(
@@ -76,16 +61,9 @@ export const catalogSchema = z
         modelId: id,
         engine: z.string().optional(),
         transmission: z.string().optional(),
-        configurationIds: z.array(id).optional(),
       }),
     ),
     mappings: z.array(sourceMapping).default([]),
-    modelAliases: z
-      .array(
-        z.object({ id, name, modelId: id, configurationId: id.optional() }),
-      )
-      .optional(),
-    commercialRevision: id.optional(),
   })
   .superRefine((data, ctx) => {
     const fail = (message: string) => ctx.addIssue({ code: "custom", message });
@@ -121,33 +99,6 @@ export const catalogSchema = z
     }
     for (const version of data.versions)
       if (!models.has(version.modelId)) fail("Versão sem modelo de catálogo.");
-    for (const model of data.models) {
-      const configurations = model.configurations ?? [];
-      if (
-        new Set(configurations.map((item) => item.id)).size !==
-        configurations.length
-      )
-        fail("Configuração do modelo duplicada.");
-    }
-    for (const alias of data.modelAliases ?? [])
-      if (
-        !models.has(alias.modelId) ||
-        (alias.configurationId &&
-          !data.models
-            .find((item) => item.id === alias.modelId)
-            ?.configurations?.some((item) => item.id === alias.configurationId))
-      )
-        fail("Alias sem modelo ou configuração correspondente.");
-    for (const version of data.versions)
-      if (
-        version.configurationIds?.some(
-          (id) =>
-            !data.models
-              .find((item) => item.id === version.modelId)
-              ?.configurations?.some((item) => item.id === id),
-        )
-      )
-        fail("Versão com configuração de outro modelo.");
     for (const mapping of data.mappings) {
       if (mapping.canonicalBrandId && !brands.has(mapping.canonicalBrandId))
         fail("Correspondência aponta para marca inexistente.");
@@ -216,7 +167,6 @@ export type CatalogIdentity = {
   brandId: string;
   modelId?: string;
   versionId?: string;
-  configurationId?: string;
 };
 export type SourceVehicle = {
   source: "olx" | "webmotors";
@@ -226,7 +176,6 @@ export type SourceVehicle = {
   brandId?: string | null;
   modelId?: string | null;
   versionId?: string | null;
-  doors?: number | null;
 };
 function resolve<T extends CatalogEntity>(
   rows: T[],
@@ -248,10 +197,8 @@ function resolve<T extends CatalogEntity>(
   );
   return matches.length === 1 ? matches[0] : undefined;
 }
-const same = (
-  left: string | null | undefined,
-  right: string | null | undefined,
-) => !!left && !!right && catalogKey(left) === catalogKey(right);
+const same = (left: string | null | undefined, right: string | null | undefined) =>
+  !!left && !!right && catalogKey(left) === catalogKey(right);
 function mappingMatches(
   mapping: VehicleCatalog["mappings"][number],
   row: SourceVehicle,
@@ -262,22 +209,14 @@ function mappingMatches(
     (!row.brandId || mapping.sourceBrandId !== row.brandId)
   )
     return false;
-  if (
-    !mapping.sourceBrandId &&
-    mapping.sourceBrand &&
-    !same(mapping.sourceBrand, row.brand)
-  )
+  if (!mapping.sourceBrandId && mapping.sourceBrand && !same(mapping.sourceBrand, row.brand))
     return false;
   if (
     mapping.sourceModelId &&
     (!row.modelId || mapping.sourceModelId !== row.modelId)
   )
     return false;
-  if (
-    !mapping.sourceModelId &&
-    mapping.sourceModelLabel &&
-    !same(mapping.sourceModelLabel, row.model)
-  )
+  if (!mapping.sourceModelId && mapping.sourceModelLabel && !same(mapping.sourceModelLabel, row.model))
     return false;
   if (
     mapping.level === "version" &&
@@ -295,7 +234,11 @@ function mappingMatches(
   return true;
 }
 export type CatalogResolutionStatus =
-  "confirmed" | "divergent" | "pending" | "ambiguous" | "unresolved";
+  | "confirmed"
+  | "divergent"
+  | "pending"
+  | "ambiguous"
+  | "unresolved";
 /** Resolve IDs first. Full source descriptions are joined only through explicit catalog records. */
 export function resolveCatalogVehicle(
   catalog: VehicleCatalog,
@@ -317,62 +260,6 @@ export function resolveCatalogVehicle(
         .filter((value): value is string => !!value),
     ),
   ];
-  // A literal structured model label can identify a commercial family only
-  // when no established source-ID binding or competing reference contradicts it.
-  // Complete unknown OLX descriptions are never split at a model prefix.
-  if (
-    !model &&
-    (!row.modelId ||
-      (!models.some((item) =>
-        item.references.some((ref) => ref.source === row.source),
-      ) &&
-        !catalog.mappings.some(
-          (mapping) =>
-            mapping.source === row.source &&
-            mapping.sourceModelId &&
-            mapping.canonicalBrandId === brand?.id,
-        ))) &&
-    !modelMappings.length &&
-    catalog.commercialRevision &&
-    row.brand &&
-    row.model
-  ) {
-    const scopedBrand = catalog.brands.filter(
-      (item) =>
-        same(item.name, row.brand) &&
-        (!row.brandId ||
-          !item.references.some((ref) => ref.source === row.source)),
-    );
-    const directBrand =
-      brand ?? (scopedBrand.length === 1 ? scopedBrand[0] : undefined);
-    if (directBrand) {
-      const directModels = catalog.models.filter(
-        (item) =>
-          item.brandId === directBrand.id &&
-          (same(item.name, row.model) ||
-            catalog.modelAliases?.some(
-              (alias) =>
-                alias.modelId === item.id && same(alias.name, row.model),
-            )),
-      );
-      const referenced = catalog.models.filter(
-        (item) =>
-          item.brandId === directBrand.id &&
-          item.references.some(
-            (ref) =>
-              ref.source === row.source &&
-              [ref.name, ...ref.aliases].some((label) =>
-                same(label, row.model),
-              ),
-          ),
-      );
-      if (directModels.length === 1 && referenced.length <= 1) {
-        brand = directBrand;
-        models = catalog.models.filter((item) => item.brandId === brand!.id);
-        model = directModels[0];
-      }
-    }
-  }
   let modelStatus: CatalogResolutionStatus = model ? "confirmed" : "unresolved";
   let targetModelId: string | undefined;
   if (!model && confirmedModelIds.length === 1) {
@@ -438,57 +325,22 @@ export function resolveCatalogVehicle(
     ];
     if (confirmedVersionIds.length === 1) {
       version = catalog.versions.find(
-        (item) =>
-          item.id === confirmedVersionIds[0] && item.modelId === model?.id,
+        (item) => item.id === confirmedVersionIds[0] && item.modelId === model?.id,
       );
       versionStatus = version ? "confirmed" : "unresolved";
     } else if (confirmedVersionIds.length > 1) versionStatus = "ambiguous";
     else if (versionMappings.some((mapping) => mapping.status === "pending"))
       versionStatus = "pending";
   }
-  const approvedModelMappings = modelMappings.filter(
-    (item) =>
-      item.status === "confirmed" && item.canonicalModelId === model?.id,
-  );
-  const mappedDoors = [
-    ...new Set(
-      approvedModelMappings
-        .map((item) => item.doors)
-        .filter((value): value is number => !!value),
-    ),
-  ];
-  const doors =
-    row.doors ?? (mappedDoors.length === 1 ? mappedDoors[0] : undefined);
-  const configurationIds = [
-    ...new Set(
-      approvedModelMappings
-        .map((item) => item.configurationId)
-        .filter((value): value is string => !!value),
-    ),
-  ];
-  const literalConfiguration = !row.modelId
-    ? catalog.modelAliases?.find(
-        (alias) => alias.modelId === model?.id && same(alias.name, row.model),
-      )?.configurationId
-    : undefined;
-  const configuration = literalConfiguration
-    ? model?.configurations?.find((item) => item.id === literalConfiguration)
-    : configurationIds.length === 1
-      ? model?.configurations?.find((item) => item.id === configurationIds[0])
-      : model?.configurations?.find((item) => !!doors && item.doors === doors);
   return {
     brand,
     model,
     version,
-    doors: doors ?? configuration?.doors,
     identity: brand
       ? {
           brandId: brand.id,
           ...(model ? { modelId: model.id } : {}),
           ...(version && model ? { versionId: version.id } : {}),
-          ...(configuration && model
-            ? { configurationId: configuration.id }
-            : {}),
         }
       : undefined,
     classification: {

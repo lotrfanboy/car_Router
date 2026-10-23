@@ -1,13 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { db } from "./db";
-import {
-  currentSearchCriteria,
-  executeSearch,
-  SearchError,
-} from "./discovery-store";
+import { executeSearch, SearchError } from "./discovery-store";
 import { providerConfig, secret } from "./discovery-providers";
-import { listingMatchStatus, type Listing } from "./discovery";
+import { listingMatchStatus, searchSchema, type Listing } from "./discovery";
 import { listingKey } from "./listing-comparison";
 import { money } from "./vehicle";
 import { radarState } from "./radar-state";
@@ -88,53 +84,49 @@ export async function listRadars() {
   });
   return {
     infrastructure,
-    radars: await Promise.all(
-      rows.map(async (row) => {
-        const criteria = await currentSearchCriteria(
-          JSON.parse(row.search.criteria),
-        );
-        const connected = criteria.sources.some(
-          (s) => providerConfig(s).configured,
-        );
-        const ready =
-          infrastructure.ready &&
-          (row.channel !== "email" || infrastructure.email);
-        return {
-          ...row,
-          search: undefined,
-          criteria,
-          notices: row.notices.map((notice) => {
-            let listing: Listing | null = null;
-            try {
-              listing = notice.payload
-                ? (JSON.parse(notice.payload) as Listing)
-                : null;
-            } catch {}
-            return { ...notice, payload: undefined, listing };
-          }),
-          state: radarState({
-            enabled: row.enabled,
-            ready,
-            schedulerSeen,
-            connected,
-            latest: row.runs[0],
-          }),
-          nextRunAt:
-            row.enabled &&
-            ready &&
-            schedulerSeen &&
-            connected &&
-            row.runsRemaining !== 0
-              ? row.nextRunAt
-              : null,
-          missing: [
-            ...infrastructure.missing,
-            ...(row.channel === "email" ? infrastructure.emailMissing : []),
-            ...(!connected ? ["Ao menos uma fonte da busca conectada"] : []),
-          ],
-        };
-      }),
-    ),
+    radars: rows.map((row) => {
+      const criteria = searchSchema.parse(JSON.parse(row.search.criteria));
+      const connected = criteria.sources.some(
+        (s) => providerConfig(s).configured,
+      );
+      const ready =
+        infrastructure.ready &&
+        (row.channel !== "email" || infrastructure.email);
+      return {
+        ...row,
+        search: undefined,
+        criteria,
+        notices: row.notices.map((notice) => {
+          let listing: Listing | null = null;
+          try {
+            listing = notice.payload
+              ? (JSON.parse(notice.payload) as Listing)
+              : null;
+          } catch {}
+          return { ...notice, payload: undefined, listing };
+        }),
+        state: radarState({
+          enabled: row.enabled,
+          ready,
+          schedulerSeen,
+          connected,
+          latest: row.runs[0],
+        }),
+        nextRunAt:
+          row.enabled &&
+          ready &&
+          schedulerSeen &&
+          connected &&
+          row.runsRemaining !== 0
+            ? row.nextRunAt
+            : null,
+        missing: [
+          ...infrastructure.missing,
+          ...(row.channel === "email" ? infrastructure.emailMissing : []),
+          ...(!connected ? ["Ao menos uma fonte da busca conectada"] : []),
+        ],
+      };
+    }),
   };
 }
 export async function saveRadar(input: unknown, id?: string) {
@@ -287,9 +279,7 @@ export async function tickRadars() {
             "Radar alterado ou pausado antes da consulta.",
             409,
           );
-        const criteria = await currentSearchCriteria(
-          JSON.parse(radar.search.criteria),
-        );
+        const criteria = searchSchema.parse(JSON.parse(radar.search.criteria));
         const result = await executeSearch(radar.searchId, {
           reuseRecent: true,
         });

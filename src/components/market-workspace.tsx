@@ -1,5 +1,4 @@
 "use client";
-import { commercialModelName } from "@/lib/commercial-names";
 
 import {
   useMemo,
@@ -67,9 +66,7 @@ const unique = (vehicles: Vehicle[], key: keyof Vehicle) =>
   [
     ...new Set(
       vehicles
-        .map((v) =>
-          key === "model" ? commercialModelName(v.brand, v.model) : v[key],
-        )
+        .map((v) => v[key])
         .filter(
           (value): value is string =>
             typeof value === "string" && value.length > 0,
@@ -122,10 +119,7 @@ function FilterForm({
     (v) => !draft.brand || v.brand === draft.brand,
   );
   const byModel = byBrand.filter(
-    (v) =>
-      !draft.model ||
-      v.model === draft.model ||
-      commercialModelName(v.brand, v.model) === draft.model,
+    (v) => !draft.model || v.model === draft.model,
   );
   const select = (
     name: MarketKey,

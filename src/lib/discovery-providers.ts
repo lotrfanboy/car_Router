@@ -5,7 +5,6 @@ import {
   type VehicleCatalog,
 } from "./vehicle-catalog";
 import { readVehicleCatalog } from "./catalog-store";
-import { normalizeCatalogCriteria } from "./commercial-models";
 import { planSourceQuery } from "./source-query";
 import {
   buildOlxUrl,
@@ -226,7 +225,6 @@ export function normalizeOlx(
       brand: str(attrs.vehicle_brand),
       model: sourceModel,
       version: explicitVersion,
-      doors: integer(attrs.doors) ?? integer(attrs.vehicle_doors),
       ...sourceIdentity,
     });
     return [
@@ -240,7 +238,6 @@ export function normalizeOlx(
         sourceModel,
         sourceIdentity,
         identity: resolved?.identity,
-        doors: resolved?.doors,
         catalogResolution: resolved?.classification,
         original: {
           brand: str(attrs.vehicle_brand),
@@ -309,11 +306,6 @@ export function normalizeReef(
       brand: str(r.make),
       model: str(r.model),
       version,
-      doors:
-        integer(r.doors) ??
-        (version?.match(/\b([24])\s*P\b/i)
-          ? Number(version.match(/\b([24])\s*P\b/i)![1])
-          : undefined),
       ...sourceIdentity,
     });
 
@@ -328,7 +320,6 @@ export function normalizeReef(
         sourceModel: str(r.model),
         sourceIdentity,
         identity: resolved?.identity,
-        doors: resolved?.doors,
         catalogResolution: resolved?.classification,
         original: {
           brand: str(r.make),
@@ -480,7 +471,6 @@ export async function fetchSource(
   }
   try {
     const catalog = await readVehicleCatalog();
-    criteria = normalizeCatalogCriteria(catalog, criteria);
     const plan = planSourceQuery(catalog, source, criteria);
     result.applied = { remote: [], local: [], mapping: plan.mapping };
     if (!plan.query) throw new Error(plan.mapping.message);
@@ -515,12 +505,6 @@ export async function fetchSource(
       local: [
         "marca",
         "modelo",
-        ...(criteria.doors ? ["número de portas"] : []),
-        ...(criteria.catalog?.provider === "carrouter" &&
-        criteria.catalog.configurationCode &&
-        !criteria.doors
-          ? ["configuração do modelo"]
-          : []),
         "localização",
         ...(criteria.version ? ["versão"] : []),
         ...optionalFilters,

@@ -13,5 +13,4 @@ validation-private/
 coverage/
 tsconfig.tsbuildinfo
 test-results/
-__pycache__/
 docs/screenshots/debug-*.png

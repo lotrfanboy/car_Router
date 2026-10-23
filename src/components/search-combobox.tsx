@@ -8,7 +8,6 @@ export type SearchOption = {
   searchName?: string;
   provider?: "carrouter";
   revision?: string;
-  doors?: 2 | 4;
 };
 
 const key = (value: string) =>

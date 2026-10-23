@@ -1,9 +1,5 @@
 import type { SearchCriteria, Source } from "./discovery";
 import type { CatalogEntity, VehicleCatalog } from "./vehicle-catalog";
-import {
-  normalizeCatalogCriteria,
-  validCatalogCriteria,
-} from "./commercial-models";
 
 export type SourceQueryMapping = {
   status: "confirmed" | "uncertain" | "incompatible";
@@ -37,7 +33,6 @@ export function planSourceQuery(
   source: Source,
   criteria: SearchCriteria,
 ): SourceQueryPlan {
-  criteria = normalizeCatalogCriteria(catalog, criteria);
   const selected =
     criteria.catalog?.provider === "carrouter" ? criteria.catalog : undefined;
   const brand = catalog.brands.find((item) => item.id === selected?.brandCode);
@@ -49,8 +44,7 @@ export function planSourceQuery(
   );
   if (
     selected &&
-    (!validCatalogCriteria(catalog, criteria) ||
-      !brand ||
+    (!brand ||
       selected.revision !== catalog.revision ||
       criteria.brand !== brand.name ||
       selected.brandName !== brand.name ||
