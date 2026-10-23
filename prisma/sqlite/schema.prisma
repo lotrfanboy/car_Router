@@ -391,3 +391,22 @@ model CatalogSourceMapping {
   @@index([revisionId, canonicalModelId])
   @@index([revisionId, notCanonicalModelId])
 }
+
+// Explicit, bounded provider operations. Never enqueued by page loads or selectors.
+model ProviderOperation {
+  id String @id
+  batchId String
+  kind String
+  provider String
+  status String @default("queued")
+  credits Int
+  request String
+  response String?
+  summary String?
+  error String?
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([batchId, status])
+  @@index([kind, status, completedAt])
+}

@@ -21,6 +21,7 @@ const requiredTables = [
   "RadarObservation",
   "ListingPrice",
   "ProviderSpend",
+  "ProviderOperation",
   "SearchLock",
   "OlxLocation",
   "CatalogSearch",
