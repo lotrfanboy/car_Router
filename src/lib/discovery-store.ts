@@ -54,7 +54,32 @@ export class SearchError extends Error {
 }
 const dailyLimit = 10;
 const trialLimit = { gecko: 20, reef: 40 };
-export async function reserveCredits(provider: string, credits: number) {
+// The catalog verification was a bounded one-off batch. Give interactive
+// searches a small, dated allowance without reopening scheduled radar spend.
+const validationBatch = "search-catalog-20261023";
+const manualSupplement = { gecko: 2, reef: 4 };
+type BudgetScope = "manual" | "scheduled";
+const validationCreditsToday = async (
+  tx: Pick<typeof db, "providerOperation">,
+  provider: keyof typeof trialLimit,
+  day: Date,
+) => {
+  const validation = await tx.providerOperation.aggregate({
+    where: {
+      batchId: validationBatch,
+      provider,
+      status: "succeeded",
+      completedAt: { gte: day },
+    },
+    _sum: { credits: true },
+  });
+  return validation._sum.credits ?? 0;
+};
+export async function reserveCredits(
+  provider: string,
+  credits: number,
+  scope: BudgetScope = "manual",
+) {
   if (!(provider in trialLimit) || credits < 1)
     throw new SearchError("Orçamento inválido.");
   await db.$transaction(async (tx) => {
@@ -80,8 +105,18 @@ export async function reserveCredits(provider: string, credits: number) {
         _sum: { credits: true },
       }),
     ]);
+    const verified = await validationCreditsToday(
+      tx,
+      provider as keyof typeof trialLimit,
+      day,
+    );
+    const ordinaryToday = Math.max(0, (today._sum.credits ?? 0) - verified);
+    const extra =
+      scope === "manual" && verified > 0
+        ? manualSupplement[provider as keyof typeof trialLimit]
+        : 0;
     if (
-      (today._sum.credits ?? 0) + credits > dailyLimit ||
+      ordinaryToday + credits > dailyLimit + extra ||
       (all._sum.credits ?? 0) + credits >
         trialLimit[provider as keyof typeof trialLimit]
     )
@@ -109,6 +144,14 @@ export async function integrationStatus() {
         where: { provider, createdAt: { gte: day } },
         _sum: { credits: true },
       });
+      const verified = await validationCreditsToday(
+        db,
+        provider as keyof typeof trialLimit,
+        day,
+      );
+      const extra = verified
+        ? manualSupplement[provider as keyof typeof trialLimit]
+        : 0;
       const attempts = runs.flatMap((run) => {
         try {
           const result = JSON.parse(run.result) as SearchResult & {
@@ -128,8 +171,8 @@ export async function integrationStatus() {
         configured,
         configurationMessage,
         cost,
-        reservedToday: spent._sum.credits ?? 0,
-        dailyLimit,
+        reservedToday: Math.max(0, (spent._sum.credits ?? 0) - verified),
+        dailyLimit: dailyLimit + extra,
         lastAttemptAt: latest?.runAt ?? null,
         lastAttemptStatus: latest?.status ?? null,
         lastSuccessfulAt: successful?.runAt ?? null,
@@ -388,7 +431,7 @@ export async function saveSearch(input: unknown) {
 }
 export async function executeSearch(
   id: string,
-  options: { reuseRecent?: boolean } = {},
+  options: { reuseRecent?: boolean; budgetScope?: BudgetScope } = {},
 ) {
   const search = await db.savedSearch.findUnique({ where: { id } });
   if (!search) throw new SearchError("Busca não encontrada.", 404);
@@ -515,7 +558,11 @@ export async function executeSearch(
     };
     // Sequential calls keep the spend and each partial failure understandable.
     for (const source of criteria.sources)
-      result.sources.push(await fetchSource(source, reference, reserveCredits));
+      result.sources.push(
+        await fetchSource(source, reference, (provider, credits) =>
+          reserveCredits(provider, credits, options.budgetScope ?? "manual"),
+        ),
+      );
     for (const source of result.sources)
       for (const row of source.listings)
         row.reasons = eligibility(row, criteria);

@@ -292,6 +292,7 @@ export async function tickRadars() {
         );
         const result = await executeSearch(radar.searchId, {
           reuseRecent: true,
+          budgetScope: "scheduled",
         });
         let baseline = 0,
           newListings = 0,

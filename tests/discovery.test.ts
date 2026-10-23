@@ -142,6 +142,7 @@ beforeEach(async () => {
   await db.db.savedSearch.deleteMany();
   await db.db.discoveredListing.deleteMany();
   await db.db.providerSpend.deleteMany();
+  await db.db.providerOperation.deleteMany();
   await db.db.searchLock.deleteMany();
   await db.db.olxLocation.deleteMany();
   calls.length = 0;
@@ -577,6 +578,61 @@ it("refuses paid Gecko plans, and blocks extraction when local budget is exhaust
     "plano gratuito",
   );
   expect(calls).toHaveLength(1);
+});
+it("separates the completed catalog batch from a bounded manual allowance", async () => {
+  for (const [provider, validationCredits, supplement] of [
+    ["gecko", 2, 2],
+    ["reef", 5, 4],
+  ] as const) {
+    await db.db.providerSpend.createMany({
+      data: [
+        { provider, credits: 10 },
+        { provider, credits: validationCredits },
+      ],
+    });
+    await db.db.providerOperation.create({
+      data: {
+        id: `catalog-${provider}`,
+        batchId: "search-catalog-20261023",
+        kind: "validation",
+        provider,
+        status: "succeeded",
+        credits: validationCredits,
+        request: "{}",
+        completedAt: new Date(),
+      },
+    });
+    const status = (await store.integrationStatus()).find(
+      (item) => item.source === (provider === "gecko" ? "olx" : "webmotors"),
+    );
+    expect(status).toMatchObject({
+      reservedToday: 10,
+      dailyLimit: 10 + supplement,
+    });
+    await expect(
+      store.reserveCredits(provider, 1, "scheduled"),
+    ).rejects.toMatchObject({ status: 429 });
+    await store.reserveCredits(provider, supplement);
+    await expect(store.reserveCredits(provider, 1)).rejects.toMatchObject({
+      status: 429,
+    });
+    expect(
+      await db.db.providerSpend.aggregate({
+        where: { provider },
+        _sum: { credits: true },
+      }),
+    ).toMatchObject({ _sum: { credits: 10 + validationCredits + supplement } });
+  }
+  expect(calls).toHaveLength(0);
+});
+it("keeps the normal daily cap when no catalog validation completed today", async () => {
+  await db.db.providerSpend.create({
+    data: { provider: "gecko", credits: 10 },
+  });
+  await expect(store.reserveCredits("gecko", 1)).rejects.toMatchObject({
+    status: 429,
+  });
+  expect(calls).toHaveLength(0);
 });
 it("requires Reef free-trial opt-in and prevents concurrent or cross-site executions", async () => {
   vi.stubEnv("REEF_FREE_TRIAL", "false");
