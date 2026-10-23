@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { commercialModelName } from "./commercial-names";
 
 z.config(z.locales.pt());
 
@@ -217,7 +218,9 @@ export function filterVehicles(
           f.q,
         ) &&
         matches(v.brand, f.brand) &&
-        matches(v.model, f.model) &&
+        (matches(v.model, f.model) ||
+          (f.model === commercialModelName(v.brand, f.model) &&
+            matches(commercialModelName(v.brand, v.model), f.model))) &&
         matches(v.version, f.version || "") &&
         (!f.fuel || v.fuel === f.fuel) &&
         (!f.transmission || v.transmission === f.transmission) &&

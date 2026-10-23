@@ -4,6 +4,7 @@ import {
   type PriceObservation,
   type Vehicle,
 } from "./vehicle";
+import { commercialModelName } from "./commercial-names";
 
 export type OpportunityRules = {
   minComparables: number;
@@ -645,7 +646,12 @@ export function marketSummary(
     );
   const groups = new Map<string, Vehicle[]>();
   for (const vehicle of rows) {
-    const key = [vehicle.brand, vehicle.model].map(normalize).join("\u001f");
+    const key = [
+      vehicle.brand,
+      commercialModelName(vehicle.brand, vehicle.model),
+    ]
+      .map(normalize)
+      .join("\u001f");
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key)!.push(vehicle);
   }
@@ -688,7 +694,7 @@ export function marketSummary(
         return {
           key,
           brand: values[0].brand,
-          model: values[0].model,
+          model: commercialModelName(values[0].brand, values[0].model),
           count: values.length,
           medianPriceCents: midpoint,
           opportunitiesCount: values.filter((vehicle) =>

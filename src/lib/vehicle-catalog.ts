@@ -7,7 +7,7 @@ export const catalogKey = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/(\d),(?=\d)/g, "$1.")
-    .replace(/[^a-z0-9.]+/g, "");
+    .replace(/[^a-z0-9.+]+/g, "");
 const id = z.string().trim().min(1).max(240);
 const name = z.string().trim().min(1).max(240);
 const reference = z.object({
@@ -17,7 +17,11 @@ const reference = z.object({
   aliases: z.array(name).default([]),
   evidenceId: id,
 });
-const entity = z.object({ id, name, references: z.array(reference).default([]) });
+const entity = z.object({
+  id,
+  name,
+  references: z.array(reference).default([]),
+});
 const sourceMapping = z.object({
   id,
   source: z.enum(["webmotors", "olx"]),
@@ -34,6 +38,8 @@ const sourceMapping = z.object({
   canonicalVersionId: id.nullable().optional(),
   notCanonicalModelId: id.nullable().optional(),
   candidateVersionIds: z.array(id).default([]),
+  configurationId: id.optional(),
+  doors: z.number().int().min(2).max(5).optional(),
 });
 export const catalogSchema = z
   .object({
@@ -54,6 +60,15 @@ export const catalogSchema = z
         brandId: id,
         versionsPending: z.boolean().optional(),
         hasAcceptedVersions: z.boolean().optional(),
+        configurations: z
+          .array(
+            z.object({
+              id,
+              name,
+              doors: z.number().int().min(2).max(5).optional(),
+            }),
+          )
+          .optional(),
       }),
     ),
     versions: z.array(
@@ -61,9 +76,16 @@ export const catalogSchema = z
         modelId: id,
         engine: z.string().optional(),
         transmission: z.string().optional(),
+        configurationIds: z.array(id).optional(),
       }),
     ),
     mappings: z.array(sourceMapping).default([]),
+    modelAliases: z
+      .array(
+        z.object({ id, name, modelId: id, configurationId: id.optional() }),
+      )
+      .optional(),
+    commercialRevision: id.optional(),
   })
   .superRefine((data, ctx) => {
     const fail = (message: string) => ctx.addIssue({ code: "custom", message });
@@ -72,6 +94,13 @@ export const catalogSchema = z
       fail("Identificador de evidência duplicado.");
     const brands = new Set(data.brands.map((item) => item.id));
     const models = new Set(data.models.map((item) => item.id));
+    const configurationsByModel = new Map(
+      data.models.map((item) => [
+        item.id,
+        new Set(item.configurations?.map((configuration) => configuration.id)),
+      ]),
+    );
+    const versions = new Set(data.versions.map((item) => item.id));
     for (const rows of [data.brands, data.models, data.versions]) {
       if (new Set(rows.map((item) => item.id)).size !== rows.length)
         fail("Identificador de catálogo duplicado.");
@@ -99,6 +128,28 @@ export const catalogSchema = z
     }
     for (const version of data.versions)
       if (!models.has(version.modelId)) fail("Versão sem modelo de catálogo.");
+    for (const model of data.models) {
+      const configurations = model.configurations ?? [];
+      if (
+        new Set(configurations.map((item) => item.id)).size !==
+        configurations.length
+      )
+        fail("Configuração do modelo duplicada.");
+    }
+    for (const alias of data.modelAliases ?? [])
+      if (
+        !models.has(alias.modelId) ||
+        (alias.configurationId &&
+          !configurationsByModel.get(alias.modelId)?.has(alias.configurationId))
+      )
+        fail("Alias sem modelo ou configuração correspondente.");
+    for (const version of data.versions)
+      if (
+        version.configurationIds?.some(
+          (id) => !configurationsByModel.get(version.modelId)?.has(id),
+        )
+      )
+        fail("Versão com configuração de outro modelo.");
     for (const mapping of data.mappings) {
       if (mapping.canonicalBrandId && !brands.has(mapping.canonicalBrandId))
         fail("Correspondência aponta para marca inexistente.");
@@ -111,12 +162,12 @@ export const catalogSchema = z
         fail("Divergência aponta para modelo inexistente.");
       if (
         mapping.canonicalVersionId &&
-        !data.versions.some((item) => item.id === mapping.canonicalVersionId)
+        !versions.has(mapping.canonicalVersionId)
       )
         fail("Correspondência aponta para versão inexistente.");
       if (
         mapping.candidateVersionIds.some(
-          (candidate) => !data.versions.some((item) => item.id === candidate),
+          (candidate) => !versions.has(candidate),
         )
       )
         fail("Pendência aponta para versão candidata inexistente.");
@@ -167,6 +218,7 @@ export type CatalogIdentity = {
   brandId: string;
   modelId?: string;
   versionId?: string;
+  configurationId?: string;
 };
 export type SourceVehicle = {
   source: "olx" | "webmotors";
@@ -176,6 +228,7 @@ export type SourceVehicle = {
   brandId?: string | null;
   modelId?: string | null;
   versionId?: string | null;
+  doors?: number | null;
 };
 function resolve<T extends CatalogEntity>(
   rows: T[],
@@ -197,8 +250,10 @@ function resolve<T extends CatalogEntity>(
   );
   return matches.length === 1 ? matches[0] : undefined;
 }
-const same = (left: string | null | undefined, right: string | null | undefined) =>
-  !!left && !!right && catalogKey(left) === catalogKey(right);
+const same = (
+  left: string | null | undefined,
+  right: string | null | undefined,
+) => !!left && !!right && catalogKey(left) === catalogKey(right);
 function mappingMatches(
   mapping: VehicleCatalog["mappings"][number],
   row: SourceVehicle,
@@ -209,14 +264,22 @@ function mappingMatches(
     (!row.brandId || mapping.sourceBrandId !== row.brandId)
   )
     return false;
-  if (!mapping.sourceBrandId && mapping.sourceBrand && !same(mapping.sourceBrand, row.brand))
+  if (
+    !mapping.sourceBrandId &&
+    mapping.sourceBrand &&
+    !same(mapping.sourceBrand, row.brand)
+  )
     return false;
   if (
     mapping.sourceModelId &&
     (!row.modelId || mapping.sourceModelId !== row.modelId)
   )
     return false;
-  if (!mapping.sourceModelId && mapping.sourceModelLabel && !same(mapping.sourceModelLabel, row.model))
+  if (
+    !mapping.sourceModelId &&
+    mapping.sourceModelLabel &&
+    !same(mapping.sourceModelLabel, row.model)
+  )
     return false;
   if (
     mapping.level === "version" &&
@@ -234,20 +297,79 @@ function mappingMatches(
   return true;
 }
 export type CatalogResolutionStatus =
-  | "confirmed"
-  | "divergent"
-  | "pending"
-  | "ambiguous"
-  | "unresolved";
+  "confirmed" | "divergent" | "pending" | "ambiguous" | "unresolved";
+// Catalogs are immutable revision snapshots. Build these indexes once per snapshot,
+// rather than scanning every model, alias and technical version for each listing.
+function buildResolutionIndex(catalog: VehicleCatalog) {
+  const modelsById = new Map(catalog.models.map((model) => [model.id, model]));
+  const brandsById = new Map(catalog.brands.map((brand) => [brand.id, brand]));
+  const modelsByBrand = new Map<string, VehicleCatalog["models"]>();
+  const versionsByModel = new Map<string, VehicleCatalog["versions"]>();
+  const versionsByBrand = new Map<string, VehicleCatalog["versions"]>();
+  const labelsByBrand = new Map<
+    string,
+    Map<string, Set<VehicleCatalog["models"][number]>>
+  >();
+  const aliasesByModel = new Map<
+    string,
+    NonNullable<VehicleCatalog["modelAliases"]>
+  >();
+  const append = <T>(map: Map<string, T[]>, key: string, value: T) => {
+    const rows = map.get(key);
+    if (rows) rows.push(value);
+    else map.set(key, [value]);
+  };
+  const label = (model: VehicleCatalog["models"][number], name: string) => {
+    let labels = labelsByBrand.get(model.brandId);
+    if (!labels) labelsByBrand.set(model.brandId, (labels = new Map()));
+    const key = catalogKey(name);
+    let matches = labels.get(key);
+    if (!matches) labels.set(key, (matches = new Set()));
+    matches.add(model);
+  };
+  for (const model of catalog.models) {
+    append(modelsByBrand, model.brandId, model);
+    label(model, model.name);
+  }
+  for (const alias of catalog.modelAliases ?? []) {
+    append(aliasesByModel, alias.modelId, alias);
+    const model = modelsById.get(alias.modelId);
+    if (model) label(model, alias.name);
+  }
+  for (const version of catalog.versions) {
+    append(versionsByModel, version.modelId, version);
+    const model = modelsById.get(version.modelId);
+    if (model) append(versionsByBrand, model.brandId, version);
+  }
+  return {
+    modelsById,
+    brandsById,
+    modelsByBrand,
+    versionsByModel,
+    versionsByBrand,
+    labelsByBrand,
+    aliasesByModel,
+  };
+}
+const resolutionIndexes = new WeakMap<
+  VehicleCatalog,
+  ReturnType<typeof buildResolutionIndex>
+>();
+function resolutionIndex(catalog: VehicleCatalog) {
+  let index = resolutionIndexes.get(catalog);
+  if (!index)
+    resolutionIndexes.set(catalog, (index = buildResolutionIndex(catalog)));
+  return index;
+}
+
 /** Resolve IDs first. Full source descriptions are joined only through explicit catalog records. */
 export function resolveCatalogVehicle(
   catalog: VehicleCatalog,
   row: SourceVehicle,
 ) {
+  const index = resolutionIndex(catalog);
   let brand = resolve(catalog.brands, row.source, row.brandId, row.brand);
-  let models = brand
-    ? catalog.models.filter((item) => item.brandId === brand!.id)
-    : [];
+  let models = brand ? (index.modelsByBrand.get(brand!.id) ?? []) : [];
   let model = resolve(models, row.source, row.modelId, row.model);
   const modelMappings = catalog.mappings.filter(
     (mapping) => mapping.level === "model" && mappingMatches(mapping, row),
@@ -260,17 +382,64 @@ export function resolveCatalogVehicle(
         .filter((value): value is string => !!value),
     ),
   ];
+  // A literal structured model label can identify a commercial family only
+  // when no established source-ID binding or competing reference contradicts it.
+  // Complete unknown OLX descriptions are never split at a model prefix.
+  if (
+    !model &&
+    (!row.modelId ||
+      (!models.some((item) =>
+        item.references.some((ref) => ref.source === row.source),
+      ) &&
+        !catalog.mappings.some(
+          (mapping) =>
+            mapping.source === row.source &&
+            mapping.sourceModelId &&
+            mapping.canonicalBrandId === brand?.id,
+        ))) &&
+    !modelMappings.length &&
+    catalog.commercialRevision &&
+    row.brand &&
+    row.model
+  ) {
+    const scopedBrand = catalog.brands.filter(
+      (item) =>
+        same(item.name, row.brand) &&
+        (!row.brandId ||
+          !item.references.some((ref) => ref.source === row.source)),
+    );
+    const directBrand =
+      brand ?? (scopedBrand.length === 1 ? scopedBrand[0] : undefined);
+    if (directBrand) {
+      const directModels = [
+        ...(index.labelsByBrand
+          .get(directBrand.id)
+          ?.get(catalogKey(row.model)) ?? []),
+      ];
+      const referenced = (index.modelsByBrand.get(directBrand.id) ?? []).filter(
+        (item) =>
+          item.references.some(
+            (ref) =>
+              ref.source === row.source &&
+              [ref.name, ...ref.aliases].some((label) =>
+                same(label, row.model),
+              ),
+          ),
+      );
+      if (directModels.length === 1 && referenced.length <= 1) {
+        brand = directBrand;
+        models = index.modelsByBrand.get(brand!.id) ?? [];
+        model = directModels[0];
+      }
+    }
+  }
   let modelStatus: CatalogResolutionStatus = model ? "confirmed" : "unresolved";
   let targetModelId: string | undefined;
   if (!model && confirmedModelIds.length === 1) {
-    model = catalog.models.find((item) => item.id === confirmedModelIds[0]);
+    model = index.modelsById.get(confirmedModelIds[0]);
     const mappedModel = model;
-    brand = mappedModel
-      ? catalog.brands.find((item) => item.id === mappedModel.brandId)
-      : undefined;
-    models = brand
-      ? catalog.models.filter((item) => item.brandId === brand!.id)
-      : [];
+    brand = mappedModel ? index.brandsById.get(mappedModel.brandId) : undefined;
+    models = brand ? (index.modelsByBrand.get(brand!.id) ?? []) : [];
     modelStatus = model && brand ? "confirmed" : "unresolved";
   } else if (!model && confirmedModelIds.length > 1) modelStatus = "ambiguous";
   if (!model) {
@@ -285,18 +454,17 @@ export function resolveCatalogVehicle(
     if (negativeTargets.length === 1) {
       modelStatus = "divergent";
       targetModelId = negativeTargets[0];
-      const target = catalog.models.find((item) => item.id === targetModelId);
-      if (target)
-        brand = catalog.brands.find((item) => item.id === target.brandId);
+      const target = index.modelsById.get(targetModelId);
+      if (target) brand = index.brandsById.get(target.brandId);
     } else if (negativeTargets.length > 1) modelStatus = "ambiguous";
     else if (modelMappings.some((mapping) => mapping.status === "pending"))
       modelStatus = "pending";
   }
-  const versions = catalog.versions.filter((item) =>
-    models.some((parent) => parent.id === item.modelId),
-  );
+  const versions = models.length
+    ? (index.versionsByBrand.get(models[0].brandId) ?? [])
+    : [];
   let version = resolve(
-    model ? versions.filter((item) => item.modelId === model?.id) : versions,
+    model ? (index.versionsByModel.get(model.id) ?? []) : versions,
     row.source,
     row.versionId,
     row.version ?? (row.source === "olx" ? row.model : null),
@@ -325,22 +493,57 @@ export function resolveCatalogVehicle(
     ];
     if (confirmedVersionIds.length === 1) {
       version = catalog.versions.find(
-        (item) => item.id === confirmedVersionIds[0] && item.modelId === model?.id,
+        (item) =>
+          item.id === confirmedVersionIds[0] && item.modelId === model?.id,
       );
       versionStatus = version ? "confirmed" : "unresolved";
     } else if (confirmedVersionIds.length > 1) versionStatus = "ambiguous";
     else if (versionMappings.some((mapping) => mapping.status === "pending"))
       versionStatus = "pending";
   }
+  const approvedModelMappings = modelMappings.filter(
+    (item) =>
+      item.status === "confirmed" && item.canonicalModelId === model?.id,
+  );
+  const mappedDoors = [
+    ...new Set(
+      approvedModelMappings
+        .map((item) => item.doors)
+        .filter((value): value is number => !!value),
+    ),
+  ];
+  const doors =
+    row.doors ?? (mappedDoors.length === 1 ? mappedDoors[0] : undefined);
+  const configurationIds = [
+    ...new Set(
+      approvedModelMappings
+        .map((item) => item.configurationId)
+        .filter((value): value is string => !!value),
+    ),
+  ];
+  const literalConfiguration = !row.modelId
+    ? (model ? index.aliasesByModel.get(model.id) : undefined)?.find((alias) =>
+        same(alias.name, row.model),
+      )?.configurationId
+    : undefined;
+  const configuration = literalConfiguration
+    ? model?.configurations?.find((item) => item.id === literalConfiguration)
+    : configurationIds.length === 1
+      ? model?.configurations?.find((item) => item.id === configurationIds[0])
+      : model?.configurations?.find((item) => !!doors && item.doors === doors);
   return {
     brand,
     model,
     version,
+    doors: doors ?? configuration?.doors,
     identity: brand
       ? {
           brandId: brand.id,
           ...(model ? { modelId: model.id } : {}),
           ...(version && model ? { versionId: version.id } : {}),
+          ...(configuration && model
+            ? { configurationId: configuration.id }
+            : {}),
         }
       : undefined,
     classification: {

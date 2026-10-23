@@ -1,0 +1,165 @@
+{
+  "provenance": "Read-only persisted provider observations recovered on 2026-10-23; exact model identity only, no commercial trim equivalence inferred.",
+  "observations": [
+    {
+      "source": "olx",
+      "externalId": "1531195232",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-1-0-mpfi-vhc-8v-5p-2013-1531195232",
+      "observed_at": "2026-10-23T13:02:35.398Z",
+      "brand": "Chevrolet",
+      "model": "Celta 1.0/ Super 1.0 MPFI VHC 8V 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "b0602bd30a87a149e27c22e5e20100ba8aa017d87cb7076379f1169841c07e90"
+    },
+    {
+      "source": "olx",
+      "externalId": "1537517809",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-4-super-energy-1-4-8v-85cv-3p-2005-1537517809",
+      "observed_at": "2026-10-23T13:02:35.398Z",
+      "brand": "Chevrolet",
+      "model": "Celta 1.4/ Super/ Energy 1.4 8V 85cv 3P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "ff5e619ae04fcce68feb5c8c8b910da45c3524cf8eb07160509b31717831eeea"
+    },
+    {
+      "source": "olx",
+      "externalId": "1530263065",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-1-4-mpfi-8v-85cv-5p-2005-1530263065",
+      "observed_at": "2026-10-23T13:02:35.398Z",
+      "brand": "Chevrolet",
+      "model": "Celta Life 1.4 MPFI 8V 85cv 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "f9f566de8fd2303c34914282e985592a7eaf3d085dbf536802ef99dffe961eff"
+    },
+    {
+      "source": "olx",
+      "externalId": "1540457852",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2012-1540457852",
+      "observed_at": "2026-10-23T13:03:30.874Z",
+      "brand": "Chevrolet",
+      "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "07a412c8ff5334fe1ae9ebe94a5dc23476eb73c7fff152090a1540a86335dddb"
+    },
+    {
+      "source": "olx",
+      "externalId": "1544449567",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1544449567",
+      "observed_at": "2026-10-23T13:02:35.398Z",
+      "brand": "Chevrolet",
+      "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "5a0d5d40715a1e94982faa37ef145be0e7294c7c4cd59cd07560fafa5113e15d"
+    },
+    {
+      "source": "olx",
+      "externalId": "1546637962",
+      "url": "https://sc.olx.com.br/oeste-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1546637962",
+      "observed_at": "2026-10-23T13:03:30.874Z",
+      "brand": "Chevrolet",
+      "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Celta",
+      "sha256": "a47f38893dbdabcaf113a3c63fdfe7e9ca646d8af586426b07cb4d531bbf4e1e"
+    },
+    {
+      "source": "webmotors",
+      "externalId": "78812447",
+      "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-spirit-8v-flex-2p-manual/2-portas/2005-2006/78812447",
+      "observed_at": "2026-10-23T13:03:13.148Z",
+      "brand": "CHEVROLET",
+      "model": "CELTA",
+      "version": "1.0 MPFI SPIRIT 8V FLEX 2P MANUAL",
+      "source_identity": {
+        "brandId": "2",
+        "modelId": "1143",
+        "versionId": "339982"
+      },
+      "commercialModel": "Celta",
+      "sha256": "425150afd7230a3448db655f248546c69318f764729552292e37473e3f9fff1a"
+    },
+    {
+      "source": "webmotors",
+      "externalId": "80511669",
+      "url": "https://www.webmotors.com.br/comprar/chevrolet/corsa/10-mpfi-maxx-sedan-8v-flex-4p-manual/4-portas/2006/80511669",
+      "observed_at": "2026-10-23T13:03:13.148Z",
+      "brand": "CHEVROLET",
+      "model": "CORSA",
+      "version": "1.0 MPFI MAXX SEDAN 8V FLEX 4P MANUAL",
+      "source_identity": {
+        "brandId": "2",
+        "modelId": "670",
+        "versionId": "338249"
+      },
+      "commercialModel": "Corsa",
+      "sha256": "4816d672585d8013fa376792b420beb2198165bfe510e4db81dd9f1c9a194172"
+    },
+    {
+      "source": "webmotors",
+      "externalId": "81139169",
+      "url": "https://www.webmotors.com.br/comprar/chevrolet/corsa/10-mpfi-maxx-8v-flex-4p-manual/4-portas/2006/81139169",
+      "observed_at": "2026-10-23T13:03:13.148Z",
+      "brand": "CHEVROLET",
+      "model": "CORSA",
+      "version": "1.0 MPFI MAXX 8V FLEX 4P MANUAL",
+      "source_identity": {
+        "brandId": "2",
+        "modelId": "670",
+        "versionId": "337726"
+      },
+      "commercialModel": "Corsa",
+      "sha256": "2d85cd50c0820f3078f66bbc04a11254e7be022339bb5ae2e2ba1266a56fdd5f"
+    },
+    {
+      "source": "webmotors",
+      "externalId": "79700226",
+      "url": "https://www.webmotors.com.br/comprar/chevrolet/s10/28-executive-4x4-cd-12v-turbo-electronic-intercooler-diesel-4p-manual/4-portas/2005-2006/79700226",
+      "observed_at": "2026-10-23T13:03:13.148Z",
+      "brand": "CHEVROLET",
+      "model": "S10",
+      "version": "2.8 EXECUTIVE 4X4 CD 12V TURBO ELECTRONIC INTERCOOLER DIESEL 4P MANUAL",
+      "source_identity": {
+        "brandId": "2",
+        "modelId": "761",
+        "versionId": "338354"
+      },
+      "commercialModel": "S10",
+      "sha256": "be94912d1c7ca4bdf3b8028a9bfb4191c0b32616ca470ec2eaced0056ca3e2a5"
+    }
+  ]
+}
