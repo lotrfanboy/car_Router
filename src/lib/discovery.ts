@@ -42,6 +42,7 @@ export const searchSchema = z
     brand: z.string().trim().min(1).max(80),
     model: z.string().trim().min(1).max(200),
     version: z.string().trim().max(200).optional(),
+    doors: z.union([z.literal(2), z.literal(4)]).optional(),
     // FIPE provenance is separate from the textual query and source attributes.
     // A family selection has a brand identity but no fabricated FIPE model ID.
     catalog: z
@@ -80,12 +81,17 @@ export const searchSchema = z
             modelName: z.string().min(1).max(240).optional(),
             versionCode: z.string().min(1).max(240).optional(),
             versionName: z.string().min(1).max(240).optional(),
+            configurationCode: z.string().min(1).max(240).optional(),
+            configurationName: z.string().min(1).max(240).optional(),
           })
           .superRefine((value, ctx) => {
             if (
               Boolean(value.modelCode) !== Boolean(value.modelName) ||
               Boolean(value.versionCode) !== Boolean(value.versionName) ||
-              (value.versionCode && !value.modelCode)
+              (value.versionCode && !value.modelCode) ||
+              Boolean(value.configurationCode) !==
+                Boolean(value.configurationName) ||
+              (value.configurationCode && !value.modelCode)
             )
               ctx.addIssue({
                 code: "custom",
@@ -205,6 +211,7 @@ export type Listing = {
   fuel?: string | null;
   transmission?: string | null;
   engine?: string | null;
+  doors?: number | null;
   imageUrl?: string | null;
   modelYear: number | null;
   priceCents: number | null;
@@ -272,6 +279,11 @@ export function listingMatchStatus(
       : [];
   if (
     knownIdentityConflict ||
+    (!!criteria.doors && !!row.doors && criteria.doors !== row.doors) ||
+    (!!selected?.configurationCode &&
+      !criteria.doors &&
+      !!row.identity?.configurationId &&
+      row.identity.configurationId !== selected.configurationCode) ||
     (!!row.state && row.state !== criteria.state) ||
     (criteria.locationMode === "cities" &&
       !!row.city &&
@@ -295,6 +307,22 @@ export function listingMatchStatus(
 export function eligibility(row: Listing, s: SearchCriteria) {
   const reasons: string[] = [];
   const selected = s.catalog?.provider === "carrouter" ? s.catalog : undefined;
+  if (s.doors && row.doors !== s.doors)
+    reasons.push(
+      row.doors
+        ? "Número de portas diferente"
+        : "Número de portas não identificado",
+    );
+  if (
+    selected?.configurationCode &&
+    !s.doors &&
+    row.identity?.configurationId !== selected.configurationCode
+  )
+    reasons.push(
+      row.identity?.configurationId
+        ? "Configuração do modelo diferente"
+        : "Configuração do modelo não identificada",
+    );
   const brandMatches = selected
     ? row.identity?.brandId === selected.brandCode
     : !!row.brand && canonicalBrand(row.brand) === canonicalBrand(s.brand);

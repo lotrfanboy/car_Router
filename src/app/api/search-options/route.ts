@@ -22,7 +22,9 @@ export async function GET(request: NextRequest) {
       if (!response.ok) throw new Error("Catálogo de cidades indisponível.");
       return NextResponse.json(parseCatalogCities(await response.json()));
     }
-    if (!["brands", "models", "versions"].includes(type ?? ""))
+    if (
+      !["brands", "models", "versions", "configurations"].includes(type ?? "")
+    )
       return NextResponse.json(
         { error: "Catálogo inválido." },
         { status: 400 },
@@ -41,7 +43,7 @@ export async function GET(request: NextRequest) {
     if (type !== "brands" && !catalog.brands.some((item) => item.id === brand))
       return NextResponse.json({ error: "Marca inválida." }, { status: 400 });
     if (
-      type === "versions" &&
+      (type === "versions" || type === "configurations") &&
       !catalog.models.some(
         (item) => item.id === model && item.brandId === brand,
       )
@@ -50,12 +52,39 @@ export async function GET(request: NextRequest) {
         { error: "Modelo não pertence à marca." },
         { status: 400 },
       );
+    const selectedModel = catalog.models.find(
+      (item) => item.id === model && item.brandId === brand,
+    );
+    if (type === "configurations")
+      return NextResponse.json(
+        (selectedModel?.configurations ?? []).map((item) => ({
+          code: item.id,
+          name: item.name,
+          doors: item.doors,
+          provider: "carrouter",
+          revision: catalog.revision,
+        })),
+      );
+    const configuration = params.get("configuration");
+    if (
+      configuration &&
+      !selectedModel?.configurations?.some((item) => item.id === configuration)
+    )
+      return NextResponse.json(
+        { error: "Configuração não pertence ao modelo." },
+        { status: 400 },
+      );
     const rows =
       type === "brands"
         ? catalog.brands
         : type === "models"
           ? catalog.models.filter((item) => item.brandId === brand)
-          : catalog.versions.filter((item) => item.modelId === model);
+          : catalog.versions.filter(
+              (item) =>
+                item.modelId === model &&
+                (!configuration ||
+                  item.configurationIds?.includes(configuration)),
+            );
     return NextResponse.json(
       rows
         .map((item) => catalogOption(item, catalog.revision))

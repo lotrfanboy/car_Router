@@ -400,6 +400,10 @@ export function RadarsWorkspace({
               <p>
                 {row.criteria.brand} {row.criteria.model} ·{" "}
                 {row.criteria.version || "Todas as versões"} ·{" "}
+                {row.criteria.catalog?.provider === "carrouter" &&
+                row.criteria.catalog.configurationName
+                  ? `${row.criteria.catalog.configurationName} · `
+                  : ""}
                 {row.criteria.yearMin !== null
                   ? `de ${row.criteria.yearMin}`
                   : "sem ano mínimo"}{" "}

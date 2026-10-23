@@ -42,6 +42,7 @@ type Draft = {
   brand: string;
   model: string;
   version: string;
+  doors?: 2 | 4;
   city: string;
   cities: string[];
   state: string;
@@ -143,6 +144,8 @@ export function SearchWorkspace({
   const [brandChoice, setBrandChoice] = useState<SearchOption | null>(null);
   const [modelChoice, setModelChoice] = useState<SearchOption | null>(null);
   const [versionChoice, setVersionChoice] = useState<SearchOption | null>(null);
+  const [configurationChoice, setConfigurationChoice] =
+    useState<SearchOption | null>(null);
   const [manualBrand, setManualBrand] = useState(false);
   const [manualModel, setManualModel] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -166,15 +169,24 @@ export function SearchWorkspace({
   );
   const versionCatalog = useCatalog(
     brandChoice && modelChoice
-      ? `/api/search-options?type=versions&brand=${encodeURIComponent(brandChoice.code)}&model=${encodeURIComponent(modelChoice.code)}`
+      ? `/api/search-options?type=versions&brand=${encodeURIComponent(brandChoice.code)}&model=${encodeURIComponent(modelChoice.code)}${configurationChoice ? `&configuration=${encodeURIComponent(configurationChoice.code)}` : ""}`
       : null,
   );
   const catalogVersions = versionCatalog.options;
+  const configurationCatalog = useCatalog(
+    brandChoice && modelChoice
+      ? `/api/search-options?type=configurations&brand=${encodeURIComponent(brandChoice.code)}&model=${encodeURIComponent(modelChoice.code)}`
+      : null,
+  );
   const cityCatalog = useCatalog(
     `/api/search-options?type=cities&state=${encodeURIComponent(state)}`,
   );
   function change<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
+  }
+  function clearConfiguration() {
+    setConfigurationChoice(null);
+    change("doors", undefined);
   }
   function loadSaved(row?: Saved) {
     setSelected(row?.id ?? "");
@@ -215,6 +227,17 @@ export function SearchWorkspace({
         : null,
     );
     setManualBrand(!!row && !catalog);
+    setConfigurationChoice(
+      catalog?.configurationCode
+        ? {
+            code: catalog.configurationCode,
+            name: catalog.configurationName!,
+            doors: row?.criteria.doors,
+            provider: "carrouter",
+            revision: catalog.revision,
+          }
+        : null,
+    );
     setManualModel(!!row && !catalog?.modelCode);
     setAdvancedOpen(
       Boolean(
@@ -302,13 +325,16 @@ export function SearchWorkspace({
       .filter((source) => source.status === "ok")
       .flatMap((source) => source.listings) ?? [];
   const resultRows = currentRows.filter(
-    (row) => display && listingMatchStatus(row, display.criteria) === "confirmed",
+    (row) =>
+      display && listingMatchStatus(row, display.criteria) === "confirmed",
   );
   const unclassifiedRows = currentRows.filter(
-    (row) => display && listingMatchStatus(row, display.criteria) === "uncertain",
+    (row) =>
+      display && listingMatchStatus(row, display.criteria) === "uncertain",
   );
   const incompatibleRows = currentRows.filter(
-    (row) => display && listingMatchStatus(row, display.criteria) === "incompatible",
+    (row) =>
+      display && listingMatchStatus(row, display.criteria) === "incompatible",
   );
   const hasValidComparison = resultRows.some(
     (row) => row.comparison?.status === "valid",
@@ -320,6 +346,7 @@ export function SearchWorkspace({
     value.brand,
     value.model,
     value.version,
+    value.doors,
     value.city,
     value.state,
     [...value.cities].sort(),
@@ -342,11 +369,13 @@ export function SearchWorkspace({
         brandChoice?.code,
         modelChoice?.code,
         versionChoice?.code,
+        configurationChoice?.code,
       ]) !==
         JSON.stringify([
           displayedCatalog?.brandCode,
           displayedCatalog?.modelCode,
           displayedCatalog?.versionCode,
+          displayedCatalog?.configurationCode,
         ]));
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -395,6 +424,10 @@ export function SearchWorkspace({
       optional(draft.yearMin) === loadedCriteria.yearMin &&
       optional(draft.yearMax) === loadedCriteria.yearMax &&
       version === (loadedCriteria.version ?? "") &&
+      configurationChoice?.code ===
+        (loadedCriteria.catalog?.provider === "carrouter"
+          ? loadedCriteria.catalog.configurationCode
+          : undefined) &&
       optional(draft.priceMax) === loadedCriteria.priceMax &&
       optional(draft.mileageMax) === loadedCriteria.mileageMax &&
       draft.privateOnly === loadedCriteria.privateOnly;
@@ -418,8 +451,9 @@ export function SearchWorkspace({
             modelCode: modelChoice?.code,
             modelName: modelChoice?.name,
             versionCode: versionChoice?.code,
-            versionName:
-              versionChoice?.searchName ?? versionChoice?.name,
+            configurationCode: configurationChoice?.code,
+            configurationName: configurationChoice?.name,
+            versionName: versionChoice?.searchName ?? versionChoice?.name,
           }
         : undefined,
       yearMin: optional(draft.yearMin),
@@ -604,6 +638,7 @@ export function SearchWorkspace({
                   onChange={(value) => {
                     change("brand", value);
                     change("model", "");
+                    clearConfiguration();
                     change("version", "");
                     setBrandChoice(null);
                     setModelChoice(null);
@@ -614,6 +649,7 @@ export function SearchWorkspace({
                   onSelect={(option) => {
                     change("brand", option.searchName ?? option.name);
                     change("model", "");
+                    clearConfiguration();
                     change("version", "");
                     setBrandChoice(option);
                     setModelChoice(null);
@@ -623,6 +659,7 @@ export function SearchWorkspace({
                   }}
                   onManual={() => {
                     setManualBrand(true);
+                    clearConfiguration();
                     setBrandChoice(null);
                   }}
                 />
@@ -642,6 +679,7 @@ export function SearchWorkspace({
                   disabled={!brandChoice && !manualBrand}
                   onChange={(value) => {
                     change("model", value);
+                    clearConfiguration();
                     change("version", "");
                     setModelChoice(null);
                     setVersionChoice(null);
@@ -649,6 +687,7 @@ export function SearchWorkspace({
                   }}
                   onSelect={(option) => {
                     change("model", option.searchName ?? option.name);
+                    clearConfiguration();
                     change("version", "");
                     setModelChoice(option);
                     setVersionChoice(null);
@@ -656,6 +695,7 @@ export function SearchWorkspace({
                   }}
                   onManual={() => {
                     setManualModel(true);
+                    clearConfiguration();
                     setModelChoice(null);
                   }}
                 />
@@ -667,6 +707,42 @@ export function SearchWorkspace({
                     ? "Catálogo estruturado indisponível. A entrada manual é temporária enquanto a fonte é definida."
                     : "Marca e modelo usam relações do catálogo importado. Trocar opções não consulta anúncios."}
               </p>
+              {modelChoice &&
+                (configurationCatalog.options.length > 0 ||
+                  configurationChoice) && (
+                  <label>
+                    Configuração <small>Opcional</small>
+                    <select
+                      name="configuration"
+                      value={configurationChoice?.code ?? ""}
+                      onChange={(event) => {
+                        const choice =
+                          configurationCatalog.options.find(
+                            (item) => item.code === event.target.value,
+                          ) ?? null;
+                        setConfigurationChoice(choice);
+                        change("doors", choice?.doors);
+                        change("version", "");
+                        setVersionChoice(null);
+                      }}
+                    >
+                      <option value="">Todas as configurações</option>
+                      {configurationChoice &&
+                        !configurationCatalog.options.some(
+                          (item) => item.code === configurationChoice.code,
+                        ) && (
+                          <option value={configurationChoice.code}>
+                            {configurationChoice.name} · salva
+                          </option>
+                        )}
+                      {configurationCatalog.options.map((item) => (
+                        <option key={item.code} value={item.code}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
               <label>
                 Versão <small>Opcional</small>
                 {modelChoice && catalogVersions.length > 0 ? (
@@ -991,7 +1067,10 @@ export function SearchWorkspace({
             {sourceRun?.sources.map((s) => (
               <details
                 key={s.source}
-                open={s.status !== "ok" || s.applied?.mapping?.status === "uncertain"}
+                open={
+                  s.status !== "ok" ||
+                  s.applied?.mapping?.status === "uncertain"
+                }
               >
                 <summary>
                   {sourceNames[s.source]} ·{" "}
@@ -1012,8 +1091,8 @@ export function SearchWorkspace({
                 {s.applied && (
                   <>
                     <p>
-                      Enviado à fonte: {s.applied.remote.join(", ")}. Conferência
-                      local dos critérios preenchidos:{" "}
+                      Enviado à fonte: {s.applied.remote.join(", ")}.
+                      Conferência local dos critérios preenchidos:{" "}
                       {s.applied.local.join(", ")}.
                     </p>
                     {s.applied.mapping && <p>{s.applied.mapping.message}</p>}
@@ -1024,13 +1103,23 @@ export function SearchWorkspace({
                   {s.received ?? s.listings.length} recebidos ·{" "}
                   {s.listings.filter((row) => !row.reasons.length).length}{" "}
                   aprovados ·{" "}
-                  {s.listings.filter((row) =>
-                    display && listingMatchStatus(row, display.criteria) === "uncertain",
-                  ).length}{" "}
+                  {
+                    s.listings.filter(
+                      (row) =>
+                        display &&
+                        listingMatchStatus(row, display.criteria) ===
+                          "uncertain",
+                    ).length
+                  }{" "}
                   incertos ·{" "}
-                  {s.listings.filter((row) =>
-                    display && listingMatchStatus(row, display.criteria) === "incompatible",
-                  ).length}{" "}
+                  {
+                    s.listings.filter(
+                      (row) =>
+                        display &&
+                        listingMatchStatus(row, display.criteria) ===
+                          "incompatible",
+                    ).length
+                  }{" "}
                   incompatíveis ·{" "}
                   {(s.received ?? s.listings.length) - s.listings.length}{" "}
                   descartados na normalização.
@@ -1051,7 +1140,10 @@ export function SearchWorkspace({
                     </li>
                   ))}
                 </ul>
-                <small>As classificações são separadas; um anúncio pode ter mais de uma restrição.</small>
+                <small>
+                  As classificações são separadas; um anúncio pode ter mais de
+                  uma restrição.
+                </small>
               </details>
             ))}
           </div>
@@ -1079,6 +1171,10 @@ export function SearchWorkspace({
                 Critérios aplicados: {display?.criteria.brand}{" "}
                 {display?.criteria.model} ·{" "}
                 {display?.criteria.version || "Todas as versões"} ·{" "}
+                {display?.criteria.catalog?.provider === "carrouter" &&
+                display.criteria.catalog.configurationName
+                  ? `${display.criteria.catalog.configurationName} · `
+                  : ""}
                 {display ? criteriaLocation(display.criteria) : ""} · ano de{" "}
                 {display?.criteria.yearMin ?? "qualquer"} até{" "}
                 {display?.criteria.yearMax ?? "qualquer"} · preço máximo{" "}
@@ -1156,7 +1252,8 @@ export function SearchWorkspace({
                 <details className="previous-results">
                   <summary>
                     {unclassifiedRows.length} resultado
-                    {unclassifiedRows.length === 1 ? "" : "s"} com correspondência incerta
+                    {unclassifiedRows.length === 1 ? "" : "s"} com
+                    correspondência incerta
                   </summary>
                   <p>
                     Estes anúncios continuam visíveis para revisão, mas não
@@ -1176,11 +1273,15 @@ export function SearchWorkspace({
                 <details className="previous-results">
                   <summary>
                     {incompatibleRows.length} resultado
-                    {incompatibleRows.length === 1 ? " incompatível" : "s incompatíveis"} com os filtros
+                    {incompatibleRows.length === 1
+                      ? " incompatível"
+                      : "s incompatíveis"}{" "}
+                    com os filtros
                   </summary>
                   <p>
-                    Há pelo menos um dado confirmado fora dos critérios selecionados.
-                    Estes anúncios não entram na contagem de candidatos.
+                    Há pelo menos um dado confirmado fora dos critérios
+                    selecionados. Estes anúncios não entram na contagem de
+                    candidatos.
                   </p>
                   {incompatibleRows.map((row) => (
                     <ListingCard
