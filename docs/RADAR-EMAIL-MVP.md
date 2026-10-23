@@ -100,3 +100,9 @@ Para o radar existente **MECA SP** (Mercedes-Benz C 180, SP inteiro, OLX + Webmo
 - O cron existente foi auditado: ativo, POST autenticado, `*/30 * * * *`. Respostas históricas HTTP 200 com `processed: 0` confirmam alcance do endpoint; não são prova de envio ou coleta bem-sucedida.
 - `npm run db:migrate` agora faz **somente verificação do banco**. Não chama mais `run-approved-provider-operations`. As cinco operações do lote anterior já estavam concluídas; não foram criadas operações pagas novas.
 - Nenhum envio real de teste foi autorizado ou executado por esta tarefa. Nenhuma coleta real foi disparada manualmente. Não se declara o teste ponta a ponta concluído antes de confirmar o envio e observar o resultado do provedor.
+
+### Situação do serviço após deploy
+
+O deploy `dep-dbdrk9vavr4c7395t08g`, commit `68690ec`, ficou `live` às 16h51 de Brasília. O log da inicialização confirmou **ausentes `RESEND_API_KEY` e `RADAR_EMAIL_FROM`**, destinatário presente e envio automático desativado. Preencher esses dois campos no painel Render; não enviar chave no chat. Nenhum remetente foi inventado nem foi contratado domínio/plano.
+
+O proxy do ambiente de execução recusou o túnel HTTPS para o domínio do aplicativo com HTTP 403. Isso limita chamadas diretas de verificação e a obtenção da prévia real a partir deste ambiente; não comprova indisponibilidade do aplicativo. Os conectores Render/Supabase continuaram acessíveis. Para executar o script daqui, permitir `radar-automotivo-preview.onrender.com` nas configurações de rede do ambiente; alternativamente usar o script em um ambiente de operador já autorizado que possua acesso ao serviço. Não foi tentado contornar o bloqueio.
