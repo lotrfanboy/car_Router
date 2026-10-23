@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/test.mjs",
     "db:generate": "prisma generate --schema prisma/schema.prisma && prisma generate --schema prisma/sqlite/schema.prisma",
-    "db:migrate": "node scripts/verify-database.mjs && node scripts/run-approved-provider-operations.mjs",
+    "db:migrate": "node scripts/verify-database.mjs",
     "db:migrate:apply": "supabase db push",
     "catalog:dry-run": "node scripts/import-vehicle-catalog.mjs --dry-run",
     "catalog:import": "node scripts/import-vehicle-catalog.mjs --activate",

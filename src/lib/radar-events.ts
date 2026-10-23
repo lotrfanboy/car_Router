@@ -36,6 +36,7 @@ export function radarEvent(
     row.priceCents <= 0
   )
     return null;
+  if (!options.initialized) return { kind: "baseline", matchStatus };
   if (options.mode === "discount")
     return matchStatus === "confirmed" &&
       row.comparison?.status === "valid" &&
@@ -43,7 +44,6 @@ export function radarEvent(
       row.comparison.belowPercent >= options.minPercent
       ? { kind: "discount", matchStatus }
       : null;
-  if (!options.initialized) return { kind: "baseline", matchStatus };
   if (!options.previous) return { kind: "new_listing", matchStatus };
   const previousPrice = options.previous.priceCents;
   if (

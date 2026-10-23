@@ -91,37 +91,40 @@ model SearchCache {
 }
 
 model Radar {
-  id            String        @id @default(cuid())
-  searchId      String
-  name          String
-  minPercent    Float
-  mode          String        @default("discount")
-  channel       String        @default("email")
-  runsRemaining Int?
-  intervalHours Int           @default(24)
-  enabled       Boolean       @default(false)
-  lastRunAt     DateTime?
-  nextRunAt     DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  search        SavedSearch   @relation(fields: [searchId], references: [id], onDelete: Restrict)
-  runs          RadarRun[]
-  notices       RadarNotice[]
-  sourceStates  RadarSourceState[]
-  observations  RadarObservation[]
+  id              String               @id @default(cuid())
+  searchId        String
+  name            String
+  minPercent      Float
+  mode            String               @default("discount")
+  channel         String               @default("email")
+  runsRemaining   Int?
+  intervalHours   Int                  @default(24)
+  enabled         Boolean              @default(false)
+  lastRunAt       DateTime?
+  nextRunAt       DateTime?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  search          SavedSearch          @relation(fields: [searchId], references: [id], onDelete: Restrict)
+  runs            RadarRun[]
+  notices         RadarNotice[]
+  sourceStates    RadarSourceState[]
+  observations    RadarObservation[]
+  emailDeliveries RadarEmailDelivery[]
 
   @@index([searchId])
   @@index([enabled, nextRunAt])
 }
 
 model RadarRun {
-  id         String    @id @default(cuid())
-  radarId    String
-  startedAt  DateTime  @default(now())
-  finishedAt DateTime?
-  status     String
-  message    String
-  radar      Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  id            String              @id @default(cuid())
+  radarId       String
+  startedAt     DateTime            @default(now())
+  finishedAt    DateTime?
+  status        String
+  message       String
+  radar         Radar               @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  notices       RadarNotice[]
+  emailDelivery RadarEmailDelivery?
 
   @@index([radarId, startedAt])
 }
@@ -138,11 +141,15 @@ model RadarNotice {
   matchStatus        String    @default("confirmed")
   payload            String?
   previousPriceCents Int?
+  runId              String?
+  emailEligible      Boolean   @default(false)
+  run                RadarRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
   createdAt          DateTime  @default(now())
   sentAt             DateTime?
   radar              Radar     @relation(fields: [radarId], references: [id], onDelete: Cascade)
 
   @@index([radarId, listingKey])
+  @@index([runId])
 }
 
 model RadarSourceState {
@@ -158,7 +165,7 @@ model RadarObservation {
   radarId                String
   listingKey             String
   priceCents             Int?
-  lastNotifiedPriceCents  Int?
+  lastNotifiedPriceCents Int?
   firstSeenAt            DateTime @default(now())
   lastSeenAt             DateTime @default(now())
   radar                  Radar    @relation(fields: [radarId], references: [id], onDelete: Cascade)
@@ -394,19 +401,44 @@ model CatalogSourceMapping {
 
 // Explicit, bounded provider operations. Never enqueued by page loads or selectors.
 model ProviderOperation {
-  id String @id
-  batchId String
-  kind String
-  provider String
-  status String @default("queued")
-  credits Int
-  request String
-  response String?
-  summary String?
-  error String?
-  createdAt DateTime @default(now())
+  id          String    @id
+  batchId     String
+  kind        String
+  provider    String
+  status      String    @default("queued")
+  credits     Int
+  request     String
+  response    String?
+  summary     String?
+  error       String?
+  createdAt   DateTime  @default(now())
   completedAt DateTime?
 
   @@index([batchId, status])
   @@index([kind, status, completedAt])
+}
+
+// Frozen per-run email; internal notices and collection accounting remain independent.
+model RadarEmailDelivery {
+  id             String    @id @default(cuid())
+  radarId        String?
+  runId          String?   @unique
+  kind           String    @default("digest")
+  status         String    @default("pending")
+  payload        String?
+  idempotencyKey String    @unique
+  attempts       Int       @default(0)
+  firstAttemptAt DateTime?
+  nextAttemptAt  DateTime  @default(now())
+  claimedAt      DateTime?
+  providerId     String?
+  acceptedAt     DateTime?
+  deliveredAt    DateTime?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  radar          Radar?    @relation(fields: [radarId], references: [id], onDelete: Cascade)
+  run            RadarRun? @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([status, nextAttemptAt])
+  @@index([radarId])
 }

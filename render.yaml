@@ -24,6 +24,8 @@ services:
         sync: false
       - key: RADAR_APP_URL
         sync: false
+      - key: RADAR_EMAIL_ENABLED
+        value: "false"
       - key: RESEND_API_KEY
         sync: false
       - key: RADAR_EMAIL_FROM

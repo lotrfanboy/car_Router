@@ -54,6 +54,15 @@ type Radar = {
     sentAt: string | null;
     channel: RadarChannel;
   }[];
+  emailDeliveries: {
+    id: string;
+    status: string;
+    attempts: number;
+    providerId: string | null;
+    lastError: string | null;
+    acceptedAt: string | null;
+    deliveredAt: string | null;
+  }[];
   runs: {
     id: string;
     status: string;
@@ -322,14 +331,15 @@ export function RadarsWorkspace({
                   min="0"
                   max="100"
                   step="1"
-                  defaultValue={editing?.runsRemaining ?? ""}
-                  placeholder="Sem limite de execuções"
+                  defaultValue={editing ? (editing.runsRemaining ?? "") : 1}
+                  placeholder="Defina um limite para agendar"
                 />
               </label>
               <p className="muted">
                 Use 1 para uma única consulta. Ao chegar a zero, o Radar pausa.
-                Em branco, continua até você pausar, respeitando os limites de
-                créditos das fontes.
+                Defina o limite antes de ativar. Cada tentativa de coleta conta,
+                inclusive se uma fonte falhar. Reenviar um resumo pendente não
+                consome outra coleta.
               </p>
               <label className="discovery-check">
                 <input
@@ -381,7 +391,11 @@ export function RadarsWorkspace({
             </div>
           )}
           {rows.map((row) => (
-            <article className="panel radar-card" key={row.id}>
+            <article
+              className="panel radar-card"
+              key={row.id}
+              id={`radar-${row.id}`}
+            >
               <div className="listing-topline">
                 <h2>{row.name}</h2>
                 <strong className={`radar-state ${row.state}`}>
@@ -418,7 +432,7 @@ export function RadarsWorkspace({
               </p>
               <p className="muted">
                 {row.runsRemaining === null
-                  ? "Execuções contínuas até você pausar, dentro dos limites de créditos."
+                  ? "Agendamento bloqueado: defina um limite de execuções para este MVP."
                   : row.runsRemaining === 0
                     ? "Limite de execuções atingido. Edite o limite antes de ativar novamente."
                     : `${row.runsRemaining} execução(ões) restante(s).`}
@@ -430,7 +444,15 @@ export function RadarsWorkspace({
                   : "ainda não executado"}
                 <br />
                 Próxima execução:{" "}
-                {row.nextRunAt ? observedWhen(row.nextRunAt) : "não agendada"}
+                {row.nextRunAt
+                  ? `a partir de ${new Date(row.nextRunAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })} (Brasília)`
+                  : "não agendada"}
+                <br />O agendador verifica a cada 30 minutos. Este radar
+                consulta{" "}
+                {row.intervalHours === 24
+                  ? "a cada 24 horas"
+                  : "a cada 168 horas"}
+                .
               </p>
               {row.state === "pending" && (
                 <p className="comparison-pending">{row.missing.join("; ")}</p>
@@ -438,7 +460,11 @@ export function RadarsWorkspace({
               <div className="listing-actions">
                 <button
                   className="button small"
-                  disabled={busy || (!row.enabled && row.runsRemaining === 0)}
+                  disabled={
+                    busy ||
+                    (!row.enabled &&
+                      (row.runsRemaining === 0 || row.runsRemaining === null))
+                  }
                   onClick={() =>
                     void mutate(
                       row.id,
@@ -491,6 +517,27 @@ export function RadarsWorkspace({
                     Cancelar
                   </button>
                 </div>
+              )}
+              {(row.emailDeliveries ?? []).length > 0 && (
+                <details>
+                  <summary>Resumos por e-mail</summary>
+                  {row.emailDeliveries.map((delivery) => (
+                    <p key={delivery.id}>
+                      {{
+                        pending: "Resumo pendente",
+                        retry: "Entrega pendente de nova tentativa",
+                        sending: "Solicitando envio",
+                        unknown: "Resultado incerto; conferir no provedor",
+                        accepted:
+                          "Aceito pelo provedor; entrega ainda não confirmada",
+                        delivered: "Entrega confirmada pelo provedor",
+                        failed: "Entrega não concluída; revisar",
+                      }[delivery.status] ?? delivery.status}
+                      {` · ${delivery.attempts} tentativa(s). `}
+                      {delivery.lastError}
+                    </p>
+                  ))}
+                </details>
               )}
               {(row.notices ?? []).length > 0 && (
                 <section aria-label={`Avisos de ${row.name}`}>

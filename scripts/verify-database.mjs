@@ -17,6 +17,7 @@ const requiredTables = [
   "Radar",
   "RadarRun",
   "RadarNotice",
+  "RadarEmailDelivery",
   "RadarSourceState",
   "RadarObservation",
   "ListingPrice",
@@ -73,6 +74,8 @@ try {
     "RadarNotice.matchStatus",
     "RadarNotice.payload",
     "RadarNotice.previousPriceCents",
+    "RadarNotice.runId",
+    "RadarNotice.emailEligible",
   ];
   const missingColumns = requiredRadarColumns.filter(
     (name) => !presentColumns.has(name),
@@ -99,6 +102,14 @@ try {
     active.versions !== active.versionCount
   )
     throw new Error("Nenhuma revisão íntegra do catálogo está ativa.");
+  const emailMissing = [
+    "RESEND_API_KEY",
+    "RADAR_EMAIL_FROM",
+    "RADAR_EMAIL_TO",
+  ].filter((name) => !process.env[name]?.trim());
+  console.log(
+    `E-mail MVP: variáveis ausentes=${emailMissing.join(",") || "nenhuma"}; automático=${process.env.RADAR_EMAIL_ENABLED === "true"}. Remetente autorizado depende de validação no Resend.`,
+  );
   console.log(
     `Banco e catálogo prontos: ${active.brands} marcas, ${active.models} modelos, ${active.versions} versões.`,
   );

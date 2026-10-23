@@ -9,7 +9,12 @@ import {
 import { providerConfig, secret } from "./discovery-providers";
 import { listingMatchStatus, type Listing } from "./discovery";
 import { listingKey } from "./listing-comparison";
-import { money } from "./vehicle";
+import {
+  radarEmailConfiguration,
+  queueRadarEmails,
+  deliverPendingRadarEmails,
+  reconcileRadarEmails,
+} from "./radar-email";
 import { radarState } from "./radar-state";
 import {
   radarEvent,
@@ -33,10 +38,8 @@ export function radarInfrastructure() {
   const scheduler =
     setting("RADAR_SCHEDULER_ENABLED") === "true" &&
     setting("RADAR_CRON_SECRET").length >= 32;
-  const email =
-    !!setting("RESEND_API_KEY") &&
-    z.email().safeParse(setting("RADAR_EMAIL_TO")).success &&
-    !!setting("RADAR_EMAIL_FROM");
+  const emailConfig = radarEmailConfiguration();
+  const email = emailConfig.configured && emailConfig.enabled;
   const origin = setting("RADAR_APP_URL");
   let link = false;
   try {
@@ -48,9 +51,13 @@ export function radarInfrastructure() {
     email,
     link,
     ready: scheduler && link,
-    emailMissing: !email
-      ? ["Canal de e-mail: RESEND_API_KEY, RADAR_EMAIL_FROM e RADAR_EMAIL_TO"]
-      : [],
+    emailConfiguration: emailConfig,
+    emailMissing: [
+      ...emailConfig.missing.map((name) => `Canal de e-mail: ${name}`),
+      ...(!emailConfig.enabled
+        ? ["Canal de e-mail: RADAR_EMAIL_ENABLED=true após validar o teste"]
+        : []),
+    ],
     missing: [
       ...(!scheduler
         ? ["Agendador externo e RADAR_CRON_SECRET (mínimo 32 caracteres)"]
@@ -83,6 +90,21 @@ export async function listRadars() {
       search: true,
       runs: { orderBy: { startedAt: "desc" }, take: 5 },
       notices: { orderBy: { createdAt: "desc" }, take: 50 },
+      emailDeliveries: {
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          runId: true,
+          status: true,
+          attempts: true,
+          providerId: true,
+          acceptedAt: true,
+          deliveredAt: true,
+          lastError: true,
+          createdAt: true,
+        },
+      },
     },
     orderBy: { createdAt: "desc" },
   });
@@ -98,6 +120,7 @@ export async function listRadars() {
         );
         const ready =
           infrastructure.ready &&
+          row.runsRemaining !== null &&
           (row.channel !== "email" || infrastructure.email);
         return {
           ...row,
@@ -129,6 +152,9 @@ export async function listRadars() {
               : null,
           missing: [
             ...infrastructure.missing,
+            ...(row.runsRemaining === null
+              ? ["Defina um limite de execuções para agendar este MVP"]
+              : []),
             ...(row.channel === "email" ? infrastructure.emailMissing : []),
             ...(!connected ? ["Ao menos uma fonte da busca conectada"] : []),
           ],
@@ -141,6 +167,11 @@ export async function saveRadar(input: unknown, id?: string) {
   const value = radarSchema.parse(input);
   if (!(await db.savedSearch.findUnique({ where: { id: value.searchId } })))
     throw new SearchError("Busca não encontrada.", 404);
+  if (value.enabled && value.runsRemaining === null)
+    throw new SearchError(
+      "Defina o limite de execuções antes de ativar o Radar.",
+      409,
+    );
   const enabled = value.enabled && value.runsRemaining !== 0;
   if (id)
     return db.$transaction(async (tx) => {
@@ -156,7 +187,15 @@ export async function saveRadar(input: unknown, id?: string) {
       }
       return tx.radar.update({
         where: { id },
-        data: { ...value, enabled, nextRunAt: enabled ? new Date() : null },
+        data: {
+          ...value,
+          enabled,
+          nextRunAt: enabled
+            ? previous.enabled
+              ? previous.nextRunAt
+              : new Date()
+            : null,
+        },
       });
     });
   if ((await db.radar.count()) >= 30)
@@ -164,43 +203,6 @@ export async function saveRadar(input: unknown, id?: string) {
   return db.radar.create({
     data: { ...value, enabled, nextRunAt: enabled ? new Date() : null },
   });
-}
-async function sendEmail(
-  row: Listing,
-  eventKey: string,
-  kind: RadarEventKind,
-  matchStatus: RadarMatch,
-  previousPriceCents: number | null,
-) {
-  const c = row.comparison;
-  const link = `${setting("RADAR_APP_URL").replace(/\/$/, "")}/anuncios/${row.source}/${encodeURIComponent(row.externalId)}`;
-  const description =
-    kind === "discount" && c
-      ? `${money(row.priceCents!)} · média dos semelhantes: ${money(c.meanCents!)} · ${c.belowPercent!.toFixed(1)}% abaixo · ${c.count} comparáveis`
-      : kind === "price_drop"
-        ? `Queda de preço: ${money(previousPriceCents!)} para ${money(row.priceCents!)}.`
-        : `Novo para este radar: ${money(row.priceCents!)}. A primeira observação não confirma a data de publicação.`;
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${setting("RESEND_API_KEY")}`,
-      "Content-Type": "application/json",
-      "Idempotency-Key": eventKey,
-    },
-    body: JSON.stringify({
-      from: setting("RADAR_EMAIL_FROM"),
-      to: [setting("RADAR_EMAIL_TO")],
-      subject: `Radar: ${row.title.replace(/[\r\n]/g, " ").slice(0, 110)}`,
-      text: `${row.title}\n${description}\n${matchStatus === "uncertain" ? "Correspondência incerta; confira os critérios no anúncio. " + row.reasons.join("; ") : "Correspondência confirmada com os filtros."}\n${row.city ?? "Cidade não informada"}/${row.state ?? ""}\n${link}\nPreços anunciados da amostra observada.`,
-    }),
-    signal: AbortSignal.timeout(15000),
-    redirect: "error",
-  });
-  if (!response.ok)
-    throw new Error("O provedor de e-mail não confirmou o envio.");
-  const body = await response.json();
-  if (typeof body.id !== "string")
-    throw new Error("O provedor de e-mail não confirmou o envio.");
 }
 export async function tickRadars() {
   const infrastructure = radarInfrastructure();
@@ -231,12 +233,28 @@ export async function tickRadars() {
   let processed = 0;
   let blockedEmail = false;
   try {
+    // A restart must not re-collect a claimed run. Recover only its durable notices.
+    // Mark abandoned runs for review; the already advanced nextRunAt remains intact.
+    const staleBefore = new Date(Date.now() - 30 * 60000);
+    await db.radarRun.updateMany({
+      where: { status: "running", startedAt: { lt: staleBefore } },
+      data: {
+        status: "error",
+        finishedAt: new Date(),
+        message:
+          "Execução interrompida; coleta não repetida. Avisos persistidos preservados.",
+      },
+    });
+    await queueRadarEmails();
+    await deliverPendingRadarEmails();
+    await reconcileRadarEmails();
     const due = await db.radar.findMany({
       where: {
         enabled: true,
+        runs: { none: { status: "running" } },
         AND: [
           { OR: [{ nextRunAt: null }, { nextRunAt: { lte: new Date() } }] },
-          { OR: [{ runsRemaining: null }, { runsRemaining: { gt: 0 } }] },
+          { runsRemaining: { gt: 0 } },
         ],
       },
       include: { search: true },
@@ -255,32 +273,39 @@ export async function tickRadars() {
       const now = new Date();
       const runsRemaining =
         radar.runsRemaining === null ? null : radar.runsRemaining - 1;
-      const claimed = await db.radar.updateMany({
-        where: { id: radar.id, enabled: true, updatedAt: radar.updatedAt },
-        data: {
-          lastRunAt: now,
-          updatedAt: now,
-          nextRunAt: new Date(now.getTime() + radar.intervalHours * 3600000),
-          runsRemaining,
-        },
+      const run = await db.$transaction(async (tx) => {
+        const claimed = await tx.radar.updateMany({
+          where: {
+            id: radar.id,
+            enabled: true,
+            updatedAt: radar.updatedAt,
+            runsRemaining: radar.runsRemaining,
+            nextRunAt: radar.nextRunAt,
+            runs: { none: { status: "running" } },
+          },
+          data: {
+            lastRunAt: now,
+            updatedAt: now,
+            nextRunAt: new Date(now.getTime() + radar.intervalHours * 3600000),
+            runsRemaining,
+          },
+        });
+        if (!claimed.count) return null;
+        return tx.radarRun.create({
+          data: {
+            radarId: radar.id,
+            status: "running",
+            message: "Consultando fontes.",
+          },
+        });
       });
-      if (!claimed.count) continue;
+      if (!run) continue;
       const stillCurrent = async () => {
         const current = await db.radar.findUnique({ where: { id: radar.id } });
         return (
           !!current?.enabled && current.updatedAt.getTime() === now.getTime()
         );
       };
-      const run = await db.radarRun.create({
-        data: {
-          radarId: radar.id,
-          status: "running",
-          message: "Consultando fontes.",
-        },
-      });
-      let sent = 0,
-        failed = 0,
-        emailLimited = 0;
       try {
         if (!(await stillCurrent()))
           throw new SearchError(
@@ -301,13 +326,13 @@ export async function tickRadars() {
           uncertain = 0,
           incompatible = 0,
           missingPrice = 0;
-        const deliveries: {
+        type DeliveryEvent = {
           row: Listing;
           eventKey: string;
           kind: RadarEventKind;
           matchStatus: RadarMatch;
           previousPriceCents: number | null;
-        }[] = [];
+        };
         for (const source of result.sources.filter(
           (item) => item.status === "ok",
         )) {
@@ -352,7 +377,7 @@ export async function tickRadars() {
               const previousByKey = new Map(
                 previousRows.map((row) => [row.listingKey, row]),
               );
-              const created: typeof deliveries = [];
+              const created: DeliveryEvent[] = [];
               for (const row of rows) {
                 const key = listingKey(row);
                 const previous = previousByKey.get(key);
@@ -393,10 +418,15 @@ export async function tickRadars() {
                   ) {
                     eventKey = proposedKey;
                     const emailRequested =
-                      radar.channel !== "in_app" && event.kind !== "baseline";
+                      radar.channel !== "in_app" &&
+                      event.kind !== "baseline" &&
+                      event.matchStatus === "confirmed" &&
+                      !previous;
                     await tx.radarNotice.create({
                       data: {
                         radarId: radar.id,
+                        runId: run.id,
+                        emailEligible: emailRequested,
                         listingKey: key,
                         priceCents: row.priceCents!,
                         previousPriceCents: previous?.priceCents ?? null,
@@ -459,58 +489,14 @@ export async function tickRadars() {
             if (event.kind === "discount") discounts++;
             if (event.matchStatus === "uncertain") uncertain++;
           }
-          deliveries.push(...sourceEvents);
-        }
-        for (const event of deliveries) {
-          if (
-            radar.channel === "in_app" ||
-            !infrastructure.email ||
-            event.kind === "baseline"
-          )
-            continue;
-          if (sent + failed >= 10) {
-            await db.radarNotice.update({
-              where: { eventKey: event.eventKey },
-              data: { status: "email_limited" },
-            });
-            emailLimited++;
-            continue;
-          }
-          if (!(await stillCurrent())) break;
-          const { row, eventKey, kind, matchStatus, previousPriceCents } =
-            event;
-          await db.radarNotice.update({
-            where: { eventKey },
-            data: { status: "sending" },
-          });
-          try {
-            await sendEmail(
-              row,
-              eventKey,
-              kind,
-              matchStatus,
-              previousPriceCents,
-            );
-            await db.radarNotice.update({
-              where: { eventKey },
-              data: { status: "sent", sentAt: new Date() },
-            });
-            sent++;
-          } catch {
-            await db.radarNotice.update({
-              where: { eventKey },
-              data: { status: "unconfirmed" },
-            });
-            failed++;
-          }
         }
         const failures = result.sources.filter((s) => s.status !== "ok");
         await db.radarRun.update({
           where: { id: run.id },
           data: {
             finishedAt: new Date(),
-            status: failed || failures.length ? "error" : "ok",
-            message: `${baseline} anúncio(s) na primeira verificação; ${newListings} novo(s) para este radar; ${drops} queda(s) de preço; ${discounts} candidato(s) no limite de desconto. ${uncertain} correspondência(s) incerta(s), separadas das confirmadas. ${incompatible} incompatível(is); ${missingPrice} sem preço válido para aviso. ${sent} aviso(s) aceito(s) pelo provedor de e-mail.${radar.channel !== "in_app" && !infrastructure.email ? " E-mail indisponível; avisos preservados no aplicativo." : ""}${failed ? ` ${failed} envio(s) sem confirmação; sem reenvio automático.` : ""}${emailLimited ? ` ${emailLimited} aviso(s) somente no aplicativo: limite de 10 e-mails por execução atingido; sem envio automático posterior.` : ""}${failures.length ? " Falha ou indisponibilidade em fonte: " + failures.map((s) => s.message).join(" ") : ""}${result.sources.some((source) => source.partial) ? " Cobertura parcial: ausência nesta página não significa remoção do anúncio." : ""}`,
+            status: failures.length ? "error" : "ok",
+            message: `${baseline} anúncio(s) na primeira verificação; ${newListings} novo(s) para este radar; ${drops} queda(s) de preço; ${discounts} candidato(s) no limite de desconto. ${uncertain} correspondência(s) incerta(s), separadas das confirmadas. ${incompatible} incompatível(is); ${missingPrice} sem preço válido para aviso. Resumo de novas oportunidades confirmadas persistido para entrega separada; falhas de e-mail não repetem a coleta.${radar.channel !== "in_app" && !infrastructure.email ? " E-mail indisponível; avisos preservados no aplicativo." : ""}${failures.length ? " Falha ou indisponibilidade em fonte: " + failures.map((s) => s.message).join(" ") : ""}${result.sources.some((source) => source.partial) ? " Cobertura parcial: ausência nesta página não significa remoção do anúncio." : ""}`,
           },
         });
       } catch (e) {
@@ -526,6 +512,13 @@ export async function tickRadars() {
           },
         });
       } finally {
+        try {
+          await queueRadarEmails();
+          await deliverPendingRadarEmails();
+        } catch {
+          // Durable notices retain runId/emailEligible; the next tick only retries enqueue/delivery.
+          console.error("Radar: entrega pendente; avisos preservados.");
+        }
         // Consume the bounded attempt even on collection failure; pause only after its events.
         if (runsRemaining === 0)
           await db.radar.updateMany({

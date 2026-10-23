@@ -12,6 +12,7 @@ const state = vi.hoisted(() => ({
   price: 10000000,
   fail: false,
   configured: true,
+  newListing: false,
 }));
 vi.mock("../src/lib/discovery-providers", async (original) => {
   const actual =
@@ -30,8 +31,8 @@ vi.mock("../src/lib/discovery-providers", async (original) => {
       const observedAt = new Date().toISOString();
       const listings: Listing[] = Array.from({ length: 7 }, (_, i) => ({
         source: "olx",
-        externalId: String(i),
-        url: `https://pr.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/test-only-${i}`,
+        externalId: state.newListing && i === 0 ? "new-0" : String(i),
+        url: `https://pr.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/test-only-${state.newListing && i === 0 ? "new-0" : i}`,
         title: "TESTE ISOLADO Corolla XEi",
         brand: "Toyota",
         model: "Corolla",
@@ -113,8 +114,10 @@ beforeEach(async () => {
   state.price = 10000000;
   state.fail = false;
   state.configured = true;
+  state.newListing = false;
   deliveries.length = 0;
   vi.stubEnv("RADAR_SCHEDULER_ENABLED", "true");
+  vi.stubEnv("RADAR_EMAIL_ENABLED", "true");
   vi.stubEnv("RADAR_CRON_SECRET", "test-only-012345678901234567890123456789");
   vi.stubEnv("RESEND_API_KEY", "test-only");
   vi.stubEnv("RADAR_EMAIL_FROM", "radar@example.test");
@@ -143,6 +146,7 @@ async function createRadar(enabled = true) {
   return radar.saveRadar({
     searchId: search.id,
     name: "TESTE ISOLADO",
+    runsRemaining: 20,
     minPercent: 10,
     intervalHours: 24,
     enabled,
@@ -612,28 +616,33 @@ it("records scheduler health without spending credits when email is unavailable"
     missing: expect.arrayContaining([expect.stringContaining("e-mail")]),
   });
 });
-it("runs server-side, records the real send contract, avoids repeats and notifies on a new qualifying price drop", async () => {
+it("establishes the discount baseline and sends a summary only for a new qualifying ID", async () => {
   const row = await createRadar();
   expect((await radar.listRadars()).radars[0].state).toBe("pending");
   expect(await radar.tickRadars()).toEqual({ processed: 1 });
   expect((await radar.listRadars()).radars[0].state).toBe("success");
   expect(state.calls).toHaveLength(1);
-  expect(deliveries).toHaveLength(1);
-  expect(JSON.stringify(deliveries[0])).toContain("média dos semelhantes");
-  expect(JSON.stringify(deliveries[0])).toContain("/anuncios/olx/0");
-  expect((await db.radarNotice.findFirst())?.status).toBe("sent");
+  expect(deliveries).toHaveLength(0);
+  expect((await db.radarNotice.findFirst())?.kind).toBe("baseline");
   await due(row.id);
   await radar.tickRadars();
-  expect(deliveries).toHaveLength(1);
+  expect(deliveries).toHaveLength(0);
   state.price = 9000000;
+  state.newListing = true;
   await due(row.id);
   await radar.tickRadars();
-  expect(deliveries).toHaveLength(2);
+  expect(deliveries).toHaveLength(1);
+  expect(JSON.stringify(deliveries[0])).toContain("nova(s) oportunidade(s)");
+  expect(JSON.stringify(deliveries[0])).toContain("/radares#radar-");
+  expect(await db.radarEmailDelivery.findFirst()).toMatchObject({
+    status: "accepted",
+    providerId: "test-message",
+  });
   expect(await db.radarRun.count()).toBe(3);
   expect(
     (
-      await db.radar.findUnique({ where: { id: row.id } })
-    )?.nextRunAt!.getTime(),
+      await db.radar.findUniqueOrThrow({ where: { id: row.id } })
+    ).nextRunAt!.getTime(),
   ).toBeGreaterThan(Date.now());
 });
 it("reports scheduled and running from persisted scheduler and execution records", async () => {
@@ -704,10 +713,12 @@ it("does not claim a notification was sent when provider delivery is uncertain",
       throw new Error("timeout with secret diagnostic");
     }),
   );
+  await radar.tickRadars(); // first successful collection establishes the base, without email
+  state.newListing = true;
+  await due(row.id);
   await radar.tickRadars();
-  expect((await db.radarNotice.findFirst())?.status).toBe("unconfirmed");
-  const run = await db.radarRun.findFirst();
-  expect(run?.message).toContain("0 aviso(s)");
+  expect((await db.radarEmailDelivery.findFirst())?.status).toBe("unknown");
+  const run = await db.radarRun.findFirst({ orderBy: { startedAt: "desc" } });
   expect(run?.message).not.toContain("secret");
   await due(row.id);
   await radar.tickRadars();
@@ -747,6 +758,7 @@ it("shares a recent manual execution with the Radar without another provider cal
   await store.executeSearch(row.searchId);
   expect(await radar.tickRadars()).toEqual({ processed: 1 });
   expect(state.calls).toHaveLength(1);
-  expect(deliveries).toHaveLength(1);
+  expect(deliveries).toHaveLength(0);
+  expect((await db.radarNotice.findFirst())?.kind).toBe("baseline");
   expect((await db.radarRun.findFirst())?.status).toBe("ok");
 });
