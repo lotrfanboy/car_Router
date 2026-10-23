@@ -1,3 +1,12 @@
+## Fluxo de manutenção deste projeto
+
+Este projeto é um MVP. O GitHub é a fonte de verdade, e as manutenções autorizadas pelo usuário devem ser registradas diretamente na `main` de `lotrfanboy/car_Router`.
+
+- Não criar branches locais ou remotas, worktrees de feature ou pull requests para as manutenções deste projeto, salvo pedido explícito do usuário para mudar esse fluxo.
+- Validar as alterações e fazer o commit diretamente na `main` do GitHub.
+- Conferir o estado atual da `main` antes de publicar, preservar alterações concorrentes e nunca usar force-push para sobrescrevê-las.
+- Esta diretriz é específica deste repositório e prevalece sobre preferências genéricas de fluxo com branches e PRs.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
