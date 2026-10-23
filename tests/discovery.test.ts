@@ -19,12 +19,50 @@ import {
 import fixture from "./fixtures/vehicle-catalog.json";
 import { catalogSchema } from "../src/lib/vehicle-catalog";
 const catalogFixture = catalogSchema.parse(fixture);
+const queryFixtureState = vi.hoisted(() => ({
+  extraTarget: false,
+  noTargets: false,
+}));
 const normalizeOlx = (value: unknown, observedAt: string) =>
   normalizeOlxSource(value, observedAt, catalogFixture);
 vi.mock("../src/lib/catalog-store", async () => {
   const { default: data } = await import("./fixtures/vehicle-catalog.json");
   const { catalogSchema } = await import("../src/lib/vehicle-catalog");
-  return { readVehicleCatalog: async () => catalogSchema.parse(data) };
+  return {
+    readVehicleCatalog: async () =>
+      catalogSchema.parse({
+        ...data,
+        // Explicit synthetic query contract, independently declared from ad references.
+        queryTargets: queryFixtureState.noTargets
+          ? []
+          : [
+              {
+                id: "test-corolla-query",
+                source: "webmotors",
+                canonicalBrandId: data.brands[0].id,
+                canonicalModelId: data.models[0].id,
+                sourceBrand: "TOYOTA",
+                sourceModel: "COROLLA",
+                evidenceId: data.evidence[0].id,
+                status: "confirmed",
+              },
+              ...(queryFixtureState.extraTarget
+                ? [
+                    {
+                      id: "test-corolla-secondary-query",
+                      source: "webmotors",
+                      canonicalBrandId: data.brands[0].id,
+                      canonicalModelId: data.models[0].id,
+                      sourceBrand: "TOYOTA",
+                      sourceModel: "COROLLA SEDAN",
+                      evidenceId: data.evidence[0].id,
+                      status: "confirmed",
+                    },
+                  ]
+                : []),
+            ],
+      }),
+  };
 });
 
 const root = mkdtempSync(path.join(process.env.RADAR_TEST_ROOT!, "searches-"));
@@ -112,6 +150,8 @@ beforeEach(async () => {
   currentState = "PR";
   regions = ["norte-de-santa-catarina"];
   reefFails = false;
+  queryFixtureState.extraTarget = false;
+  queryFixtureState.noTargets = false;
   vi.stubEnv("GECKO_API_KEY", "test-only");
   vi.stubEnv("REEF_API_KEY", "test-only");
   vi.stubEnv("REEF_FREE_TRIAL", "true");
@@ -379,17 +419,15 @@ it("validates the optional local model-group identity separately from FIPE model
       }).success,
     ).toBe(false);
 });
-it("filters optional versions by whole words, without claiming unavailable attributes", () => {
+it("keeps version selection out of collection eligibility", () => {
   const row = normalizeOlx({ items: [olx()] }, new Date().toISOString())[0];
   expect(eligibility(row, { ...criteria, version: "xei" })).toEqual([]);
-  expect(eligibility(row, { ...criteria, version: "XE" })).toContain(
-    "Versão diferente ou desconhecida",
-  );
+  expect(eligibility(row, { ...criteria, version: "XE" })).toEqual([]);
   expect(
     eligibility({ ...row, version: null }, { ...criteria, version: "xei" }),
-  ).toContain("Versão diferente ou desconhecida");
+  ).toEqual([]);
 });
-it("sends textual model queries to OLX while preserving selected FIPE identity", async () => {
+it("migrates a validated FIPE-era family before sending a broad textual model query to OLX", async () => {
   const catalog = {
     provider: "fipe",
     brandCode: "59",
@@ -414,8 +452,20 @@ it("sends textual model queries to OLX while preserving selected FIPE identity",
   expect(new URL(payload.url).searchParams.get("q")).toBe("Toyota Corolla");
   expect(JSON.stringify(payload)).not.toContain(catalog.modelName);
   expect(JSON.stringify(payload)).not.toContain(catalog.modelGroup);
-  expect(result.sources[0].listings[0].reasons).toEqual([]);
-  expect((await store.listSearches())[0].criteria.catalog).toEqual(catalog);
+  // The fixture's full OLX description has no reviewed inbound alias; a valid
+  // outbound family cannot turn that returned text into a confirmed identity.
+  expect(result.sources[0].listings[0].sourceModel).toBe("Corolla XEi 2.0");
+  expect(result.sources[0].listings[0].reasons).toEqual([
+    "Modelo não classificado",
+  ]);
+  expect((await store.listSearches())[0].criteria.catalog).toEqual({
+    provider: "carrouter",
+    revision: catalogFixture.revision,
+    brandCode: catalogFixture.brands[0].id,
+    brandName: catalogFixture.brands[0].name,
+    modelCode: catalogFixture.models[0].id,
+    modelName: catalogFixture.models[0].name,
+  });
 });
 it("saving and reading searches costs nothing; cross-site POST is rejected", async () => {
   const foreign = new Request("http://localhost:3000/api/searches", {
@@ -602,7 +652,14 @@ it("round-trips catalog IDs and optional cities, including legacy saved city sea
       catalog,
     });
     expect(searchSchema.parse(JSON.parse(saved.criteria))).toMatchObject({
-      catalog,
+      catalog: {
+        provider: catalog.provider,
+        revision: catalog.revision,
+        brandCode: catalog.brandCode,
+        brandName: catalog.brandName,
+        modelCode: catalog.modelCode,
+        modelName: catalog.modelName,
+      },
       cities,
       city: cities[0] ?? "",
       locationMode: cities.length ? "cities" : "state",
@@ -637,7 +694,7 @@ it("round-trips catalog IDs and optional cities, including legacy saved city sea
   expect(calls).toHaveLength(0);
 });
 
-it("translates catalog selections to source names and trim while preserving every requested filter", async () => {
+it("translates catalog selections to approved source names without version, doors or configuration filters", async () => {
   const { fetchSource } = await import("../src/lib/discovery-providers");
   const model = catalogFixture.models[0],
     brand = catalogFixture.brands[0],
@@ -675,7 +732,6 @@ it("translates catalog selections to source names and trim while preserving ever
   expect(body).toMatchObject({
     make: brand.references[0].name,
     model: model.references[0].name,
-    trim: version.references[0].name,
     year_min: 2020,
     year_max: 2020,
     price_max: 120000,
@@ -690,7 +746,10 @@ it("translates catalog selections to source names and trim while preserving ever
     listings: [],
     partial: false,
   });
-  expect(result.applied?.remote).toContain("versão");
+  expect(body).not.toHaveProperty("trim");
+  expect(body).not.toHaveProperty("doors");
+  expect(body).not.toHaveProperty("configuration");
+  expect(result.applied?.remote).not.toContain("versão");
   expect(result.applied?.local).toContain("ano");
 });
 
@@ -757,4 +816,138 @@ it("reports malformed integration data as failure and invalid catalog identity b
   expect(result.message).toContain("incompatível");
   expect(fetcher).not.toHaveBeenCalled();
   expect(reserve).not.toHaveBeenCalled();
+});
+
+it("collects every approved native model across selected cities without replanning translated labels", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  queryFixtureState.extraTarget = true;
+  const requestBodies: Record<string, unknown>[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (_url: string, init: RequestInit) => {
+      const body = JSON.parse(String(init.body));
+      requestBodies.push(body);
+      return Response.json({
+        ok: true,
+        data: { listings: [reef], total_results: 1, has_more: false },
+      });
+    }),
+  );
+  const reserve = vi.fn();
+  const result = await fetchSource(
+    "webmotors",
+    searchSchema.parse({
+      ...criteria,
+      cities: ["Curitiba", "Londrina"],
+      version: "do not send this trim",
+      doors: 2,
+    }),
+    reserve,
+  );
+  expect(requestBodies.map((body) => [body.model, body.location])).toEqual([
+    ["COROLLA", "pr-curitiba"],
+    ["COROLLA SEDAN", "pr-curitiba"],
+    ["COROLLA", "pr-londrina"],
+    ["COROLLA SEDAN", "pr-londrina"],
+  ]);
+  expect(
+    requestBodies.every((body) => !("trim" in body) && !("doors" in body)),
+  ).toBe(true);
+  expect(reserve).toHaveBeenCalledTimes(4);
+  expect(result).toMatchObject({
+    status: "ok",
+    creditsReserved: 8,
+    received: 4,
+    total: null,
+    partial: false,
+    normalizationDiscards: { "Anúncio repetido entre consultas": 3 },
+  });
+  expect(result.listings).toHaveLength(1);
+  expect(result.listings[0].reasons).toEqual([]);
+  expect(result.targets).toHaveLength(4);
+  expect(result.message).toContain("4 de 4 consultas");
+});
+
+it("retains successful native targets and marks the family partial when the budget blocks a remaining target", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  queryFixtureState.extraTarget = true;
+  const requestBodies: unknown[] = [];
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (_url: string, init: RequestInit) => {
+      requestBodies.push(JSON.parse(String(init.body)));
+      return Response.json({
+        ok: true,
+        data: { listings: [reef], total_results: 1, has_more: false },
+      });
+    }),
+  );
+  const reserve = vi
+    .fn()
+    .mockResolvedValueOnce(undefined)
+    .mockRejectedValueOnce(new Error("Orçamento gratuito local atingido."));
+  const result = await fetchSource("webmotors", criteria, reserve);
+  expect(requestBodies).toHaveLength(1);
+  expect(result).toMatchObject({
+    status: "ok",
+    partial: true,
+    creditsReserved: 2,
+    total: null,
+    received: 1,
+  });
+  expect(result.listings).toHaveLength(1);
+  expect(
+    result.targets?.map((target) => [
+      target.model,
+      target.status,
+      target.creditsReserved,
+    ]),
+  ).toEqual([
+    ["COROLLA", "ok", 2],
+    ["COROLLA SEDAN", "error", 0],
+  ]);
+  expect(result.message).toContain("1 de 2 consultas");
+  expect(result.message).toContain("Orçamento");
+});
+
+it("does not spend or call Webmotors when there is no approved outbound model binding", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  queryFixtureState.noTargets = true;
+  const reserve = vi.fn();
+  const result = await fetchSource("webmotors", criteria, reserve);
+  expect(result).toMatchObject({
+    status: "error",
+    creditsReserved: 0,
+    listings: [],
+  });
+  expect(result.message).toContain("vínculo de busca validado");
+  expect(reserve).not.toHaveBeenCalled();
+  expect(fetch).not.toHaveBeenCalled();
+});
+
+it("keeps family coverage partial when a successful target reports more pages", async () => {
+  const { fetchSource } = await import("../src/lib/discovery-providers");
+  queryFixtureState.extraTarget = true;
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async () =>
+      Response.json({
+        ok: true,
+        data: {
+          listings: [reef],
+          total_results: 25,
+          has_more: true,
+        },
+      }),
+    ),
+  );
+  const result = await fetchSource("webmotors", criteria, vi.fn());
+  expect(result).toMatchObject({
+    status: "ok",
+    partial: true,
+    total: null,
+    creditsReserved: 4,
+  });
+  expect(result.targets?.every((target) => target.partial)).toBe(true);
+  expect(result.message).toContain("páginas ainda não recebidas");
 });

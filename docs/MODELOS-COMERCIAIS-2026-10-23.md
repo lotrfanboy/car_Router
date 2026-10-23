@@ -1,5 +1,7 @@
 # Modelos comerciais e tradução para os portais
 
+> Registro histórico. O contrato atual de busca, catálogo nativo integral e filtro local de versão estão documentados em [search-catalog.md](search-catalog.md). As descrições de seletores de versão/configuração neste documento foram substituídas.
+
 O seletor passa a oferecer um único modelo comercial para os agrupamentos revisados. `Celta 2P` e `Celta 4P` aparecem como **Celta**, com configuração opcional **2 portas** ou **4 portas**. `Camaro` e `Camaro (2017)` aparecem como **Camaro**; a configuração original continua disponível e restringe as versões relacionadas. Uma indicação no rótulo técnico não preenche automaticamente os filtros de ano-modelo.
 
 ## Catálogo e compatibilidade

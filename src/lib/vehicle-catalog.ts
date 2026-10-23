@@ -8,6 +8,9 @@ export const catalogKey = (value: string) =>
     .toLowerCase()
     .replace(/(\d),(?=\d)/g, "$1.")
     .replace(/[^a-z0-9.+]+/g, "");
+/** Outbound native labels remain distinct even when classification ignores punctuation. */
+export const sourceLabelKey = (value: string) =>
+  value.normalize("NFC").trim().replace(/\s+/g, " ").toLowerCase();
 const id = z.string().trim().min(1).max(240);
 const name = z.string().trim().min(1).max(240);
 const reference = z.object({
@@ -41,6 +44,20 @@ const sourceMapping = z.object({
   configurationId: id.optional(),
   doors: z.number().int().min(2).max(5).optional(),
 });
+const queryTarget = z.object({
+  id,
+  source: z.enum(["webmotors", "olx"]),
+  canonicalBrandId: id,
+  canonicalModelId: id,
+  sourceBrand: name,
+  sourceModel: name,
+  sourceBrandId: id.optional(),
+  sourceModelId: id.optional(),
+  evidenceId: id,
+  status: z.literal("confirmed"),
+});
+export type CatalogQueryTarget = z.infer<typeof queryTarget>;
+
 export const catalogSchema = z
   .object({
     schemaVersion: z.literal(1),
@@ -86,6 +103,8 @@ export const catalogSchema = z
       )
       .optional(),
     commercialRevision: id.optional(),
+    queryTargets: z.array(queryTarget).optional(),
+    searchRevision: id.optional(),
   })
   .superRefine((data, ctx) => {
     const fail = (message: string) => ctx.addIssue({ code: "custom", message });
@@ -94,6 +113,29 @@ export const catalogSchema = z
       fail("Identificador de evidência duplicado.");
     const brands = new Set(data.brands.map((item) => item.id));
     const models = new Set(data.models.map((item) => item.id));
+    const modelParents = new Map(
+      data.models.map((item) => [item.id, item.brandId]),
+    );
+    const targetKeys = new Set<string>();
+    const targetIds = new Set<string>();
+    for (const target of data.queryTargets ?? []) {
+      if (!evidence.has(target.evidenceId))
+        fail("Critério remoto sem evidência.");
+      if (
+        !brands.has(target.canonicalBrandId) ||
+        modelParents.get(target.canonicalModelId) !== target.canonicalBrandId
+      )
+        fail("Critério remoto aponta para marca/modelo incompatíveis.");
+      const key = [
+        target.source,
+        target.sourceBrandId ?? sourceLabelKey(target.sourceBrand),
+        target.sourceModelId ?? sourceLabelKey(target.sourceModel),
+      ].join(":");
+      if (targetKeys.has(key) || targetIds.has(target.id))
+        fail("Critério remoto duplicado ou ambíguo.");
+      targetKeys.add(key);
+      targetIds.add(target.id);
+    }
     const configurationsByModel = new Map(
       data.models.map((item) => [
         item.id,
@@ -310,6 +352,9 @@ function buildResolutionIndex(catalog: VehicleCatalog) {
     string,
     Map<string, Set<VehicleCatalog["models"][number]>>
   >();
+  const queryTargetsByBrand = new Map<string, CatalogQueryTarget[]>();
+  const queryBrandIds = new Map<string, Set<string>>();
+  const queryBrandLabels = new Map<string, Set<string>>();
   const aliasesByModel = new Map<
     string,
     NonNullable<VehicleCatalog["modelAliases"]>
@@ -336,6 +381,23 @@ function buildResolutionIndex(catalog: VehicleCatalog) {
     const model = modelsById.get(alias.modelId);
     if (model) label(model, alias.name);
   }
+  for (const target of catalog.queryTargets ?? []) {
+    append(
+      queryTargetsByBrand,
+      `${target.source}:${target.canonicalBrandId}`,
+      target,
+    );
+    const keys = [
+      [queryBrandLabels, `${target.source}:${catalogKey(target.sourceBrand)}`],
+    ] as [Map<string, Set<string>>, string][];
+    if (target.sourceBrandId)
+      keys.push([queryBrandIds, `${target.source}:${target.sourceBrandId}`]);
+    for (const [map, key] of keys) {
+      const values = map.get(key) ?? new Set<string>();
+      values.add(target.canonicalBrandId);
+      map.set(key, values);
+    }
+  }
   for (const version of catalog.versions) {
     append(versionsByModel, version.modelId, version);
     const model = modelsById.get(version.modelId);
@@ -349,6 +411,9 @@ function buildResolutionIndex(catalog: VehicleCatalog) {
     versionsByBrand,
     labelsByBrand,
     aliasesByModel,
+    queryTargetsByBrand,
+    queryBrandIds,
+    queryBrandLabels,
   };
 }
 const resolutionIndexes = new WeakMap<
@@ -369,6 +434,29 @@ export function resolveCatalogVehicle(
 ) {
   const index = resolutionIndex(catalog);
   let brand = resolve(catalog.brands, row.source, row.brandId, row.brand);
+  if (!brand) {
+    const ids = row.brandId
+      ? index.queryBrandIds.get(`${row.source}:${row.brandId}`)
+      : undefined;
+    const labels = row.brand
+      ? index.queryBrandLabels.get(`${row.source}:${catalogKey(row.brand)}`)
+      : undefined;
+    const candidates = [...(ids?.size ? ids : (labels ?? []))].filter((id) => {
+      const candidate = index.brandsById.get(id);
+      const known =
+        candidate?.references.filter((ref) => ref.source === row.source) ?? [];
+      const targets =
+        index.queryTargetsByBrand.get(`${row.source}:${id}`) ?? [];
+      const knownIds = new Set([
+        ...known.map((ref) => ref.id),
+        ...targets.flatMap((target) =>
+          target.sourceBrandId ? [target.sourceBrandId] : [],
+        ),
+      ]);
+      return !row.brandId || !knownIds.size || knownIds.has(row.brandId);
+    });
+    if (candidates.length === 1) brand = index.brandsById.get(candidates[0]);
+  }
   let models = brand ? (index.modelsByBrand.get(brand!.id) ?? []) : [];
   let model = resolve(models, row.source, row.modelId, row.model);
   const modelMappings = catalog.mappings.filter(
@@ -382,6 +470,53 @@ export function resolveCatalogVehicle(
         .filter((value): value is string => !!value),
     ),
   ];
+  const nativeTargets = brand
+    ? (index.queryTargetsByBrand.get(`${row.source}:${brand.id}`) ?? [])
+    : [];
+  const nativeIdMatches = row.modelId
+    ? nativeTargets.filter((target) => target.sourceModelId === row.modelId)
+    : [];
+  const nativeCandidates = nativeIdMatches.length
+    ? nativeIdMatches
+    : !model && !modelMappings.length && row.model
+      ? nativeTargets.filter((target) => {
+          if (
+            !same(target.sourceModel, row.model) ||
+            (row.modelId && target.sourceModelId)
+          )
+            return false;
+          const candidate = index.modelsById.get(target.canonicalModelId);
+          const knownIds = [
+            ...(candidate?.references
+              .filter(
+                (ref) =>
+                  ref.source === row.source &&
+                  [ref.name, ...ref.aliases].some((label) =>
+                    same(label, target.sourceModel),
+                  ),
+              )
+              .map((ref) => ref.id) ?? []),
+            ...catalog.mappings
+              .filter(
+                (mapping) =>
+                  mapping.source === row.source &&
+                  mapping.canonicalModelId === target.canonicalModelId &&
+                  (!mapping.sourceModelLabel ||
+                    same(mapping.sourceModelLabel, target.sourceModel)) &&
+                  mapping.sourceModelId,
+              )
+              .map((mapping) => mapping.sourceModelId!),
+          ];
+          return (
+            !row.modelId || !knownIds.length || knownIds.includes(row.modelId)
+          );
+        })
+      : [];
+  const nativeModelIds = [
+    ...new Set(nativeCandidates.map((target) => target.canonicalModelId)),
+  ];
+  if (nativeModelIds.length === 1 && (!model || nativeIdMatches.length))
+    model = index.modelsById.get(nativeModelIds[0]);
   // A literal structured model label can identify a commercial family only
   // when no established source-ID binding or competing reference contradicts it.
   // Complete unknown OLX descriptions are never split at a model prefix.
@@ -396,7 +531,8 @@ export function resolveCatalogVehicle(
             mapping.source === row.source &&
             mapping.sourceModelId &&
             mapping.canonicalBrandId === brand?.id,
-        ))) &&
+        ) &&
+        !nativeTargets.some((target) => target.sourceModelId))) &&
     !modelMappings.length &&
     catalog.commercialRevision &&
     row.brand &&

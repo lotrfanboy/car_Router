@@ -4,6 +4,7 @@ Run after npm run build. Source attributes are recovered observations; listings,
 prices and locations in this UI fixture are synthetic. No provider request runs.
 """
 import json
+import re
 from pathlib import Path
 import socket
 import sqlite3
@@ -37,8 +38,16 @@ def seed(path):
                          sourceModel=row["model"], version=row["version"], sourceIdentity=row["source_identity"],
                          original=dict(brand=row["brand"], model=row["model"], version=row["version"]),
                          modelYear=2006, state="SC", city="Blumenau", priceCents=1000000, mileage=100000,
-                         sellerType="private", observedAt=now, reasons=["Modelo não classificado"])
+                         sellerType="private", observedAt=now, reasons=["Modelo não classificado"],
+                         versionOrigin="explicit" if row["version"] else "unknown")
                     for row in selected if row["source"] == source]
+        if source == "webmotors":
+            missing = dict(listings[0], externalId="synthetic-no-version",
+                           url="https://www.webmotors.com.br/comprar/chevrolet/celta/test/900000001",
+                           title="TESTE LOCAL · CELTA SEM VERSÃO", version=None, versionOrigin="unknown",
+                           sourceIdentity={**listings[0]["sourceIdentity"], "versionId": None},
+                           original={**listings[0]["original"], "version": None})
+            listings.append(missing)
         sources.append(dict(source=source, status="ok", observedAt=now, elapsedMs=1, creditsReserved=0,
                             partial=False, total=len(listings), received=len(listings), message="Fixture local",
                             listings=listings))
@@ -61,10 +70,26 @@ def seed(path):
 def check(page, base, width):
     page.goto(base + "/buscar?busca=legacy-celta")
     expect(page.get_by_role("combobox", name="Modelo", exact=True)).to_have_value("Celta")
-    expect(page.locator('select[name="configuration"] option:checked')).to_have_text("2 portas")
-    expect(page.locator("article.listing-card:visible")).to_have_count(1)
-    expect(page.get_by_text("Correspondência confirmada", exact=True)).to_have_count(1)
+    expect(page.locator('[name="configuration"], [name="version"]')).to_have_count(0)
+    expect(page.locator("article.listing-card:visible")).to_have_count(3)
+    expect(page.get_by_text("Correspondência confirmada", exact=True)).to_have_count(3)
     expect(page.get_by_text("Modelo não classificado", exact=True)).to_have_count(0)
+    facet = page.get_by_role("combobox", name="Versão nos resultados", exact=True)
+    expect(facet).to_have_value("")
+    expect(facet.locator("option:checked")).to_have_text("Todas as versões (4)")
+    assert facet.evaluate("element => new Set([...element.options].map(option => option.textContent)).size === element.options.length")
+    page.wait_for_load_state("networkidle")
+    requests = []
+    listener = lambda request: requests.append(request.url)
+    page.on("request", listener)
+    facet.select_option(label="Não informada (1)")
+    expect(page.locator("article.listing-card:visible")).to_have_count(1)
+    expect(page.get_by_text("TESTE LOCAL · CELTA SEM VERSÃO", exact=True)).to_be_visible()
+    facet.select_option("")
+    expect(page.locator("article.listing-card:visible")).to_have_count(3)
+    page.wait_for_load_state("networkidle")
+    page.remove_listener("request", listener)
+    assert not requests, f"Changing the local facet issued HTTP requests: {requests}"
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), width
     page.screenshot(path=str(ARTIFACTS / f"{width}-restored.png"), full_page=True)
     field = page.get_by_role("combobox", name="Modelo", exact=True)
@@ -74,23 +99,36 @@ def check(page, base, width):
     expect(page.get_by_role("option", name="Celta 2P", exact=True)).to_have_count(0)
     expect(page.get_by_role("option", name="Camaro (2017)", exact=True)).to_have_count(0)
     page.get_by_role("option", name="Camaro", exact=True).click()
-    expect(page.locator('select[name="configuration"]')).to_have_value("")
-    expect(page.locator('select[name="version"] option')).to_have_count(11)
-    page.locator('select[name="configuration"]').select_option(label="Camaro (2017)")
-    expect(page.locator('select[name="version"] option')).to_have_count(3)
-    page.locator('select[name="version"]').select_option(index=1)
-    expect(page.locator('select[name="version"]')).not_to_have_value("")
-    field.fill("celta")
-    page.get_by_role("option", name="Celta", exact=True).click()
-    expect(page.locator('select[name="configuration"]')).to_have_value("")
-    expect(page.locator('input[name="version"]')).to_have_value("")
-    page.locator('select[name="configuration"]').select_option(label="4 portas")
+    expect(page.locator('[name="configuration"], [name="version"]')).to_have_count(0)
     with page.expect_response(lambda response: response.url == base + "/api/searches" and response.request.method == "POST") as saved:
         page.get_by_role("button", name="Salvar critérios sem consultar", exact=True).click()
-    assert saved.value.status == 201, saved.value.text()
-    expect(page.locator('select[name="configuration"] option:checked')).to_have_text("4 portas")
+    response = saved.value
+    assert response.status == 201, response.text()
+    criteria = response.request.post_data_json
+    assert not criteria.get("version") and not criteria.get("doors") and not criteria.get("olxUrl"), criteria
+    assert not any(key in criteria.get("catalog", {}) for key in ("versionCode", "versionName", "configurationCode", "configurationName")), criteria
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), width
     page.screenshot(path=str(ARTIFACTS / f"{width}-saved.png"), full_page=True)
+    # Native snapshot brands absent from the technical fixture must also work.
+    brand = page.get_by_role("combobox", name="Marca", exact=True)
+    brand.fill("AUDI")
+    page.get_by_role("option", name="AUDI", exact=True).click()
+    field.fill("a3")
+    expect(page.get_by_role("option", name="A3", exact=True)).to_have_count(1)
+    expect(page.get_by_role("option", name="A3 Sportback", exact=True)).to_have_count(0)
+    expect(page.get_by_role("option", name="A3 Spotback", exact=True)).to_have_count(0)
+    field.fill("s3")
+    expect(page.get_by_role("option", name="S3", exact=True)).to_have_count(1)
+    expect(page.get_by_role("option", name="RS3", exact=True)).to_have_count(1)
+    names = page.get_by_role("listbox", name="Modelo", exact=True).get_by_role("option").all_text_contents()
+    assert len(names) == len(set(name.strip().casefold() for name in names)), names
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), width
+    page.screenshot(path=str(ARTIFACTS / f"{width}-audi.png"), full_page=True)
+    brand.fill("FORD")
+    page.get_by_role("option", name="FORD", exact=True).click()
+    field.fill("ka")
+    expect(page.get_by_role("option", name=re.compile(r"^ka$", re.I))).to_have_count(1)
+    expect(page.get_by_role("option", name=re.compile(r"^ka\s*\+$", re.I))).to_have_count(1)
 
 
 def main():
@@ -134,9 +172,11 @@ def main():
                 assert db.execute("SELECT count(*) FROM SearchRun").fetchone()[0] == 1
                 assert db.execute("SELECT count(*) FROM SavedSearch").fetchone()[0] == 2
             report = dict(status="passed", completed_at=timestamp(), viewports=[1440, 390],
-                          checks=["legacy Celta 2P restored as Celta + 2 portas", "known source labels reclassified from history",
-                                  "one commercial model per option", "Camaro configurations filter related versions",
-                                  "changing model clears configuration and version", "save preserves doors without collecting",
+                          checks=["legacy Celta 2P restored as the complete Celta model", "known source labels reclassified from history",
+                                  "one commercial model per option", "no collection version or configuration inputs",
+                                  "local version facet with counts and unknown values", "changing version sends zero HTTP requests",
+                                  "saved request excludes version/configuration restrictions", "native Audi A3 unique and S3/RS3 separate",
+                                  "native Ford KA and KA + remain separate",
                                   "no horizontal overflow or JavaScript errors"],
                           javascript_errors=errors, external_requests=external, provider_attempts=provider_attempts)
             (ARTIFACTS / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")

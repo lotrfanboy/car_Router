@@ -1,4 +1,7 @@
 import { db } from "./db";
+import { collectionCriteria } from "./search-criteria";
+import { commercialModelName } from "./commercial-names";
+import { planSourceQuery } from "./source-query";
 import { createHash } from "node:crypto";
 import {
   eligibility,
@@ -25,13 +28,20 @@ export async function currentSearchCriteria(
   input: unknown,
   catalog?: VehicleCatalog,
 ): Promise<SearchCriteria> {
-  const criteria = searchSchema.parse(input);
-  return criteria.catalog?.provider === "carrouter"
-    ? normalizeCatalogCriteria(
-        catalog ?? (await readVehicleCatalog()),
-        criteria,
-      )
-    : criteria;
+  const criteria = collectionCriteria(searchSchema.parse(input));
+  const activeCatalog = catalog ?? (await readVehicleCatalog());
+  if (criteria.catalog?.provider === "carrouter" && criteria.catalog.modelCode)
+    return collectionCriteria(
+      normalizeCatalogCriteria(activeCatalog, criteria),
+    );
+  // Manual and FIPE-era saved names must use the same canonical family for
+  // both collection and local classification. Only an unambiguous native
+  // contract or an explicitly reviewed alias can establish that selection.
+  const plan = planSourceQuery(activeCatalog, "webmotors", {
+    ...criteria,
+    model: commercialModelName(criteria.brand, criteria.model),
+  });
+  return plan.mapping.status === "confirmed" ? plan.criteria : criteria;
 }
 
 export class SearchError extends Error {
@@ -138,10 +148,22 @@ export async function listSearches() {
   const context = await createEnrichmentContext();
   return Promise.all(
     rows.map(async (row) => {
+      const originalCriteria = JSON.parse(row.criteria) as SearchCriteria;
       const criteria = await currentSearchCriteria(
-        JSON.parse(row.criteria),
+        originalCriteria,
         context.catalog,
       );
+      const criteriaMigrationNotice =
+        originalCriteria.model !== criteria.model ||
+        originalCriteria.catalog?.modelCode !== criteria.catalog?.modelCode ||
+        originalCriteria.version ||
+        originalCriteria.doors ||
+        originalCriteria.olxUrl ||
+        (originalCriteria.catalog?.provider === "carrouter" &&
+          (originalCriteria.catalog.versionCode ||
+            originalCriteria.catalog.configurationCode))
+          ? "Esta busca agora coleta todo o modelo. Resultados antigos mantêm o recorte da coleta original; execute novamente para ampliar. Refine a versão nos resultados."
+          : undefined;
       const latest = row.runs[0]
         ? {
             id: row.runs[0].id,
@@ -181,6 +203,7 @@ export async function listSearches() {
       return {
         id: row.id,
         criteria,
+        criteriaMigrationNotice,
         latest,
         ...history,
       };
@@ -266,13 +289,15 @@ async function recoverSearchRuns(
 }
 /** Collection honors the requested scope. Comparables use already persisted observations. */
 export function referenceCriteria(criteria: SearchCriteria): SearchCriteria {
-  return { ...criteria };
+  return collectionCriteria(criteria);
 }
 function criteriaKey(
   criteria: SearchCriteria,
   collection = false,
   legacyLocation = false,
+  searchRevision = "",
 ) {
+  criteria = collectionCriteria(criteria);
   const locationFields: Partial<SearchCriteria> = { ...criteria };
   if (legacyLocation) {
     delete locationFields.locationMode;
@@ -288,13 +313,13 @@ function criteriaKey(
             criteria.catalog?.provider === "carrouter"
               ? criteria.catalog
               : undefined,
-          collectionVersion: 4,
+          collectionVersion: 5,
+          searchRevision,
         }
       : {}),
     name: "",
     brand: normalized(criteria.brand),
     model: catalogKey(criteria.model),
-    version: catalogKey(criteria.version ?? ""),
     city: normalized(criteria.city),
     ...(legacyLocation
       ? {}
@@ -367,7 +392,12 @@ export async function executeSearch(
 ) {
   const search = await db.savedSearch.findUnique({ where: { id } });
   if (!search) throw new SearchError("Busca não encontrada.", 404);
-  const criteria = await currentSearchCriteria(JSON.parse(search.criteria));
+  const catalog = await readVehicleCatalog();
+  const searchRevision = `${catalog.revision}:${catalog.commercialRevision ?? ""}:${catalog.searchRevision ?? ""}`;
+  const criteria = await currentSearchCriteria(
+    JSON.parse(search.criteria),
+    catalog,
+  );
   if (!criteria.sources.some((source) => providerConfig(source).configured))
     throw new SearchError(
       "Nenhuma fonte selecionada está configurada. Revise as integrações antes de consultar.",
@@ -385,11 +415,31 @@ export async function executeSearch(
     const result = JSON.parse(last.result) as SearchResult & {
       interrupted?: boolean;
     };
-    if (!result.interrupted && result.sources.length)
+    if (
+      !result.interrupted &&
+      result.sources.length &&
+      result.collectionVersion === 5 &&
+      result.searchRevision === searchRevision
+    )
       return {
         id: last.id,
         createdAt: last.createdAt,
-        ...(await enrichResult(result, criteria)),
+        ...(await enrichResult(
+          {
+            ...result,
+            sources: result.sources.map((source) => ({
+              ...source,
+              creditsReserved: 0,
+              locationCredits: 0,
+              targets: source.targets?.map((target) => ({
+                ...target,
+                creditsReserved: 0,
+                locationCredits: 0,
+              })),
+            })),
+          },
+          criteria,
+        )),
         cached: true,
       };
   }
@@ -429,7 +479,7 @@ export async function executeSearch(
       },
     });
     const reference = referenceCriteria(criteria),
-      cacheKey = criteriaKey(reference, true);
+      cacheKey = criteriaKey(reference, true, false, searchRevision);
     const cached = await db.searchCache.findUnique({ where: { id: cacheKey } });
     if (cached && Date.now() - cached.updatedAt.getTime() < 60000) {
       const result: SearchResult = JSON.parse(cached.result);
@@ -437,6 +487,11 @@ export async function executeSearch(
         ...source,
         creditsReserved: 0,
         locationCredits: 0,
+        targets: source.targets?.map((target) => ({
+          ...target,
+          creditsReserved: 0,
+          locationCredits: 0,
+        })),
         listings: source.listings.map((row) => ({
           ...row,
           reasons: eligibility(row, criteria),
@@ -453,7 +508,11 @@ export async function executeSearch(
         cached: true,
       };
     }
-    const result: SearchResult = { sources: [] };
+    const result: SearchResult = {
+      sources: [],
+      collectionVersion: 5,
+      searchRevision,
+    };
     // Sequential calls keep the spend and each partial failure understandable.
     for (const source of criteria.sources)
       result.sources.push(await fetchSource(source, reference, reserveCredits));

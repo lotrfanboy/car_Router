@@ -4,6 +4,7 @@ import fixture from "./fixtures/commercial-models.json";
 import observations from "../src/data/source-model-observations.json";
 import {
   commercialCatalog,
+  mergeSearchCatalog,
   commercialListing,
   normalizeCatalogCriteria,
   validCatalogCriteria,
@@ -41,7 +42,32 @@ vi.mock("../src/lib/db", () => ({
   db: { olxLocation: { findUnique: vi.fn() } },
 }));
 const raw = catalogSchema.parse(fixture.catalog);
-const catalog = commercialCatalog(raw);
+const catalog = mergeSearchCatalog(raw, {
+  revision: "native-test",
+  retrievedAt: "2026-10-23T00:00:00Z",
+  evidence: [
+    {
+      id: "native-test",
+      url: "https://example.com/native-catalog-fixture",
+      retrievedAt: "2026-10-23T00:00:00Z",
+      sha256: "a".repeat(64),
+      kind: "catalog",
+    },
+  ],
+  brands: [
+    {
+      source: "webmotors",
+      sourceId: "2",
+      name: "CHEVROLET",
+      models: [
+        { sourceId: "1143", name: "CELTA" },
+        { sourceId: "670", name: "CORSA" },
+        { sourceId: "761", name: "S10" },
+        { name: "CAMARO" },
+      ],
+    },
+  ],
+});
 const brand = catalog.brands.find((row) => row.name === "CHEVROLET")!;
 const celta = catalog.models.find(
   (row) => row.brandId === brand.id && row.name === "Celta",
@@ -194,7 +220,7 @@ describe("commercial identity above technical catalog entries", () => {
     ).toHaveLength(1);
     expect(vehicles.map((row) => row.model)).toEqual(["Celta 2P", "Celta 4P"]);
   });
-  it("serves commercial models, configurations and versions with validated parents", async () => {
+  it("serves commercial models and rejects technical configuration/version selectors", async () => {
     const options = await (
       await GET(optionRequest(`type=models&brand=${brand.id}`))
     ).json();
@@ -207,77 +233,47 @@ describe("commercial identity above technical catalog entries", () => {
           row.name === "Celta 2P" || row.name === "Camaro (2017)",
       ),
     ).toBe(false);
-    const configurations = await (
-      await GET(
-        optionRequest(
-          `type=configurations&brand=${brand.id}&model=${celta.id}`,
-        ),
-      )
-    ).json();
-    expect(
-      configurations.map((row: { name: string }) => row.name).sort(),
-    ).toEqual(["2 portas", "4 portas"]);
-    const camaro = catalog.models.find((row) => row.name === "Camaro")!;
-    const variant = camaro.configurations!.find(
-      (row) => row.name === "Camaro (2017)",
-    )!;
-    const versions = await (
-      await GET(
-        optionRequest(
-          `type=versions&brand=${brand.id}&model=${camaro.id}&configuration=${variant.id}`,
-        ),
-      )
-    ).json();
-    expect(versions).toHaveLength(2);
-    expect(
-      (
-        await GET(
-          optionRequest(
-            `type=versions&brand=${brand.id}&model=${celta.id}&configuration=${variant.id}`,
-          ),
-        )
-      ).status,
-    ).toBe(400);
+    for (const type of ["versions", "configurations"]) {
+      const response = await GET(
+        optionRequest(`type=${type}&brand=${brand.id}&model=${celta.id}`),
+      );
+      expect(response.status).toBe(400);
+      expect(await response.json()).toMatchObject({
+        error: "Versões são filtradas nos resultados da busca.",
+      });
+    }
   });
-  it("adapts old selections with doors and configuration, without changing years or input", () => {
+  it("adapts legacy identity without hidden doors, versions or configuration constraints", () => {
     const old = legacy();
     const before = structuredClone(old);
     const migrated = normalizeCatalogCriteria(catalog, old);
     expect(old).toEqual(before);
     expect(migrated).toMatchObject({
       model: "Celta",
-      doors: 2,
       yearMin: null,
       yearMax: null,
       catalog: {
         modelCode: celta.id,
         modelName: "Celta",
-        configurationCode: config(2).id,
       },
     });
+    expect(migrated.doors).toBeUndefined();
+    expect(migrated.version).toBe("");
+    expect(migrated.catalog).not.toHaveProperty("configurationCode");
     expect(validCatalogCriteria(catalog, migrated)).toBe(true);
     const camaro = normalizeCatalogCriteria(catalog, legacy("Camaro (2017)"));
     expect(camaro).toMatchObject({
       model: "Camaro",
       yearMin: null,
       yearMax: null,
-      catalog: { configurationName: "Camaro (2017)" },
+      catalog: { modelName: "Camaro" },
     });
   });
-  it("rejects tampered legacy names, stale revisions and unrelated versions/configurations", () => {
+  it("rejects tampered legacy model names and stale revisions", () => {
     const old = legacy();
     for (const value of [
       { ...old, model: "Celta forged" },
       { ...old, catalog: { ...old.catalog, revision: "stale" } },
-      { ...criteria(2), doors: 4 },
-      {
-        ...criteria(),
-        catalog: {
-          ...criteria().catalog,
-          configurationCode: "unknown",
-          configurationName: "unknown",
-        },
-      },
     ]) {
       const selected = searchSchema.parse(value);
       expect(planSourceQuery(catalog, "webmotors", selected).query).toBeNull();
@@ -324,9 +320,7 @@ describe("portal identities and door conventions", () => {
       expect(row.identity?.modelId).toBe(celta.id);
       expect(listingMatchStatus(row, criteria())).toBe("confirmed");
       expect(row.identity?.versionId).toBeUndefined();
-      expect(listingMatchStatus(row, criteria(2))).toBe(
-        row.doors === 2 ? "confirmed" : "incompatible",
-      );
+      expect(listingMatchStatus(row, criteria(2))).toBe("confirmed");
     }
   });
   it("excludes known Corsa/S10 responses from Celta results and radar events", () => {
@@ -423,9 +417,7 @@ describe("portal identities and door conventions", () => {
       identity: { modelId: celta.id },
     });
     expect(eligibility(fresh, criteria(2))).toEqual([]);
-    expect(eligibility(fresh, criteria(4))).toContain(
-      "Número de portas diferente",
-    );
+    expect(eligibility(fresh, criteria(4))).toEqual([]);
     const olx = observations.observations.find((row) => row.source === "olx")!;
     const [olxRow] = normalizeOlx(
       {
@@ -501,7 +493,7 @@ describe("portal identities and door conventions", () => {
       )!;
       if (source === "olx")
         expect(new URL(String(collect.body.url)).searchParams.get("q")).toBe(
-          "Chevrolet Celta",
+          "CHEVROLET Celta",
         );
       else
         expect(collect.body).toMatchObject({
@@ -512,7 +504,7 @@ describe("portal identities and door conventions", () => {
         /Celta 2P|model_d369|configurationCode|configurationName/,
       );
       expect(collect.body.trim).toBeUndefined();
-      expect(result.applied?.local).toContain("número de portas");
+      expect(result.applied?.local).not.toContain("número de portas");
     },
   );
 });

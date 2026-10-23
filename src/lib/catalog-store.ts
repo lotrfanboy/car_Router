@@ -1,6 +1,17 @@
 import { catalogSchema, type VehicleCatalog } from "./vehicle-catalog";
 import bundled from "../data/vehicle-catalog.json";
-import { commercialCatalog } from "./commercial-models";
+import {
+  mergeSearchCatalog,
+  type NativeSearchCatalogSnapshot,
+} from "./commercial-models";
+import nativeSearchCatalog from "../data/search-catalog.json";
+
+// Versioned, validated source snapshot. Reading selectors never calls a provider.
+const projectCatalog = (catalog: VehicleCatalog) =>
+  mergeSearchCatalog(
+    catalog,
+    nativeSearchCatalog as NativeSearchCatalogSnapshot,
+  );
 
 let cached: { revisionId: string; catalog: VehicleCatalog } | undefined;
 const refreshIntervalMs = 30_000;
@@ -44,7 +55,7 @@ async function loadVehicleCatalog(): Promise<VehicleCatalog> {
       const catalog =
         cached?.revisionId === "bundled"
           ? cached.catalog
-          : commercialCatalog(catalogSchema.parse(bundled));
+          : projectCatalog(catalogSchema.parse(bundled));
       cached = { revisionId: "bundled", catalog };
       return catalog;
     }
@@ -79,7 +90,7 @@ async function loadVehicleCatalog(): Promise<VehicleCatalog> {
     const timestamp = (
       revision.validatedAt ?? revision.createdAt
     ).toISOString();
-    const catalog = commercialCatalog(
+    const catalog = projectCatalog(
       catalogSchema.parse({
         schemaVersion: 1,
         revision: revision.id,

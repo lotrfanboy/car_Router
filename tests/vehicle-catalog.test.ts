@@ -18,12 +18,27 @@ vi.mock("../src/lib/catalog-store", async () => {
   const { default: data } = await import("./fixtures/vehicle-catalog.json");
   const { catalogSchema, emptyCatalog } =
     await import("../src/lib/vehicle-catalog");
+  const { mergeSearchCatalog } = await import("../src/lib/commercial-models");
   return {
     readVehicleCatalog: async () =>
       state.empty
         ? emptyCatalog
-        : catalogSchema.parse(
-            state.noVersions ? { ...data, versions: [] } : data,
+        : mergeSearchCatalog(
+            catalogSchema.parse(
+              state.noVersions ? { ...data, versions: [] } : data,
+            ),
+            {
+              revision: "fixture-source-catalog",
+              retrievedAt: data.evidence[0].retrievedAt,
+              evidence: catalogSchema.parse(data).evidence,
+              brands: [
+                {
+                  source: "webmotors",
+                  name: "Toyota",
+                  models: [{ name: "Corolla" }, { name: "Corolla Cross" }],
+                },
+              ],
+            },
           ),
   };
 });
@@ -207,9 +222,7 @@ describe("catalog relationships are data, not model-name rules", () => {
       row.observedAt,
       catalog,
     );
-    expect(eligibility(wrong, selected)).toContain(
-      "Modelo não classificado",
-    );
+    expect(eligibility(wrong, selected)).toContain("Modelo não classificado");
   });
   it("fails closed on ambiguous labels and conflicting parent/source identifiers", () => {
     const data = structuredClone(catalog);
@@ -295,7 +308,7 @@ describe("reviewed source observations", () => {
     expect(resolved.identity).toBeUndefined();
   });
 
-  it("keeps a reviewed version candidate pending and out of exact results", () => {
+  it("keeps version uncertainty as metadata without excluding a matching model from collection", () => {
     const source = resolverFixture.observations.pendingVersion;
     const resolved = resolveObservation(source);
     expect(resolved.classification).toMatchObject({
@@ -322,14 +335,12 @@ describe("reviewed source observations", () => {
       observedAt: "2026-10-22T15:04:15.307Z",
       reasons: [],
     };
-    expect(eligibility(row, selected)).toContain(
-      "Versão com correspondência pendente",
-    );
+    expect(eligibility(row, selected)).toEqual([]);
   });
 });
 
 describe("catalog endpoints do not collect listings", () => {
-  it("serves brands, models and versions locally, regardless of year", async () => {
+  it("serves brands and models locally without consulting providers", async () => {
     const fetcher = vi.fn(() => {
       throw new Error("Network must not run");
     });
@@ -347,9 +358,7 @@ describe("catalog endpoints do not collect listings", () => {
       "Corolla Cross",
     ]);
     const query = `type=versions&brand=wm:brand:35&model=wm:model:1`;
-    expect(await (await GET(request(query))).json()).toEqual(
-      await (await GET(request(query + "&year=1901"))).json(),
-    );
+    expect((await GET(request(query))).status).toBe(400);
     expect(fetcher).not.toHaveBeenCalled();
   });
   it("rejects a version request under another brand and obsolete year-catalog calls", async () => {
@@ -359,13 +368,15 @@ describe("catalog endpoints do not collect listings", () => {
     ).toBe(400);
     expect((await GET(request("type=years&brand=35"))).status).toBe(400);
   });
-  it("distinguishes missing catalog, empty versions and integration failure", async () => {
+  it("distinguishes missing catalog, removed technical selectors and integration failure", async () => {
     state.noVersions = true;
     const empty = await GET(
       request("type=versions&brand=wm:brand:35&model=wm:model:1"),
     );
-    expect(empty.status).toBe(200);
-    expect(await empty.json()).toEqual([]);
+    expect(empty.status).toBe(400);
+    expect(await empty.json()).toMatchObject({
+      error: "Versões são filtradas nos resultados da busca.",
+    });
     state.empty = true;
     expect((await GET(request("type=brands"))).status).toBe(503);
     vi.stubGlobal(

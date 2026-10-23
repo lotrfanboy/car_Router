@@ -37,6 +37,14 @@ vi.mock("../src/lib/discovery-providers", async (original) => {
         model: "Corolla",
         version: "XEi",
         versionOrigin: "explicit",
+        ...(criteria.catalog?.provider === "carrouter"
+          ? {
+              identity: {
+                brandId: criteria.catalog.brandCode,
+                modelId: criteria.catalog.modelCode,
+              },
+            }
+          : {}),
         modelYear: 2021,
         mileage: 50000 + i * 10,
         city: "Curitiba",
@@ -165,7 +173,8 @@ it("preserves every collection filter and uses stored observations for compariso
       olxUrl:
         "https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios?pe=100000&ps=50000&q=Toyota",
     }).olxUrl,
-  ).toContain("pe=100000&ps=50000");
+  ).toBe("");
+  expect(state.calls[0]).not.toHaveProperty("version");
 });
 it("deduplicates identical searches but does not reuse a narrower collection for another budget", async () => {
   const [a, b] = await Promise.all([
@@ -183,7 +192,7 @@ it("deduplicates identical searches but does not reuse a narrower collection for
     7,
   );
 });
-it("preserves catalog identities without collecting the same source query twice", async () => {
+it("reconciles legacy FIPE selections into one canonical search without collecting twice", async () => {
   const brandCatalog = {
     provider: "fipe",
     brandCode: "59",
@@ -196,17 +205,57 @@ it("preserves catalog identities without collecting the same source query twice"
   };
   const first = await store.saveSearch({ ...criteria, catalog: brandCatalog });
   const second = await store.saveSearch({ ...criteria, catalog: modelCatalog });
-  expect(first.id).not.toBe(second.id);
-  expect(JSON.parse(first.criteria).catalog).toEqual(brandCatalog);
-  expect(JSON.parse(second.criteria).catalog).toEqual(modelCatalog);
+  expect(first.id).toBe(second.id);
+  expect(JSON.parse(first.criteria).catalog).toMatchObject({
+    provider: "carrouter",
+    brandName: "TOYOTA",
+    modelName: "COROLLA",
+  });
+  expect(JSON.parse(second.criteria).catalog).toEqual(
+    JSON.parse(first.criteria).catalog,
+  );
   const collected = await store.executeSearch(first.id);
-  const reused = await store.executeSearch(second.id);
+  const stored = await db.searchRun.findUniqueOrThrow({
+    where: { id: collected.id },
+  });
+  const storedResult = JSON.parse(stored.result);
+  storedResult.sources[0].locationCredits = 1;
+  storedResult.sources[0].targets = [
+    {
+      brand: "TOYOTA",
+      model: "COROLLA",
+      city: "Curitiba",
+      state: "PR",
+      status: "ok",
+      message: "Recorded target fixture",
+      partial: false,
+      received: 7,
+      total: 7,
+      creditsReserved: 1,
+      locationCredits: 1,
+    },
+  ];
+  await db.searchRun.update({
+    where: { id: collected.id },
+    data: { result: JSON.stringify(storedResult) },
+  });
+  const reused = await store.executeSearch(second.id, { reuseRecent: true });
   expect(reused).toHaveProperty("cached", true);
   expect(state.calls).toHaveLength(1);
   expect(await db.providerSpend.count()).toBe(1);
   expect(reused.sources[0]).toMatchObject({
     creditsReserved: 0,
+    locationCredits: 0,
+    targets: [{ creditsReserved: 0, locationCredits: 0 }],
     observedAt: collected.sources[0].observedAt,
+  });
+  const originalRun = await db.searchRun.findUniqueOrThrow({
+    where: { id: collected.id },
+  });
+  expect(JSON.parse(originalRun.result).sources[0].creditsReserved).toBe(1);
+  expect(JSON.parse(originalRun.result).sources[0].targets[0]).toMatchObject({
+    creditsReserved: 1,
+    locationCredits: 1,
   });
   expect(reused.sources[0].listings[0].observedAt).toBe(
     collected.sources[0].listings[0].observedAt,
@@ -290,6 +339,10 @@ it("recovers the failed source during partial failure instead of replacing curre
     title: "TESTE ISOLADO · Corolla anterior",
     brand: "Toyota",
     model: "Corolla",
+    identity: {
+      brandId: JSON.parse(search.criteria).catalog.brandCode,
+      modelId: JSON.parse(search.criteria).catalog.modelCode,
+    },
     modelYear: 2021,
     priceCents: 10000000,
     mileage: 50000,
@@ -545,10 +598,13 @@ it("records scheduler health without spending credits when email is unavailable"
   expect(state.calls).toHaveLength(0);
   expect(deliveries).toHaveLength(0);
   expect(await db.providerSpend.count()).toBe(0);
-  expect((await db.radar.findUnique({ where: { id: row.id } }))?.lastRunAt).toBeNull();
   expect(
-    (await db.searchLock.findUnique({ where: { id: "radar-heartbeat" } }))
-      ?.expiresAt.getTime(),
+    (await db.radar.findUnique({ where: { id: row.id } }))?.lastRunAt,
+  ).toBeNull();
+  expect(
+    (
+      await db.searchLock.findUnique({ where: { id: "radar-heartbeat" } })
+    )?.expiresAt.getTime(),
   ).toBeGreaterThan(Date.now());
   expect((await radar.listRadars()).radars[0]).toMatchObject({
     state: "pending",

@@ -20,6 +20,22 @@ const names = new Map(
   ),
 );
 
+const brandNames = new Map(
+  reviewed.brandAliases.flatMap((family) =>
+    family.members.map(
+      (member) => [modelLabelKey(member), family.name] as const,
+    ),
+  ),
+);
+
+export function commercialBrandName(brand: string) {
+  return brandNames.get(modelLabelKey(brand)) ?? brand;
+}
+
 export function commercialModelName(brand: string, model: string) {
-  return names.get(`${modelLabelKey(brand)}:${modelLabelKey(model)}`) ?? model;
+  return (
+    names.get(
+      `${modelLabelKey(commercialBrandName(brand))}:${modelLabelKey(model)}`,
+    ) ?? model
+  );
 }

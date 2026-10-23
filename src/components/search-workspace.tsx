@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
@@ -12,6 +12,7 @@ import {
   type Source,
 } from "@/lib/discovery";
 import { sortListings } from "@/lib/listing-comparison";
+import { matchesResultVersion, resultVersionFacets } from "@/lib/result-facets";
 import { states } from "@/lib/vehicle";
 import { ListingCard, observedWhen } from "./listing-card";
 import { SearchCombobox, type SearchOption } from "./search-combobox";
@@ -27,6 +28,7 @@ type Saved = {
   latest: Run | null;
   lastSuccessful?: Run | null;
   previousSourceRuns?: Run[];
+  criteriaMigrationNotice?: string;
 };
 type Integration = {
   source: Source;
@@ -41,8 +43,6 @@ type DisplayResult = { searchId: string; criteria: SearchCriteria; run: Run };
 type Draft = {
   brand: string;
   model: string;
-  version: string;
-  doors?: 2 | 4;
   city: string;
   cities: string[];
   state: string;
@@ -56,7 +56,6 @@ type Draft = {
 const emptyDraft = (): Draft => ({
   brand: "",
   model: "",
-  version: "",
   city: "",
   cities: [],
   state: "PR",
@@ -78,7 +77,6 @@ const draftFrom = (criteria: SearchCriteria): Draft => ({
         : criteria.city
           ? [criteria.city]
           : [],
-  version: criteria.version ?? "",
   yearMin: String(criteria.yearMin ?? ""),
   yearMax: String(criteria.yearMax ?? ""),
   mileageMax: String(criteria.mileageMax ?? ""),
@@ -138,14 +136,12 @@ export function SearchWorkspace({
   const [integrations, setIntegrations] = useState<Integration[]>([]);
   const [selected, setSelected] = useState(initialSearchId);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
-  const [loadedCriteria, setLoadedCriteria] = useState<SearchCriteria | null>(
-    null,
-  );
   const [brandChoice, setBrandChoice] = useState<SearchOption | null>(null);
   const [modelChoice, setModelChoice] = useState<SearchOption | null>(null);
-  const [versionChoice, setVersionChoice] = useState<SearchOption | null>(null);
-  const [configurationChoice, setConfigurationChoice] =
-    useState<SearchOption | null>(null);
+  const [versionFilter, setVersionFilter] = useState<{
+    runId: string;
+    value: string;
+  } | null>(null);
   const [manualBrand, setManualBrand] = useState(false);
   const [manualModel, setManualModel] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -158,7 +154,7 @@ export function SearchWorkspace({
   const [notice, setNotice] = useState("");
   const [sort, setSort] = useState<"discount" | "price" | "recent">("recent");
   const pending = useRef(false);
-  const { brand, model, version, city, cities, state } = draft;
+  const { brand, model, city, cities, state } = draft;
   const locationMode = cities.length ? "cities" : "state";
   const brandCatalog = useCatalog("/api/search-options?type=brands");
   // Only a committed catalog choice requests models; typing never does.
@@ -167,30 +163,15 @@ export function SearchWorkspace({
       ? `/api/search-options?type=models&brand=${encodeURIComponent(brandChoice.code)}`
       : null,
   );
-  const versionCatalog = useCatalog(
-    brandChoice && modelChoice
-      ? `/api/search-options?type=versions&brand=${encodeURIComponent(brandChoice.code)}&model=${encodeURIComponent(modelChoice.code)}${configurationChoice ? `&configuration=${encodeURIComponent(configurationChoice.code)}` : ""}`
-      : null,
-  );
-  const catalogVersions = versionCatalog.options;
-  const configurationCatalog = useCatalog(
-    brandChoice && modelChoice
-      ? `/api/search-options?type=configurations&brand=${encodeURIComponent(brandChoice.code)}&model=${encodeURIComponent(modelChoice.code)}`
-      : null,
-  );
   const cityCatalog = useCatalog(
     `/api/search-options?type=cities&state=${encodeURIComponent(state)}`,
   );
   function change<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
   }
-  function clearConfiguration() {
-    setConfigurationChoice(null);
-    change("doors", undefined);
-  }
   function loadSaved(row?: Saved) {
     setSelected(row?.id ?? "");
-    setLoadedCriteria(row?.criteria ?? null);
+    setVersionFilter(null);
     setDraft(row ? draftFrom(row.criteria) : emptyDraft());
     const catalog =
       row?.criteria.catalog?.provider === "carrouter"
@@ -216,28 +197,7 @@ export function SearchWorkspace({
           }
         : null,
     );
-    setVersionChoice(
-      catalog?.versionCode
-        ? {
-            code: catalog.versionCode,
-            name: catalog.versionName!,
-            provider: "carrouter",
-            revision: catalog.revision,
-          }
-        : null,
-    );
     setManualBrand(!!row && !catalog);
-    setConfigurationChoice(
-      catalog?.configurationCode
-        ? {
-            code: catalog.configurationCode,
-            name: catalog.configurationName!,
-            doors: row?.criteria.doors,
-            provider: "carrouter",
-            revision: catalog.revision,
-          }
-        : null,
-    );
     setManualModel(!!row && !catalog?.modelCode);
     setAdvancedOpen(
       Boolean(
@@ -263,9 +223,10 @@ export function SearchWorkspace({
     setAttempt(row?.latest ?? null);
     setError("");
     setNotice(
-      row?.criteria.catalog?.provider === "fipe"
-        ? "Busca antiga preservada como texto. Os agrupamentos FIPE anteriores não comprovam identidade de modelo; selecione novamente no catálogo quando disponível."
-        : "",
+      row?.criteriaMigrationNotice ??
+        (row?.criteria.catalog?.provider === "fipe"
+          ? "Busca antiga preservada como texto. Os agrupamentos FIPE anteriores não comprovam identidade de modelo; selecione novamente no catálogo quando disponível."
+          : ""),
     );
   }
   useEffect(() => {
@@ -320,19 +281,33 @@ export function SearchWorkspace({
       )
       .map((source) => ({ previous, source })),
   );
-  const currentRows =
-    run?.sources
-      .filter((source) => source.status === "ok")
-      .flatMap((source) => source.listings) ?? [];
-  const resultRows = currentRows.filter(
+  const currentRows = useMemo(
+    () =>
+      run?.sources
+        .filter((source) => source.status === "ok")
+        .flatMap((source) => source.listings) ?? [],
+    [run],
+  );
+  const versionFacets = useMemo(
+    () => resultVersionFacets(currentRows),
+    [currentRows],
+  );
+  const selectedVersion =
+    versionFilter?.runId === run?.id ? (versionFilter?.value ?? "") : "";
+  const visibleRows = useMemo(
+    () =>
+      currentRows.filter((row) => matchesResultVersion(row, selectedVersion)),
+    [currentRows, selectedVersion],
+  );
+  const resultRows = visibleRows.filter(
     (row) =>
       display && listingMatchStatus(row, display.criteria) === "confirmed",
   );
-  const unclassifiedRows = currentRows.filter(
+  const unclassifiedRows = visibleRows.filter(
     (row) =>
       display && listingMatchStatus(row, display.criteria) === "uncertain",
   );
-  const incompatibleRows = currentRows.filter(
+  const incompatibleRows = visibleRows.filter(
     (row) =>
       display && listingMatchStatus(row, display.criteria) === "incompatible",
   );
@@ -345,8 +320,6 @@ export function SearchWorkspace({
   const comparableDraft = (value: Draft) => [
     value.brand,
     value.model,
-    value.version,
-    value.doors,
     value.city,
     value.state,
     [...value.cities].sort(),
@@ -365,17 +338,10 @@ export function SearchWorkspace({
     !!display &&
     (JSON.stringify(comparableDraft(draft)) !==
       JSON.stringify(comparableDraft(draftFrom(display.criteria))) ||
-      JSON.stringify([
-        brandChoice?.code,
-        modelChoice?.code,
-        versionChoice?.code,
-        configurationChoice?.code,
-      ]) !==
+      JSON.stringify([brandChoice?.code, modelChoice?.code]) !==
         JSON.stringify([
           displayedCatalog?.brandCode,
           displayedCatalog?.modelCode,
-          displayedCatalog?.versionCode,
-          displayedCatalog?.configurationCode,
         ]));
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -407,32 +373,10 @@ export function SearchWorkspace({
     const optional = (value: string) => (value === "" ? null : Number(value));
     const queryBrand = brandChoice?.searchName ?? brand;
     const queryModel = modelChoice?.searchName ?? model;
-    const loadedCities = loadedCriteria
-      ? loadedCriteria.cities.length
-        ? loadedCriteria.cities
-        : loadedCriteria.city
-          ? [loadedCriteria.city]
-          : []
-      : [];
-    const sameLegacyQuery =
-      loadedCriteria &&
-      queryBrand === loadedCriteria.brand &&
-      queryModel === loadedCriteria.model &&
-      locationMode === loadedCriteria.locationMode &&
-      JSON.stringify(cities) === JSON.stringify(loadedCities) &&
-      state === loadedCriteria.state &&
-      optional(draft.yearMin) === loadedCriteria.yearMin &&
-      optional(draft.yearMax) === loadedCriteria.yearMax &&
-      version === (loadedCriteria.version ?? "") &&
-      configurationChoice?.code ===
-        (loadedCriteria.catalog?.provider === "carrouter"
-          ? loadedCriteria.catalog.configurationCode
-          : undefined) &&
-      optional(draft.priceMax) === loadedCriteria.priceMax &&
-      optional(draft.mileageMax) === loadedCriteria.mileageMax &&
-      draft.privateOnly === loadedCriteria.privateOnly;
     const parsed = searchSchema.safeParse({
       ...draft,
+      version: "",
+      doors: undefined,
       locationMode,
       name: `${queryBrand} ${queryModel} · ${locationMode === "state" ? state : cities.join(", ")}`.slice(
         0,
@@ -450,17 +394,13 @@ export function SearchWorkspace({
             brandName: brandChoice.name,
             modelCode: modelChoice?.code,
             modelName: modelChoice?.name,
-            versionCode: versionChoice?.code,
-            configurationCode: configurationChoice?.code,
-            configurationName: configurationChoice?.name,
-            versionName: versionChoice?.searchName ?? versionChoice?.name,
           }
         : undefined,
       yearMin: optional(draft.yearMin),
       yearMax: optional(draft.yearMax),
       mileageMax: optional(draft.mileageMax),
       priceMax: optional(draft.priceMax),
-      olxUrl: sameLegacyQuery ? loadedCriteria.olxUrl : "",
+      olxUrl: "",
     });
     if (!parsed.success) {
       setError(
@@ -638,28 +578,21 @@ export function SearchWorkspace({
                   onChange={(value) => {
                     change("brand", value);
                     change("model", "");
-                    clearConfiguration();
-                    change("version", "");
                     setBrandChoice(null);
                     setModelChoice(null);
-                    setVersionChoice(null);
                     setManualBrand(false);
                     setManualModel(false);
                   }}
                   onSelect={(option) => {
                     change("brand", option.searchName ?? option.name);
                     change("model", "");
-                    clearConfiguration();
-                    change("version", "");
                     setBrandChoice(option);
                     setModelChoice(null);
-                    setVersionChoice(null);
                     setManualBrand(false);
                     setManualModel(false);
                   }}
                   onManual={() => {
                     setManualBrand(true);
-                    clearConfiguration();
                     setBrandChoice(null);
                   }}
                 />
@@ -679,23 +612,16 @@ export function SearchWorkspace({
                   disabled={!brandChoice && !manualBrand}
                   onChange={(value) => {
                     change("model", value);
-                    clearConfiguration();
-                    change("version", "");
                     setModelChoice(null);
-                    setVersionChoice(null);
                     setManualModel(false);
                   }}
                   onSelect={(option) => {
                     change("model", option.searchName ?? option.name);
-                    clearConfiguration();
-                    change("version", "");
                     setModelChoice(option);
-                    setVersionChoice(null);
                     setManualModel(false);
                   }}
                   onManual={() => {
                     setManualModel(true);
-                    clearConfiguration();
                     setModelChoice(null);
                   }}
                 />
@@ -707,101 +633,6 @@ export function SearchWorkspace({
                     ? "Catálogo estruturado indisponível. A entrada manual é temporária enquanto a fonte é definida."
                     : "Marca e modelo usam relações do catálogo importado. Trocar opções não consulta anúncios."}
               </p>
-              {modelChoice &&
-                (configurationCatalog.options.length > 0 ||
-                  configurationChoice) && (
-                  <label>
-                    Configuração <small>Opcional</small>
-                    <select
-                      name="configuration"
-                      value={configurationChoice?.code ?? ""}
-                      onChange={(event) => {
-                        const choice =
-                          configurationCatalog.options.find(
-                            (item) => item.code === event.target.value,
-                          ) ?? null;
-                        setConfigurationChoice(choice);
-                        change("doors", choice?.doors);
-                        change("version", "");
-                        setVersionChoice(null);
-                      }}
-                    >
-                      <option value="">Todas as configurações</option>
-                      {configurationChoice &&
-                        !configurationCatalog.options.some(
-                          (item) => item.code === configurationChoice.code,
-                        ) && (
-                          <option value={configurationChoice.code}>
-                            {configurationChoice.name} · salva
-                          </option>
-                        )}
-                      {configurationCatalog.options.map((item) => (
-                        <option key={item.code} value={item.code}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-              <label>
-                Versão <small>Opcional</small>
-                {modelChoice && catalogVersions.length > 0 ? (
-                  <select
-                    name="version"
-                    value={versionChoice?.code ?? (version ? "saved-text" : "")}
-                    onChange={(event) => {
-                      const choice =
-                        catalogVersions.find(
-                          (item) => item.code === event.target.value,
-                        ) ?? null;
-                      setVersionChoice(choice);
-                      change(
-                        "version",
-                        choice?.searchName ?? choice?.name ?? "",
-                      );
-                    }}
-                  >
-                    <option value="">Todas as versões</option>
-                    {version &&
-                      !catalogVersions.some(
-                        (item) => item.code === versionChoice?.code,
-                      ) && (
-                        <option value={versionChoice?.code ?? "saved-text"}>
-                          {version} · salva
-                        </option>
-                      )}
-                    {catalogVersions.map((item) => (
-                      <option key={item.code} value={item.code}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    name="version"
-                    maxLength={200}
-                    placeholder="Todas as versões"
-                    value={version}
-                    autoComplete="off"
-                    disabled={!modelChoice && !manualModel}
-                    onChange={(event) => {
-                      change("version", event.target.value);
-                      setVersionChoice(null);
-                    }}
-                  />
-                )}
-              </label>
-              {modelChoice && (
-                <p className="discovery-help muted">
-                  {versionCatalog.loading
-                    ? "Carregando versões…"
-                    : versionCatalog.error
-                      ? "Catálogo de versões indisponível. Todas as versões ou entrada manual temporária."
-                      : !catalogVersions.length
-                        ? "Ainda não há catálogo de versões disponível para este modelo. A entrada manual é temporária enquanto definimos a fonte; a lista de anúncios não é usada como catálogo."
-                        : "Versões vinculadas ao modelo pelo catálogo, independentemente do ano."}
-                </p>
-              )}
               <div className="form-grid two vehicle-year-row">
                 <label>
                   Ano-modelo de
@@ -992,14 +823,13 @@ export function SearchWorkspace({
             <details className="search-costs">
               <summary>Consumo desta busca</summary>
               <p>
-                {locationMode === "cities" && cities.length > 1
-                  ? `${cities.length} consultas por fonte, uma para cada cidade. `
-                  : "Uma consulta por fonte. "}
-                OLX: 1 crédito Gecko por consulta; Webmotors: 2 créditos Reef
-                por consulta. Uma cidade nova na OLX pode exigir 1 crédito Reef
-                adicional. No modo Estado inteiro é feita uma consulta estadual
-                por fonte. Limites e saldo gratuito são verificados antes da
-                coleta.
+                OLX: 1 crédito Gecko por chamada; Webmotors: 2 créditos Reef por
+                chamada. Mais de um modelo na fonte ou mais de uma página pode
+                exigir chamadas adicionais. Cidades selecionadas são consultadas
+                separadamente; uma cidade nova na OLX pode exigir 1 crédito Reef
+                para resolver a localização. Os limites são verificados antes de
+                cada chamada. Filtrar a versão dos resultados recebidos não
+                consome créditos.
               </p>
               {integrations.map((i) => (
                 <p key={i.source}>
@@ -1169,12 +999,7 @@ export function SearchWorkspace({
             <>
               <p className="muted">
                 Critérios aplicados: {display?.criteria.brand}{" "}
-                {display?.criteria.model} ·{" "}
-                {display?.criteria.version || "Todas as versões"} ·{" "}
-                {display?.criteria.catalog?.provider === "carrouter" &&
-                display.criteria.catalog.configurationName
-                  ? `${display.criteria.catalog.configurationName} · `
-                  : ""}
+                {display?.criteria.model} · versão refinada nos resultados ·{" "}
                 {display ? criteriaLocation(display.criteria) : ""} · ano de{" "}
                 {display?.criteria.yearMin ?? "qualquer"} até{" "}
                 {display?.criteria.yearMax ?? "qualquer"} · preço máximo{" "}
@@ -1196,6 +1021,43 @@ export function SearchWorkspace({
                   de {observedWhen(run.createdAt)}.
                 </p>
               )}
+              <div className="results-controls">
+                <label>
+                  Versão nos resultados
+                  <select
+                    name="resultVersion"
+                    value={selectedVersion}
+                    onChange={(event) =>
+                      setVersionFilter({
+                        runId: run.id,
+                        value: event.target.value,
+                      })
+                    }
+                  >
+                    <option value="">
+                      Todas as versões (
+                      {versionFacets.reduce(
+                        (sum, option) => sum + option.count,
+                        0,
+                      )}
+                      )
+                    </option>
+                    {versionFacets.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label} ({option.count})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <p className="discovery-help muted">
+                Filtra somente os anúncios recebidos nesta consulta, sem nova
+                coleta ou consumo de créditos.
+                {run.sources.some(
+                  (source) => source.status === "ok" && source.partial,
+                ) &&
+                  " Há páginas ou resultados ainda não coletados; uma versão ausente aqui pode existir na fonte."}
+              </p>
               <div className="results-controls">
                 <h2>
                   {candidates.length}{" "}
@@ -1220,16 +1082,20 @@ export function SearchWorkspace({
               {!candidates.length && (
                 <div className="empty-state">
                   <h2>
-                    {run.sources.some((s) => s.status === "ok")
-                      ? "Nenhuma correspondência confirmada neste recorte"
-                      : "Busca indisponível"}
+                    {selectedVersion
+                      ? "Nenhum candidato confirmado nesta versão"
+                      : run.sources.some((s) => s.status === "ok")
+                        ? "Nenhuma correspondência confirmada neste recorte"
+                        : "Busca indisponível"}
                   </h2>
                   <p>
-                    {run.sources.some((s) => s.status === "ok")
-                      ? unclassifiedRows.length
-                        ? "Há anúncios com correspondência incerta para revisar abaixo. A falta de confirmação do catálogo não significa que o veículo não exista. Todos os filtros continuam sendo conferidos."
-                        : "Nenhum anúncio recebido teve todos os critérios confirmados. A cobertura de uma página pode limitar os resultados; isso não comprova ausência no mercado."
-                      : "Nenhuma fonte concluiu a consulta. Confira a configuração e as falhas acima."}
+                    {selectedVersion
+                      ? "Confira os resultados incertos ou incompatíveis abaixo, ou selecione Todas as versões para rever a coleta completa."
+                      : run.sources.some((s) => s.status === "ok")
+                        ? unclassifiedRows.length
+                          ? "Há anúncios com correspondência incerta para revisar abaixo. A falta de confirmação do catálogo não significa que o veículo não exista. Todos os filtros continuam sendo conferidos."
+                          : "Nenhum anúncio recebido teve todos os critérios confirmados. A cobertura da coleta pode limitar os resultados; isso não comprova ausência no mercado."
+                        : "Nenhuma fonte concluiu a consulta. Confira a configuração e as falhas acima."}
                   </p>
                 </div>
               )}

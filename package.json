@@ -17,7 +17,8 @@
     "catalog:import": "node scripts/import-vehicle-catalog.mjs --activate",
     "catalog:rollback-probe": "node scripts/import-vehicle-catalog.mjs --rollback-probe",
     "setup": "npm run db:generate",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "catalog:search:import": "node scripts/import-search-catalog.mjs"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^6.19.0",

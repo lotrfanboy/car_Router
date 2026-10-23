@@ -116,7 +116,7 @@ export function ListingCard({
       className="listing-card with-photo"
     >
       {listing.imageUrl && !imageFailed ? (
-        <Link className="listing-photo" href={path}>
+        <Link className="listing-photo" href={path} prefetch={false}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={listing.imageUrl}
@@ -139,7 +139,7 @@ export function ListingCard({
           </span>
         </div>
         <h2>
-          <Link href={path}>{listing.title}</Link>
+          <Link href={path} prefetch={false}>{listing.title}</Link>
         </h2>
         {matchStatus && (
           <p className="muted">
@@ -166,7 +166,7 @@ export function ListingCard({
         </p>
         <RelativePrice listing={listing} />
         <div className="listing-actions">
-          <Link href={path} className="text-link">
+          <Link href={path} className="text-link" prefetch={false}>
             Conferir semelhantes <ArrowUpRight size={14} />
           </Link>
           <a

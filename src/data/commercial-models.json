@@ -1,36 +1,240 @@
 {
-  "revision": "commercial-models-v1",
-  "provenance": "Reviewed brand-scoped commercial families from the active Inmetro PBEV 2009–2026 catalog; publication cycles are not model years. Configurations and all original version IDs are preserved. No portal identities are inferred from these labels.",
+  "revision": "commercial-models-v2",
+  "brandAliases": [
+    {
+      "name": "WILLYS",
+      "members": ["WILLYS", "WILLYS OVERLAND"],
+      "evidenceUrls": [
+        "https://www.media.stellantis.com/br-pt/jeep/press/75-fatos-e-curiosidades-dos-75-anos-da-jeep-parte-1",
+        "https://www.media.stellantis.com/br-pt/jeep/press/jeep-celebra-75-anos-de-historia-lendaria-com-edicao-especial-para-toda-a-linha"
+      ],
+      "reviewNote": "Reviewed historical manufacturer name alias. Preserve both native make labels as query targets; JEEP and FORD remain separate brands."
+    }
+  ],
+  "provenance": "Reviewed brand-scoped search families from the Inmetro PBEV catalog and source catalogs. Technical IDs remain available as aliases; technical configuration labels do not constrain collection. Source query identities require independent catalog evidence.",
   "families": [
     {
       "brand": "AUDI",
-      "name": "A5 Sportback",
+      "name": "A1",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/press-releases/new-audi-a1-sportback-ideal-companion-for-an-urban-lifestyle-10370/download"
+      ],
+      "reviewNote": "A1 Sportback is a body variant/generation of the A1 search family; engineering variants remain separate technical records.",
       "members": [
         {
-          "label": "A5 Sportback"
+          "label": "A1"
         },
         {
-          "label": "A5 Sportback (2017)",
-          "configuration": "A5 Sportback (2017)"
+          "label": "A1 Sportback"
         }
       ]
     },
     {
       "brand": "AUDI",
-      "name": "Q5 Sportback TFSI e",
+      "name": "A3",
+      "evidenceUrls": [
+        "https://www.audi.com.br/pt/models/a3/a3-sportback-new/"
+      ],
+      "reviewNote": "A3 is the user-facing search family; Sedan, Sportback and Cabriolet are retained as native query targets when present. Spotback is a reviewed transcription alias. S3 and RS3 remain separate.",
       "members": [
+        {
+          "label": "A3"
+        },
+        {
+          "label": "A3 Sedan"
+        },
+        {
+          "label": "A3 Sportback"
+        },
+        {
+          "label": "A3 Spotback"
+        },
+        {
+          "label": "A3 Cabriolet"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A4",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-a4-23"
+      ],
+      "reviewNote": "A4 Sedan and Avant belong to the A4 family. A4 Sedan S has the source technical version Performance Black, 2.0-16V, DCT-7; it is not an S4 alias. Preserve S4 and RS4 as separate search identities. Do not rename historical A4 records to its successor A5.",
+      "members": [
+        {
+          "label": "A4"
+        },
+        {
+          "label": "A4 Avant"
+        },
+        {
+          "label": "A4 Sedan"
+        },
+        {
+          "label": "A4 Sedan Quattro"
+        },
+        {
+          "label": "A4 Sedan S"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A5",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/the-sharper-drive-the-new-audi-a5-2956/a-successful-car-is-now-even-better-the-new-audi-a5-2968",
+        "https://www.audi-mediacenter.com/en/press-releases/the-new-audi-a5-models-modern-sportiness-meets-premium-proportions-16104"
+      ],
+      "reviewNote": "The manufacturer identifies Coupe, Cabriolet and Sportback, and later Sedan and Avant, as A5 family body variants. Preserve S5 and RS5; year and quattro suffixes do not restrict an A5 search.",
+      "members": [
+        {
+          "label": "A5"
+        },
+        {
+          "label": "A5 Avant"
+        },
+        {
+          "label": "A5 Cabriolet"
+        },
+        {
+          "label": "A5 Coupe"
+        },
+        {
+          "label": "A5 Sedan"
+        },
+        {
+          "label": "A5 Sportback"
+        },
+        {
+          "label": "A5 Sportback (2017)"
+        },
+        {
+          "label": "A5 Sportback Quattro"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A6",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/de/pressemitteilungen/betriebsrat-fordert-klare-perspektiven-und-setzt-auf-zusammenarbeit-im-sinne-des-standorts-18047",
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "A6 allroad is explicitly part of the A6 family. Preserve the electric A6 e-tron family and S6/RS6 separately.",
+      "members": [
+        {
+          "label": "A6"
+        },
+        {
+          "label": "A6 Sedan"
+        },
+        {
+          "label": "A6 allroad"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A6 e-tron",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/the-audi-a6-e-tron-the-new-electric-avant-garde-16391/reimagining-the-upper-mid-size-segment-the-audi-a6-e-tron-sets-new-benchmarks-for-design-and-range-16392"
+      ],
+      "reviewNote": "Avant and Sportback are body variants of A6 e-tron. This electric family is distinct from the combustion A6.",
+      "members": [
+        {
+          "label": "A6 e-tron"
+        },
+        {
+          "label": "A6 Avant e-tron"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A7",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/the-new-audi-a7-sportback-progressive-in-design-and-technology-9831/the-new-audi-a7-sportback-sportiness-in-its-most-beautiful-form-9834"
+      ],
+      "reviewNote": "Sportback is the A7 body designation. S7 and RS7 remain separate.",
+      "members": [
+        {
+          "label": "A7"
+        },
+        {
+          "label": "A7 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "A8",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/press-releases/sharpened-design-and-innovative-technologies-for-the-flagship-the-enhanced-audi-a8-14357/download"
+      ],
+      "reviewNote": "L/Longo identify the long-wheelbase A8; Sedan is a body designation. Group for broad A8 searches, retaining technical wheelbase differences and the separate S8 identity.",
+      "members": [
+        {
+          "label": "A8"
+        },
+        {
+          "label": "A8 L"
+        },
+        {
+          "label": "A8 Longo"
+        },
+        {
+          "label": "A8 Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "Q3",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-q3-sportback-16769",
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "Q3 SUV and Sportback share the Q3 search family; the source Nacional qualifier does not define a different badge. RS Q3 remains separate.",
+      "members": [
+        {
+          "label": "Q3"
+        },
+        {
+          "label": "Q3 (Nacional)"
+        },
+        {
+          "label": "Q3 Sportback"
+        },
+        {
+          "label": "Q3 SUV"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "Q5",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-q5-sportback-13207",
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "Audi calls Sportback a coupe variant of the Q5 family; TFSI e identifies its plug-in hybrid powertrain. Preserve all technical differences and the separate SQ5 badge; these suffixes do not constrain broad Q5 collection.",
+      "members": [
+        {
+          "label": "Q5"
+        },
+        {
+          "label": "Q5 Sportback"
+        },
         {
           "label": "Q5 Sportback TFSI e"
         },
         {
           "label": "Q5 Sportback TFSIe"
-        }
-      ]
-    },
-    {
-      "brand": "AUDI",
-      "name": "Q5 TFSI e",
-      "members": [
+        },
+        {
+          "label": "Q5 SUV"
+        },
         {
           "label": "Q5 TFSI e"
         },
@@ -41,56 +245,106 @@
     },
     {
       "brand": "AUDI",
+      "name": "Q6 e-tron",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/press-releases/exciting-design-and-longest-range-in-the-model-family-the-new-audi-q6-sportback-e-tron-16295"
+      ],
+      "reviewNote": "Sportback is a body variant in the Q6 e-tron family; rear-wheel drive and quattro are drive variants. SQ6 remains separate.",
+      "members": [
+        {
+          "label": "Q6 e-tron"
+        },
+        {
+          "label": "Q6 e-tron Quattro"
+        },
+        {
+          "label": "Q6 e-tron RWD"
+        },
+        {
+          "label": "Q6 Sportback e-tron Quattro"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "Q8",
+      "evidenceUrls": [
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "The source Q8 Sportback technical records have 3.0-24V combustion engines and A-8 transmissions; they belong to the combustion Q8 search badge, not the electric Q8 e-tron. Preserve RS Q8 separately.",
+      "members": [
+        {
+          "label": "Q8"
+        },
+        {
+          "label": "Q8 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "Q8 e-tron",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/the-audi-q8-e-tron-until-2025-15069"
+      ],
+      "reviewNote": "Audi identifies SUV and Sportback as two body variants of Q8 e-tron and 55 as a drive variant. Preserve combustion Q8, original e-tron and SQ8 e-tron separately.",
+      "members": [
+        {
+          "label": "Q8 e-tron"
+        },
+        {
+          "label": "Q8 e-tron 55"
+        },
+        {
+          "label": "Q8 e-tron Sportback 55"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
       "name": "R8",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "R8 Coupe and year-qualified R8 records share the R8 badge; preserve technical variants.",
       "members": [
         {
           "label": "R8"
         },
         {
-          "label": "R8 (2017)",
-          "configuration": "R8 (2017)"
+          "label": "R8 (2017)"
+        },
+        {
+          "label": "R8 Coupe"
         }
       ]
     },
     {
       "brand": "AUDI",
-      "name": "RS 5 Sportback",
+      "name": "RS Q3",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-rs-q3-sportback-12104"
+      ],
+      "reviewNote": "RS Q3 and RS Q3 Sportback body variants belong to the same RS Q3 search family, separate from Q3.",
       "members": [
         {
-          "label": "RS 5 Sportback"
+          "label": "RS Q3"
         },
         {
-          "label": "RS5 Sportback"
-        }
-      ]
-    },
-    {
-      "brand": "AUDI",
-      "name": "RS 6 Avant",
-      "members": [
-        {
-          "label": "RS 6 Avant"
+          "label": "RSQ3"
         },
         {
-          "label": "RS6 Avant"
-        }
-      ]
-    },
-    {
-      "brand": "AUDI",
-      "name": "RS e-tron GT",
-      "members": [
-        {
-          "label": "RS e-tron GT"
-        },
-        {
-          "label": "RS-E tron GT"
+          "label": "RSQ3 Sportback"
         }
       ]
     },
     {
       "brand": "AUDI",
       "name": "RS Q8",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Reviewed spacing aliases; preserve ordinary Q8 and electric Q8 e-tron separately.",
       "members": [
         {
           "label": "RS Q8"
@@ -102,13 +356,295 @@
     },
     {
       "brand": "AUDI",
+      "name": "RS e-tron GT",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Reviewed spacing/punctuation aliases for RS e-tron GT; preserve ordinary e-tron GT separately.",
+      "members": [
+        {
+          "label": "RS e-tron GT"
+        },
+        {
+          "label": "RS-E tron GT"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "RS3",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/high-performance-redefined-audi-rs-3-sportback-and-rs-3-sedan-2021-14310"
+      ],
+      "reviewNote": "RS3 Sedan/Limousine and Sportback are body variants. RS3 is separate from A3 and S3.",
+      "members": [
+        {
+          "label": "RS3"
+        },
+        {
+          "label": "RS3 Limo"
+        },
+        {
+          "label": "RS3 Sedan"
+        },
+        {
+          "label": "RS3 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "RS4",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Avant is the RS4 body designation. Preserve A4 and S4 separately.",
+      "members": [
+        {
+          "label": "RS4"
+        },
+        {
+          "label": "RS4 Avant"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "RS5",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Audi identifies RS5 Coupe and Sportback body variants. Preserve A5 and S5 separately.",
+      "members": [
+        {
+          "label": "RS5"
+        },
+        {
+          "label": "RS 5 Sportback"
+        },
+        {
+          "label": "RS5 Coupé"
+        },
+        {
+          "label": "RS5 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "RS6",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345",
+        "https://www.audi-mediacenter.com/en/press-releases/20-years-four-generations-audi-rs-6-superior-performance-with-an-everyday-look-14795"
+      ],
+      "reviewNote": "Avant is the RS6 body designation. Audi documents plus as an increased-power RS6 variant; retain its engineering data without narrowing broad RS6 collection. A6 and S6 remain separate.",
+      "members": [
+        {
+          "label": "RS6"
+        },
+        {
+          "label": "RS 6 Avant"
+        },
+        {
+          "label": "RS6 Avant"
+        },
+        {
+          "label": "RS6 Avant Plus"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "RS7",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Sportback is the RS7 body designation. Preserve A7 and S7 separately; unverified source qualifiers are not normalized by a global suffix rule.",
+      "members": [
+        {
+          "label": "RS7"
+        },
+        {
+          "label": "RS7 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "S3",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/more-dynamic-than-ever-the-audi-s3-sportback-and-s3-sedan-2020-13110/more-sportiness-more-power-more-driving-pleasure-the-new-audi-s3-13111"
+      ],
+      "reviewNote": "Audi explicitly identifies Sedan and Sportback as S3 body variants; A3 and RS3 remain separate.",
+      "members": [
+        {
+          "label": "S3"
+        },
+        {
+          "label": "S3 Sedan"
+        },
+        {
+          "label": "S3 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "S6",
+      "evidenceUrls": [
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "Sedan is the source S6 body designation; retain the S6 badge and do not merge A6 or RS6.",
+      "members": [
+        {
+          "label": "S6"
+        },
+        {
+          "label": "S6 Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "S7",
+      "evidenceUrls": [
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "Sportback is the source S7 body designation; retain the S7 badge and do not merge A7 or RS7.",
+      "members": [
+        {
+          "label": "S7"
+        },
+        {
+          "label": "S7 Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "S8",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/press-releases/the-new-audi-s8-exhilarating-performance-in-the-luxury-class-2019-12266"
+      ],
+      "reviewNote": "The manufacturer describes S8 as a luxury sedan; the source body suffix does not define another badge. A8 remains separate.",
+      "members": [
+        {
+          "label": "S8"
+        },
+        {
+          "label": "S8 Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "SQ5",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/press-releases/dynamic-and-versatile-the-second-generation-audi-q5-sportback-16405/download",
+        "https://www.audi.co.uk/uk/web/en/models.html?bytype=suv"
+      ],
+      "reviewNote": "SQ5 SUV/Sportback are body variants of the SQ5 performance badge, separate from Q5.",
+      "members": [
+        {
+          "label": "SQ5"
+        },
+        {
+          "label": "SQ5 Sportback"
+        },
+        {
+          "label": "SQ5 SUV"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "SQ8 e-tron",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-sq8-sportback-e-tron-until-2025-14992"
+      ],
+      "reviewNote": "Sportback is a body variant of SQ8 e-tron, distinct from Q8 e-tron and combustion Q8.",
+      "members": [
+        {
+          "label": "SQ8 e-tron"
+        },
+        {
+          "label": "SQ8 e-tron Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
       "name": "TT RS",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/highlights-from-40-years-of-audi-sport-gmbh-15337/the-most-high-performance-models-of-all-time-from-audi-15345"
+      ],
+      "reviewNote": "Audi identifies TT RS as coupe and roadster; spacing and Coupe body aliases share TT RS, while TT and TTS remain separate.",
       "members": [
         {
           "label": "TT RS"
         },
         {
           "label": "TTRS"
+        },
+        {
+          "label": "TT RS Coupê"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "e-tron",
+      "evidenceUrls": [
+        "https://uploads.audi-mediacenter.com/system/production/uploaded_files/13420/file/de5e53955640acbf30121e931f9875f2fe1bc88a/en_PressInformation_Audi_e-tron.pdf"
+      ],
+      "reviewNote": "Original e-tron SUV/Sportback search family. Preserve e-tron GT, e-tron S and the later Q8 e-tron names separately; a successor rename is not a blanket alias.",
+      "members": [
+        {
+          "label": "e-tron"
+        },
+        {
+          "label": "E-tron"
+        },
+        {
+          "label": "E-tron Sportback"
+        }
+      ]
+    },
+    {
+      "brand": "AUDI",
+      "name": "e-tron S",
+      "evidenceUrls": [
+        "https://www.audi-mediacenter.com/en/audi-e-tron-s-sportback-12869"
+      ],
+      "reviewNote": "Manufacturer identifies e-tron S and e-tron S Sportback as S models. These technical aliases are not merged into ordinary e-tron or a different S/SQ badge; source query availability is validated independently.",
+      "members": [
+        {
+          "label": "e-tron S"
+        },
+        {
+          "label": "e-tron S Sportback"
+        },
+        {
+          "label": "E-tron Sportback S"
+        }
+      ]
+    },
+    {
+      "brand": "BMW",
+      "name": "iX",
+      "evidenceUrls": [
+        "https://www.press.bmwgroup.com/global/article/detail/T0327077EN/the-new-bmw-ix-xdrive40-and-new-bmw-ix-xdrive50?language=en"
+      ],
+      "reviewNote": "BMW explicitly identifies xDrive40 and xDrive50 as two iX model variants. Battery/motor specifications remain technical data, not separate broad-search models.",
+      "members": [
+        {
+          "label": "iX"
+        },
+        {
+          "label": "IX xDrive 40"
+        },
+        {
+          "label": "IX xDrive 50"
         }
       ]
     },
@@ -207,7 +743,28 @@
     },
     {
       "brand": "CHEVROLET",
+      "name": "Corvette",
+      "evidenceUrls": [
+        "https://news.chevrolet.com/newsroom.detail.html/Pages/news/us/en/2026/mar/0321-Chevrolet-Introduces-2027-Corvette-Grand-Sport-at-Sebring.html"
+      ],
+      "reviewNote": "Chevrolet describes Grand Sport as a Corvette lineup variant. Both literal source model targets remain queryable under one Corvette family.",
+      "members": [
+        {
+          "label": "Corvette"
+        },
+        {
+          "label": "CORVETTE GRAND SPORT"
+        }
+      ]
+    },
+    {
+      "brand": "CHEVROLET",
       "name": "Cruze",
+      "evidenceUrls": [
+        "https://www.chevrolet.com.br/servicos/manuais-veiculos/anos-anteriores",
+        "https://quatrorodas.abril.com.br/noticias/chevrolet-cruze-e-cruze-sport6-saem-de-linha-no-brasil-apos-13-anos/"
+      ],
+      "reviewNote": "Reviewed Cruze sedan/hatch search family. The complete native catalog exposes CRUZE; HB/NB and Sport6 are preserved technical aliases, not outbound trim filters.",
       "members": [
         {
           "label": "Cruze"
@@ -215,18 +772,27 @@
         {
           "label": "Cruze (MY19)",
           "configuration": "Cruze (MY19)"
-        }
-      ]
-    },
-    {
-      "brand": "CHEVROLET",
-      "name": "Cruze Sport6",
-      "members": [
+        },
         {
           "label": "Cruze Sport 6"
         },
         {
           "label": "Cruze Sport6"
+        },
+        {
+          "label": "CRUZE HB"
+        },
+        {
+          "label": "CRUZE NB"
+        },
+        {
+          "label": "Cruze Sedan"
+        },
+        {
+          "label": "Novo Cruze Hatch Turbo"
+        },
+        {
+          "label": "Novo Cruze Turbo"
         }
       ]
     },
@@ -240,23 +806,6 @@
         {
           "label": "Montana (2017)",
           "configuration": "Montana (2017)"
-        }
-      ]
-    },
-    {
-      "brand": "CHEVROLET",
-      "name": "Tracker",
-      "members": [
-        {
-          "label": "Nova Tracker (2017)",
-          "configuration": "Nova Tracker (2017)"
-        },
-        {
-          "label": "TRACKER"
-        },
-        {
-          "label": "TRACKER (MY26)",
-          "configuration": "TRACKER (MY26)"
         }
       ]
     },
@@ -291,19 +840,6 @@
     },
     {
       "brand": "CHEVROLET",
-      "name": "Prisma",
-      "members": [
-        {
-          "label": "Novo Prisma (2017)",
-          "configuration": "Novo Prisma (2017)"
-        },
-        {
-          "label": "Prisma"
-        }
-      ]
-    },
-    {
-      "brand": "CHEVROLET",
       "name": "Onix Joy",
       "members": [
         {
@@ -329,6 +865,19 @@
         {
           "label": "ONIX PLUS (MY26)",
           "configuration": "ONIX PLUS (MY26)"
+        }
+      ]
+    },
+    {
+      "brand": "CHEVROLET",
+      "name": "Prisma",
+      "members": [
+        {
+          "label": "Novo Prisma (2017)",
+          "configuration": "Novo Prisma (2017)"
+        },
+        {
+          "label": "Prisma"
         }
       ]
     },
@@ -392,6 +941,23 @@
         {
           "label": "TRAILBLAZER (MY26.5)",
           "configuration": "TRAILBLAZER (MY26.5)"
+        }
+      ]
+    },
+    {
+      "brand": "CHEVROLET",
+      "name": "Tracker",
+      "members": [
+        {
+          "label": "Nova Tracker (2017)",
+          "configuration": "Nova Tracker (2017)"
+        },
+        {
+          "label": "TRACKER"
+        },
+        {
+          "label": "TRACKER (MY26)",
+          "configuration": "TRACKER (MY26)"
         }
       ]
     },
@@ -529,6 +1095,19 @@
     },
     {
       "brand": "FIAT",
+      "name": "Toro",
+      "members": [
+        {
+          "label": "Toro"
+        },
+        {
+          "label": "TORO (2019)",
+          "configuration": "TORO (2019)"
+        }
+      ]
+    },
+    {
+      "brand": "FIAT",
       "name": "Uno",
       "members": [
         {
@@ -541,19 +1120,6 @@
         },
         {
           "label": "Uno"
-        }
-      ]
-    },
-    {
-      "brand": "FIAT",
-      "name": "Toro",
-      "members": [
-        {
-          "label": "Toro"
-        },
-        {
-          "label": "TORO (2019)",
-          "configuration": "TORO (2019)"
         }
       ]
     },
@@ -598,6 +1164,71 @@
     },
     {
       "brand": "FORD",
+      "name": "Fiesta",
+      "evidenceUrls": [
+        "https://media.ford.com/content/fordmedia/fsa/br/pt/news/2014/04/290/ford-lanca-promocao-com-tres-opcoes-para-o--new-fiesta--focus--e.html",
+        "https://g1.globo.com/carros/noticia/2014/08/ford-encerra-producao-do-fiesta-rocam-depois-de-14-anos.html"
+      ],
+      "reviewNote": "Reviewed Fiesta generations and hatch/sedan bodies for broad model search. Rocam is a generation/powertrain designation; model-year filters remain independent.",
+      "members": [
+        {
+          "label": "New Fiesta Hatch"
+        },
+        {
+          "label": "New Fiesta Hatch (2017)",
+          "configuration": "New Fiesta Hatch (2017)"
+        },
+        {
+          "label": "Fiesta"
+        },
+        {
+          "label": "Fiesta Hatch"
+        },
+        {
+          "label": "Fiesta Rocam"
+        },
+        {
+          "label": "Fiesta Sedan"
+        },
+        {
+          "label": "New Fiesta"
+        },
+        {
+          "label": "New Fiesta Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "FORD",
+      "name": "Focus",
+      "evidenceUrls": [
+        "https://media.ford.com/content/fordmedia/fsa/br/pt/news/2015/08/18/ford-ja-rodou-250-milhoes-de-km-no-campo-de-provas-de-tatui-e-cr.html",
+        "https://www.automotivebusiness.com.br/noticias/focus-seda-ressurge-como-fastback"
+      ],
+      "reviewNote": "Focus hatch and sedan/Fastback are the reviewed broad search family; Fastback renamed the sedan body. Native FOCUS is retained literally for queries.",
+      "members": [
+        {
+          "label": "Focus"
+        },
+        {
+          "label": "Focus Fastback"
+        },
+        {
+          "label": "Focus Hatch"
+        },
+        {
+          "label": "Focus Sedan"
+        },
+        {
+          "label": "New Focus Hatch"
+        },
+        {
+          "label": "New Focus Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "FORD",
       "name": "Fusion",
       "members": [
         {
@@ -606,6 +1237,19 @@
         {
           "label": "Fusion (2017)",
           "configuration": "Fusion (2017)"
+        }
+      ]
+    },
+    {
+      "brand": "FORD",
+      "name": "KA+",
+      "members": [
+        {
+          "label": "KA+"
+        },
+        {
+          "label": "KA+ (2017)",
+          "configuration": "KA+ (2017)"
         }
       ]
     },
@@ -640,19 +1284,6 @@
     },
     {
       "brand": "FORD",
-      "name": "KA+",
-      "members": [
-        {
-          "label": "KA+"
-        },
-        {
-          "label": "KA+ (2017)",
-          "configuration": "KA+ (2017)"
-        }
-      ]
-    },
-    {
-      "brand": "FORD",
       "name": "Mustang",
       "members": [
         {
@@ -666,20 +1297,11 @@
     },
     {
       "brand": "FORD",
-      "name": "New Fiesta Hatch",
-      "members": [
-        {
-          "label": "New Fiesta Hatch"
-        },
-        {
-          "label": "New Fiesta Hatch (2017)",
-          "configuration": "New Fiesta Hatch (2017)"
-        }
-      ]
-    },
-    {
-      "brand": "FORD",
-      "name": "Ranger 4x2",
+      "name": "Ranger",
+      "evidenceUrls": [
+        "https://media.ford.com/content/fordmedia/fsa/br/pt/news/20230/09/ford-pro-lanca-as-versoes-xl-e-xls-da-nova-ranger-com-motor-2-0-.html"
+      ],
+      "reviewNote": "Reviewed drivetrain and cab variants of Ranger. Cab/drivetrain strings never narrow a collection request. Ranger Raptor is not inferred by this alias list.",
       "members": [
         {
           "label": "Nova Ranger 4x2",
@@ -687,19 +1309,31 @@
         },
         {
           "label": "Ranger 4x2"
-        }
-      ]
-    },
-    {
-      "brand": "FORD",
-      "name": "Ranger 4x4",
-      "members": [
+        },
         {
           "label": "Nova Ranger 4x4",
           "configuration": "Nova Ranger 4x4"
         },
         {
           "label": "Ranger 4x4"
+        },
+        {
+          "label": "Ranger"
+        },
+        {
+          "label": "Ranger 4x2 C. Dupla"
+        },
+        {
+          "label": "Ranger 4x4 C. Dupla"
+        },
+        {
+          "label": "Ranger 4x4 CD"
+        },
+        {
+          "label": "Ranger 4x4 CS"
+        },
+        {
+          "label": "Ranger 4x4 CS / CD"
         }
       ]
     },
@@ -718,7 +1352,25 @@
     },
     {
       "brand": "HONDA",
+      "name": "CR-V",
+      "members": [
+        {
+          "label": "CR-V"
+        },
+        {
+          "label": "CR-V (2021)",
+          "configuration": "CR-V (2021)"
+        }
+      ]
+    },
+    {
+      "brand": "HONDA",
       "name": "City",
+      "evidenceUrls": [
+        "https://www.honda.com.br/automoveis/citysedan",
+        "https://www.honda.com.br/automoveis/cityhatchback"
+      ],
+      "reviewNote": "Honda City family includes Sedan and Hatchback. The complete native source exposes CITY. Body style is retained in original listing fields, not a remote criterion.",
       "members": [
         {
           "label": "City"
@@ -733,6 +1385,15 @@
         {
           "label": "City (novo)",
           "configuration": "City (novo)"
+        },
+        {
+          "label": "CITY HATCH"
+        },
+        {
+          "label": "City Sedan"
+        },
+        {
+          "label": "City Hatchback"
         }
       ]
     },
@@ -749,19 +1410,6 @@
         },
         {
           "label": "Civic *"
-        }
-      ]
-    },
-    {
-      "brand": "HONDA",
-      "name": "CR-V",
-      "members": [
-        {
-          "label": "CR-V"
-        },
-        {
-          "label": "CR-V (2021)",
-          "configuration": "CR-V (2021)"
         }
       ]
     },
@@ -881,6 +1529,23 @@
       ]
     },
     {
+      "brand": "JAGUAR",
+      "name": "XJS",
+      "evidenceUrls": [
+        "https://www.jaguar.com/en-gb/jdx/about-jaguar/jaguar-icons.html",
+        "https://media.jaguar.com/de-de/news/2015/06/jaguar-xj-s-und-mark-ii-erklimmen-bei-der-silvretta-classic-die-schoensten-alpenpaesse"
+      ],
+      "reviewNote": "Reviewed XJ-S/XJS naming change. Both native labels remain independent outbound targets of one displayed family.",
+      "members": [
+        {
+          "label": "XJS"
+        },
+        {
+          "label": "XJ-S"
+        }
+      ]
+    },
+    {
       "brand": "JEEP",
       "name": "Renegade",
       "members": [
@@ -907,6 +1572,54 @@
       ]
     },
     {
+      "brand": "LAND ROVER",
+      "name": "Defender",
+      "evidenceUrls": [
+        "https://www.landrover.com.br/defender/index.html",
+        "https://www.landrover.com.br/defender/defender/models-gallery.html"
+      ],
+      "reviewNote": "Defender 90/110/130 are explicitly reviewed body/wheelbase variants of the Defender family; D350 identifies the technical engine variant, not a remote model constraint.",
+      "members": [
+        {
+          "label": "Defender"
+        },
+        {
+          "label": "DEFENDER 90"
+        },
+        {
+          "label": "DEFENDER 90 D350"
+        },
+        {
+          "label": "DEFENDER 110"
+        },
+        {
+          "label": "DEFENDER 110 D350"
+        },
+        {
+          "label": "DEFENDER 130"
+        },
+        {
+          "label": "DEFENDER 130 D350"
+        }
+      ]
+    },
+    {
+      "brand": "LEXUS",
+      "name": "IS 250",
+      "evidenceUrls": [
+        "https://pressroom.lexus.com/2013-lexus-f-sport-three-levels/"
+      ],
+      "reviewNote": "F SPORT is a factory package of the IS 250 family, not a separate model criterion. Both exact native targets are retained; other engine badges remain distinct.",
+      "members": [
+        {
+          "label": "IS 250"
+        },
+        {
+          "label": "IS250 F-SPORT"
+        }
+      ]
+    },
+    {
       "brand": "LEXUS",
       "name": "NX 450H PLUG-IN",
       "members": [
@@ -916,6 +1629,22 @@
         {
           "label": "NX 450H PLUG-IN (MY26)",
           "configuration": "NX 450H PLUG-IN (MY26)"
+        }
+      ]
+    },
+    {
+      "brand": "LEXUS",
+      "name": "RX 350",
+      "evidenceUrls": [
+        "https://pressroom.lexus.com/2013-lexus-f-sport-three-levels/"
+      ],
+      "reviewNote": "F SPORT is a factory package of the RX 350 family. Both exact native targets are retained; RX 450h/500h remain distinct source families.",
+      "members": [
+        {
+          "label": "RX 350"
+        },
+        {
+          "label": "RX350 F-SPORT"
         }
       ]
     },
@@ -946,287 +1675,190 @@
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "320 E SPRINTER",
+      "name": "A 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/releases/mercedes-benz-apresenta-os-novos-automoveis-classe-a-exclusividade-e-esportividade"
+      ],
+      "reviewNote": "A200 source qualifiers, sedan/wheel labels and AMG Line equipment remain technical metadata within the A 200 search badge. AMG Line is not the separate A 35 AMG/A 45 AMG performance identity. A 250 remains separate.",
       "members": [
         {
-          "label": "320 E SPRINTER"
+          "label": "A 200"
         },
         {
-          "label": "320 ESPRINTER"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "A200 FF",
-      "members": [
+          "label": "A200 AMG LINE"
+        },
         {
           "label": "A200 FF"
         },
         {
-          "label": "A200 FF (2017)",
-          "configuration": "A200 FF (2017)"
+          "label": "A200 FF (2017)"
+        },
+        {
+          "label": "A200 SD"
+        },
+        {
+          "label": "A200 SD R17"
+        },
+        {
+          "label": "A200 SD R18"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "AMG A 45 4M",
+      "name": "A 35 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://www.mercedes-amg.com/en/a-class-hatchback",
+        "https://www.mercedes-amg.com/en/home/vehicles/a-class/sedan.html"
+      ],
+      "reviewNote": "A35 hatchback and sedan retain the A 35 AMG badge; SD and 4MATIC are body/drive qualifiers. Manufacturer documents both bodies. A 200/A 250/A 45 AMG remain separate.",
       "members": [
+        {
+          "label": "A 35 AMG"
+        },
+        {
+          "label": "A35"
+        },
+        {
+          "label": "AMG A35 4Matic"
+        },
+        {
+          "label": "AMG A35SD"
+        },
+        {
+          "label": "AMG A35SD 4MATIC"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "A 45 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://www.mercedes-amg.com/en/a-class-hatchback",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicit A45/A45 S names map to the native A 45 AMG search family; manufacturer documents A 45 S 4MATIC. S/drive/year qualifiers remain technical variants and do not merge the separate A 35 AMG badge.",
+      "members": [
+        {
+          "label": "A 45 AMG"
+        },
+        {
+          "label": "A45 AMG 4M"
+        },
         {
           "label": "AMG A 45 4M"
         },
         {
-          "label": "AMG A 45 4M (2017)",
-          "configuration": "AMG A 45 4M (2017)"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG C 63 S",
-      "members": [
-        {
-          "label": "AMG C 63 S"
+          "label": "AMG A 45 4M (2017)"
         },
         {
-          "label": "AMG C63 S"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG C 63S EP",
-      "members": [
-        {
-          "label": "AMG C 63S EP"
+          "label": "AMG A45S"
         },
         {
-          "label": "AMG C63S EP"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG CLA 45 4M",
-      "members": [
-        {
-          "label": "AMG CLA 45 4M"
+          "label": "AMG A45S 4M"
         },
         {
-          "label": "AMG CLA 45 4M (2017)",
-          "configuration": "AMG CLA 45 4M (2017)"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG CLA 45S 4M",
-      "members": [
-        {
-          "label": "AMG CLA 45S 4M"
-        },
-        {
-          "label": "AMG CLA45S 4M"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG EQE 53",
-      "members": [
-        {
-          "label": "AMG EQE 53"
-        },
-        {
-          "label": "AMG EQE53"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG G 63",
-      "members": [
-        {
-          "label": "AMG G 63"
-        },
-        {
-          "label": "AMG G63"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG G 63 4Matic",
-      "members": [
-        {
-          "label": "AMG G 63 4Matic"
-        },
-        {
-          "label": "AMG G63 4Matic"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLB 35 4M",
-      "members": [
-        {
-          "label": "AMG GLB 35 4M"
-        },
-        {
-          "label": "AMG GLB35 4M"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLC 43",
-      "members": [
-        {
-          "label": "AMG GLC 43"
-        },
-        {
-          "label": "AMG GLC43"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLC 63S EP",
-      "members": [
-        {
-          "label": "AMG GLC 63S EP"
-        },
-        {
-          "label": "AMG GLC63S EP"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLE 43",
-      "members": [
-        {
-          "label": "AMG GLE 43"
-        },
-        {
-          "label": "AMG GLE43"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLE 53 4M",
-      "members": [
-        {
-          "label": "AMG GLE 53 4M"
-        },
-        {
-          "label": "AMG GLE53 4M"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GLE 63 S CO",
-      "members": [
-        {
-          "label": "AMG GLE 63 S CO"
-        },
-        {
-          "label": "AMG GLE63 S CO"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GT C",
-      "members": [
-        {
-          "label": "AMG GT C"
-        },
-        {
-          "label": "AMG GTC"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG GT R",
-      "members": [
-        {
-          "label": "AMG GT R"
-        },
-        {
-          "label": "AMG GTR"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "AMG S 63 4M",
-      "members": [
-        {
-          "label": "AMG S 63 4M"
-        },
-        {
-          "label": "AMG S63 4M"
+          "label": "AMG A45S 4MATIC"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "B 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "B 200"
         },
         {
           "label": "B200"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "B200 FF",
-      "members": [
+        },
         {
           "label": "B200 FF"
         },
         {
-          "label": "B200 FF (2017)",
-          "configuration": "B200 FF (2017)"
+          "label": "B200 FF (2017)"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "C 180",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "C 180"
         },
         {
+          "label": "C 180 (novo)"
+        },
+        {
           "label": "C180"
+        },
+        {
+          "label": "C180 FF"
+        },
+        {
+          "label": "C180 FF BR"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "C 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "C 200"
         },
         {
           "label": "C200"
+        },
+        {
+          "label": "C200 BR"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "C 250",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "C 250"
+        },
+        {
+          "label": "C250"
+        },
+        {
+          "label": "C250 BR"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "C 300",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "C 300"
@@ -1238,130 +1870,393 @@
     },
     {
       "brand": "MERCEDES-BENZ",
+      "name": "C 43 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://www.mercedes-amg.com/en/c-class-sedan"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "C 43 AMG"
+        },
+        {
+          "label": "AMG C43"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "C 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://www.mercedes-amg.com/en/c-class-sedan",
+        "https://www.mercedes-amg.com/en/track-pace-privacy"
+      ],
+      "reviewNote": "The native C 63 AMG target is the broad badge. Manufacturer documents C63/C63 S and C63 S E PERFORMANCE, retained as distinct technical variants inside that search family. C 43 AMG and ordinary C-Class numbered badges remain separate.",
+      "members": [
+        {
+          "label": "C 63 AMG"
+        },
+        {
+          "label": "AMG C 63"
+        },
+        {
+          "label": "AMG C 63 S"
+        },
+        {
+          "label": "AMG C63 S"
+        },
+        {
+          "label": "AMG C 63S EP"
+        },
+        {
+          "label": "AMG C63S EP"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
       "name": "CLA 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "CLA 200"
         },
         {
           "label": "CLA200"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "CLA200 FF",
-      "members": [
+        },
         {
           "label": "CLA200 FF"
         },
         {
-          "label": "CLA200 FF (2017)",
-          "configuration": "CLA200 FF (2017)"
+          "label": "CLA200 FF (2017)"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "EQB 250+",
+      "name": "CLA 250",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
-          "label": "EQB 250+"
+          "label": "CLA 250"
         },
         {
-          "label": "EQB250+"
+          "label": "CLA250"
+        },
+        {
+          "label": "CLA250 4Matic"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "EQE 300",
+      "name": "CLA 35 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
-          "label": "EQE 300"
+          "label": "CLA 35 AMG"
         },
         {
-          "label": "EQE300"
+          "label": "AMG CLA35"
+        },
+        {
+          "label": "AMG CLA35 4M"
+        },
+        {
+          "label": "AMG CLA35 4Matic"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "EQE 350",
+      "name": "CLA 45 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicit CLA45/CLA45 S technical labels map to the native CLA 45 AMG search badge, supported by the manufacturer CLA 45 S 4MATIC designation. CLA 35 AMG and ordinary CLA badges remain separate.",
       "members": [
         {
-          "label": "EQE 350"
+          "label": "CLA 45 AMG"
         },
         {
-          "label": "EQE350"
+          "label": "CLA45 AMG 4M"
+        },
+        {
+          "label": "AMG CLA 45 4M"
+        },
+        {
+          "label": "AMG CLA 45 4M (2017)"
+        },
+        {
+          "label": "AMG CLA 45S 4M"
+        },
+        {
+          "label": "AMG CLA45S"
+        },
+        {
+          "label": "AMG CLA45S 4M"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "EQS 450",
+      "name": "CLS 53 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
-          "label": "EQS 450"
+          "label": "CLS 53 AMG"
         },
         {
-          "label": "EQS450"
+          "label": "AMG CLS53"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "EQS 450 4M",
+      "name": "E 250",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
-          "label": "EQS 450 4M"
+          "label": "E 250"
         },
         {
-          "label": "EQS450 4M"
+          "label": "E250"
+        },
+        {
+          "label": "E250 Turbo"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "E 53 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "E 53 AMG"
+        },
+        {
+          "label": "AMG E53 4Matic"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQB 350",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "EQB 350"
+        },
+        {
+          "label": "EQB 350 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQC 400",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "EQC 400"
+        },
+        {
+          "label": "EQC400 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQE 53 AMG SUV",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Both accepted technical model records have version SUV (electric, A-1); manufacturer price list and native tree name EQE 53 AMG SUV. This contextual SUV evidence supports these exact aliases and is not applied to ambiguous EQE300/EQE350 records.",
+      "members": [
+        {
+          "label": "EQE 53 AMG SUV"
+        },
+        {
+          "label": "AMG EQE 53"
+        },
+        {
+          "label": "AMG EQE53"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQS 53 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "EQS 53 AMG"
+        },
+        {
+          "label": "AMG EQS 53 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "G 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "G 63 AMG"
+        },
+        {
+          "label": "AMG G 63"
+        },
+        {
+          "label": "AMG G 63 4Matic"
+        },
+        {
+          "label": "AMG G63"
+        },
+        {
+          "label": "AMG G63 4M"
+        },
+        {
+          "label": "AMG G63 4Matic"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "GLA 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "GLA 200"
         },
         {
           "label": "GLA200"
-        }
-      ]
-    },
-    {
-      "brand": "MERCEDES-BENZ",
-      "name": "GLA200 FF",
-      "members": [
+        },
         {
           "label": "GLA200 FF"
         },
         {
-          "label": "GLA200 FF (2017)",
-          "configuration": "GLA200 FF (2017)"
+          "label": "GLA200 FF (2017)"
+        },
+        {
+          "label": "GLA200 FF BR"
+        },
+        {
+          "label": "GLA200 FF BR (2017)"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "GLA200 FF BR",
+      "name": "GLA 250",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
-          "label": "GLA200 FF BR"
+          "label": "GLA 250"
         },
         {
-          "label": "GLA200 FF BR (2017)",
-          "configuration": "GLA200 FF BR (2017)"
+          "label": "GLA250"
+        },
+        {
+          "label": "GLA250 4M"
+        },
+        {
+          "label": "GLA250 BR"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLA 35 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLA 35 AMG"
+        },
+        {
+          "label": "AMG GLA35 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLA 45 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLA 45 AMG"
+        },
+        {
+          "label": "GLA45 AMG 4M"
+        },
+        {
+          "label": "AMG GLA 45 4M"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
       "name": "GLB 200",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "GLB 200"
@@ -1373,8 +2268,15 @@
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "GLB 220 4M",
+      "name": "GLB 220",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
+        {
+          "label": "GLB 220"
+        },
         {
           "label": "GLB 220 4M"
         },
@@ -1385,20 +2287,242 @@
     },
     {
       "brand": "MERCEDES-BENZ",
+      "name": "GLB 35 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLB 35 AMG"
+        },
+        {
+          "label": "AMG GLB 35 4M"
+        },
+        {
+          "label": "AMG GLB35 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLC 220d",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLC 220d"
+        },
+        {
+          "label": "GLC 220D"
+        },
+        {
+          "label": "GLC 220d 4M"
+        },
+        {
+          "label": "GLC 220d 4Matic"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLC 250",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLC 250"
+        },
+        {
+          "label": "GLC 250 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLC 300",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Manufacturer lists GLC300 4MATIC and GLC300 4MATIC Coupe; the native GLC 300 criterion covers that badge without imposing body or drive constraints. GLC250, GLC43 AMG and GLC63 AMG remain separate.",
+      "members": [
+        {
+          "label": "GLC 300"
+        },
+        {
+          "label": "GLC300"
+        },
+        {
+          "label": "GLC300 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLC 43 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf",
+        "https://www.mercedes-amg.com/en/track-pace-privacy"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLC 43 AMG"
+        },
+        {
+          "label": "AMG GLC 43"
+        },
+        {
+          "label": "AMG GLC43"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLC 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://www.mercedes-amg.com/en/track-pace-privacy"
+      ],
+      "reviewNote": "Manufacturer explicitly lists GLC63 and GLC63 S; these and 4MATIC technical variants map to the native GLC 63 AMG badge. Unverified EP suffix records are preserved separately.",
+      "members": [
+        {
+          "label": "GLC 63 AMG"
+        },
+        {
+          "label": "AMG GLC63"
+        },
+        {
+          "label": "AMG GLC63 4Matic"
+        },
+        {
+          "label": "AMG GLC63S 4Matic"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
       "name": "GLE 400d",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
       "members": [
         {
           "label": "GLE 400d"
         },
         {
           "label": "GLE400d"
+        },
+        {
+          "label": "GLE400D 4M"
         }
       ]
     },
     {
       "brand": "MERCEDES-BENZ",
-      "name": "GLS 450 4M",
+      "name": "GLE 450d",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Manufacturer lists GLE450d 4MATIC and Coupe. Both use the native GLE 450d search badge. The different GLE450 gasoline badge is preserved.",
       "members": [
+        {
+          "label": "GLE 450d"
+        },
+        {
+          "label": "GLE450D"
+        },
+        {
+          "label": "GLE450D 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLE 43 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLE 43 AMG"
+        },
+        {
+          "label": "AMG GLE 43"
+        },
+        {
+          "label": "AMG GLE43"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLE 53 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLE 53 AMG"
+        },
+        {
+          "label": "AMG GLE 53 4M"
+        },
+        {
+          "label": "AMG GLE53 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLE 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Manufacturer documents GLE 63 S 4MATIC+ Coupe; explicit GLE63 source S/CO/drive qualifiers remain technical variants of native GLE 63 AMG. GLE53 AMG stays separate.",
+      "members": [
+        {
+          "label": "GLE 63 AMG"
+        },
+        {
+          "label": "AMG GLE 63"
+        },
+        {
+          "label": "AMG GLE 63 S CO"
+        },
+        {
+          "label": "AMG GLE63 S CO"
+        },
+        {
+          "label": "AMG GLE63S 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLS 450",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLS 450"
+        },
         {
           "label": "GLS 450 4M"
         },
@@ -1406,6 +2530,288 @@
           "label": "GLS450 4M"
         }
       ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "GLS 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "GLS 63 AMG"
+        },
+        {
+          "label": "AMG GLS 63"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "AMG GT 43",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "AMG GT 43"
+        },
+        {
+          "label": "AMG GT43"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "AMG GT 63",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Manufacturer documents Mercedes-AMG GT63 S E-Performance and the native source provides the AMG GT 63 badge. Keep its S/drive/powertrain qualifiers as technical variants; AMG GT43 and the unnumbered AMG GT family remain separate.",
+      "members": [
+        {
+          "label": "AMG GT 63"
+        },
+        {
+          "label": "AMG GT63S"
+        },
+        {
+          "label": "AMG GT63S 4Matic"
+        },
+        {
+          "label": "AMG GT63S EP"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "S 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models",
+        "https://imprensa.mercedes-benz.com.br/storage/files/bbQOKlKIQUFzBL4yNkptOJiE1saod34Xu4LoB1ZT.pdf"
+      ],
+      "reviewNote": "Explicit S63 technical labels retain the native S 63 AMG badge across Coupe/long-wheelbase/4MATIC and manufacturer-documented E-PERFORMANCE variants. S65 AMG and ordinary S-Class badges remain separate.",
+      "members": [
+        {
+          "label": "S 63 AMG"
+        },
+        {
+          "label": "AMG S 63 4M"
+        },
+        {
+          "label": "AMG S 63 L 4M"
+        },
+        {
+          "label": "AMG S63 4M"
+        },
+        {
+          "label": "AMG S63 EP"
+        },
+        {
+          "label": "AMG S63L 4Matic"
+        },
+        {
+          "label": "S63 AMG Coupé 4M"
+        },
+        {
+          "label": "S63 AMG L 4M"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "S 65 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "S 65 AMG"
+        },
+        {
+          "label": "AMG S 65 L"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "SL 63 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "SL 63 AMG"
+        },
+        {
+          "label": "AMG SL 63"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "SLC 43 AMG",
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Explicitly reviewed aliases for the same Mercedes-Benz badge in the 2026-10-23 native source tree. Spacing, listed source qualifiers and drive/body descriptors do not constrain broad model collection. Different numbered badges, AMG identities and unlisted aliases remain separate; technical specifications are preserved.",
+      "members": [
+        {
+          "label": "SLC 43 AMG"
+        },
+        {
+          "label": "AMG SLC 43"
+        }
+      ]
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "320 E SPRINTER",
+      "members": [
+        {
+          "label": "320 E SPRINTER"
+        },
+        {
+          "label": "320 ESPRINTER"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "AMG GLC 63S EP",
+      "members": [
+        {
+          "label": "AMG GLC 63S EP"
+        },
+        {
+          "label": "AMG GLC63S EP"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "AMG GT C",
+      "members": [
+        {
+          "label": "AMG GT C"
+        },
+        {
+          "label": "AMG GTC"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "AMG GT R",
+      "members": [
+        {
+          "label": "AMG GT R"
+        },
+        {
+          "label": "AMG GTR"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQB 250+",
+      "members": [
+        {
+          "label": "EQB 250+"
+        },
+        {
+          "label": "EQB250+"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQE 300",
+      "members": [
+        {
+          "label": "EQE 300"
+        },
+        {
+          "label": "EQE300"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQE 350",
+      "members": [
+        {
+          "label": "EQE 350"
+        },
+        {
+          "label": "EQE350"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQS 450",
+      "members": [
+        {
+          "label": "EQS 450"
+        },
+        {
+          "label": "EQS450"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "name": "EQS 450 4M",
+      "members": [
+        {
+          "label": "EQS 450 4M"
+        },
+        {
+          "label": "EQS450 4M"
+        }
+      ],
+      "evidenceUrls": [
+        "https://api.reefapi.com/webmotors/v1/makes_models"
+      ],
+      "reviewNote": "Previously reviewed lexical aliases only. This technical group does not authorize inference of a native source target, missing body type, plus sign or performance suffix. Native source binding is validated independently."
     },
     {
       "brand": "NISSAN",
@@ -1558,6 +2964,59 @@
     },
     {
       "brand": "RENAULT",
+      "name": "Master",
+      "evidenceUrls": [
+        "https://www.renault.com.br/veiculos-utilitarios/master-furgao.html",
+        "https://www.renault.com.br/veiculos-utilitarios/master-chassi/versoes-e-precos.html"
+      ],
+      "reviewNote": "Reviewed Master commercial vehicle body variants; FUGÃO is a transcription alias for Furgão in the technical input. Native MASTER remains the sole remote model target.",
+      "members": [
+        {
+          "label": "Master"
+        },
+        {
+          "label": "Master Bus"
+        },
+        {
+          "label": "Master Chassis Cabine"
+        },
+        {
+          "label": "MASTER FUGÃO PRÓ"
+        },
+        {
+          "label": "Master Furgão"
+        },
+        {
+          "label": "Master Furgão Pró"
+        },
+        {
+          "label": "Master PRO Furgão"
+        }
+      ]
+    },
+    {
+      "brand": "RENAULT",
+      "name": "Oroch",
+      "evidenceUrls": [
+        "https://motor1.uol.com.br/news/607149/porque-renault-oroch-duster-nome/",
+        "https://cdn.group.renault.com/ren/br/renault-new-cars/product-plans/2022/abril/nova-oroch/af-online_RMA002522_Catalogo_Oroch_ABR221_compressed.pdf"
+      ],
+      "reviewNote": "Reviewed rename from Duster Oroch to Oroch, confirmed by Renault product manager. Duster SUV remains separate; both native pickup names are retained as query targets.",
+      "members": [
+        {
+          "label": "Oroch"
+        },
+        {
+          "label": "Oroch (2017)",
+          "configuration": "Oroch (2017)"
+        },
+        {
+          "label": "Duster Oroch"
+        }
+      ]
+    },
+    {
+      "brand": "RENAULT",
       "name": "Sandero",
       "members": [
         {
@@ -1574,19 +3033,6 @@
       ]
     },
     {
-      "brand": "RENAULT",
-      "name": "Oroch",
-      "members": [
-        {
-          "label": "Oroch"
-        },
-        {
-          "label": "Oroch (2017)",
-          "configuration": "Oroch (2017)"
-        }
-      ]
-    },
-    {
       "brand": "SUZUKI",
       "name": "S-Cross",
       "members": [
@@ -1595,6 +3041,124 @@
         },
         {
           "label": "SCROSS"
+        }
+      ]
+    },
+    {
+      "brand": "TOYOTA",
+      "name": "Etios",
+      "evidenceUrls": [
+        "https://www.toyotacomunica.com.br/toyota-comemora-500-mil-etios-produzidos-no-brasil/"
+      ],
+      "reviewNote": "Toyota identifies hatchback and sedan as Etios bodies. ETIOS CROSS remains a separate native commercial derivative.",
+      "members": [
+        {
+          "label": "Etios"
+        },
+        {
+          "label": "Etios Hatchback"
+        },
+        {
+          "label": "Etios HB"
+        },
+        {
+          "label": "Etios SD"
+        },
+        {
+          "label": "Etios Sedã"
+        },
+        {
+          "label": "Etios Sedan"
+        }
+      ]
+    },
+    {
+      "brand": "TOYOTA",
+      "name": "Hilux",
+      "evidenceUrls": [
+        "https://www.toyotacomunica.com.br/wp-content/uploads/2023/11/Ficha-Tecnica-Hilux-2024-Novembro-2023-1.pdf"
+      ],
+      "reviewNote": "Reviewed pickup cab/drivetrain/powertrain variants. HILUX SW4/SW4 is a separate SUV family and is never collapsed into the pickup.",
+      "members": [
+        {
+          "label": "Hilux"
+        },
+        {
+          "label": "Hilux 4X2"
+        },
+        {
+          "label": "Hilux 4X4"
+        },
+        {
+          "label": "Hilux Diesel 4X4"
+        },
+        {
+          "label": "HILUX DIESEL 4X4 AT"
+        },
+        {
+          "label": "HILUX DIESEL 4X4 MT"
+        },
+        {
+          "label": "Hilux Flex 4X2"
+        },
+        {
+          "label": "Hilux Flex 4X4"
+        },
+        {
+          "label": "Hilux Gasolina 4X4"
+        }
+      ]
+    },
+    {
+      "brand": "TOYOTA",
+      "name": "Hilux SW4",
+      "evidenceUrls": [
+        "https://www.toyotacomunica.com.br/produto/sw4/"
+      ],
+      "reviewNote": "Toyota SW4 SUV corresponds to the native HILUX SW4 search label. Preserves the distinction from Hilux pickup.",
+      "members": [
+        {
+          "label": "Hilux SW4"
+        },
+        {
+          "label": "Hilux SW4 Diesel 4X4"
+        },
+        {
+          "label": "Hilux SW4 Gasolina 4X4"
+        },
+        {
+          "label": "SW4"
+        },
+        {
+          "label": "SW4 4X2"
+        },
+        {
+          "label": "SW4 DIESEL 4X4"
+        },
+        {
+          "label": "SW4 FLEX 4X2"
+        }
+      ]
+    },
+    {
+      "brand": "TOYOTA",
+      "name": "Yaris",
+      "evidenceUrls": [
+        "https://www.toyotacomunica.com.br/toyota-apresenta-linha-yaris-2023/"
+      ],
+      "reviewNote": "Toyota identifies hatch and sedan as Yaris bodies. Yaris Cross and GR Yaris remain separate families.",
+      "members": [
+        {
+          "label": "Yaris"
+        },
+        {
+          "label": "YARIS"
+        },
+        {
+          "label": "Yaris Hatchback"
+        },
+        {
+          "label": "YARIS SEDÃ"
         }
       ]
     },
@@ -1686,6 +3250,19 @@
     },
     {
       "brand": "VOLKSWAGEN",
+      "name": "Passat",
+      "members": [
+        {
+          "label": "Novo Passat",
+          "configuration": "Novo Passat"
+        },
+        {
+          "label": "Passat"
+        }
+      ]
+    },
+    {
+      "brand": "VOLKSWAGEN",
       "name": "Saveiro CD",
       "members": [
         {
@@ -1725,19 +3302,6 @@
     },
     {
       "brand": "VOLKSWAGEN",
-      "name": "Passat",
-      "members": [
-        {
-          "label": "Novo Passat",
-          "configuration": "Novo Passat"
-        },
-        {
-          "label": "Passat"
-        }
-      ]
-    },
-    {
-      "brand": "VOLKSWAGEN",
       "name": "Space Cross",
       "members": [
         {
@@ -1772,6 +3336,18 @@
     },
     {
       "brand": "VOLKSWAGEN",
+      "name": "T-Cross",
+      "members": [
+        {
+          "label": "T CROSS"
+        },
+        {
+          "label": "T-Cross"
+        }
+      ]
+    },
+    {
+      "brand": "VOLKSWAGEN",
       "name": "Voyage",
       "members": [
         {
@@ -1788,18 +3364,6 @@
         {
           "label": "Voyage (2019)",
           "configuration": "Voyage (2019)"
-        }
-      ]
-    },
-    {
-      "brand": "VOLKSWAGEN",
-      "name": "T-Cross",
-      "members": [
-        {
-          "label": "T CROSS"
-        },
-        {
-          "label": "T-Cross"
         }
       ]
     },

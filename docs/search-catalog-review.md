@@ -1,5 +1,7 @@
 # Catálogo e busca — levantamento de 22/10/2026
 
+> Registro histórico. O contrato atual de busca, catálogo nativo integral e filtro local de versão estão documentados em [search-catalog.md](search-catalog.md). As descrições de seletores de versão/configuração neste documento foram substituídas.
+
 Nenhuma consulta cobrada, chave nova, contratação ou alteração de plano foi feita neste levantamento. A documentação pública foi lida; as respostas de anúncios existentes no projeto foram usadas nos testes. Não foi encontrado um retorno salvo de catálogo completo.
 
 ## Reef já integrada

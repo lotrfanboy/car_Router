@@ -63,12 +63,7 @@ export async function enrichResult<T extends SearchResult>(
           ...row,
           saved: latest.get(listingKey(row))?.saved ?? false,
           comparison: compareListing(row, universe),
-          ...(criteria &&
-          (row.model !== original.model ||
-            row.doors !== original.doors ||
-            JSON.stringify(row.identity) !== JSON.stringify(original.identity))
-            ? { reasons: eligibility(row, criteria) }
-            : {}),
+          ...(criteria ? { reasons: eligibility(row, criteria) } : {}),
         };
       }),
     })),

@@ -1,0 +1,323 @@
+{
+  "note": "Before reconstructs prior observation mappings; after uses current reviewed labels. Full technical projection reconstructed from saved public technical catalogue, plus all native models. Source IDs converted to strings exactly as adapters do. No provider requests.",
+  "reports": [
+    {
+      "stage": "before",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:gecko:camaro",
+      "expectedFamily": "Camaro",
+      "received": 30,
+      "declaredTotal": 30,
+      "unreceivedDeclared": 0,
+      "confirmedExpectedFamily": 0,
+      "modelCounts": {
+        "unresolved": 30
+      },
+      "versionCounts": {
+        "unresolved": 30
+      },
+      "unknownLabels": [
+        "Camaro SS 6.2 V8 16V",
+        "Camaro Z-28 Targa/conv. 5.7",
+        "Camaro SS Conversível 6.2 V8 16V",
+        "Camaro SS Collection 6.2 V8 16V"
+      ],
+      "sha256": "819c4afda6cc36e830c3ba8296ace79b79d19923dc5e29668920c6214bb19afb"
+    },
+    {
+      "stage": "before",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:gecko:celta",
+      "expectedFamily": "Celta",
+      "received": 50,
+      "declaredTotal": 215,
+      "unreceivedDeclared": 165,
+      "confirmedExpectedFamily": 32,
+      "modelCounts": {
+        "confirmed": 32,
+        "unresolved": 18
+      },
+      "versionCounts": {
+        "unresolved": 50
+      },
+      "unknownLabels": [
+        "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+        "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+        "Celta Super 1.0 MPFI 8V Flexpower 3P",
+        "Celta Spirit 1.0 MPFI 8V Flexpower 3P",
+        "Celta Spirit 1.0 MPFI VHC 8V 3P",
+        "Celta Spirit 1.0 MPFI VHC 8V 5P",
+        "Celta Super 1.0 MPFI 8V Flexpower 5P"
+      ],
+      "sha256": "65a8c461e1908857190f79f264b87010402ffcd4b5fc8f42249e6960a7aa5866"
+    },
+    {
+      "stage": "before",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:reef:camaro",
+      "expectedFamily": "Camaro",
+      "received": 10,
+      "declaredTotal": 25,
+      "unreceivedDeclared": 15,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "1549015a5044b5d164e6062425b377abae54bd1f6e69b18c5c8ee3fec3c81719"
+    },
+    {
+      "stage": "before",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:reef:celta",
+      "expectedFamily": "Celta",
+      "received": 10,
+      "declaredTotal": 76,
+      "unreceivedDeclared": 66,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "0242a95edbac588f32640aba8d233ecdde3f1cc90d80f611a78f4e1f672acc50"
+    },
+    {
+      "stage": "after",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:gecko:camaro",
+      "expectedFamily": "Camaro",
+      "received": 30,
+      "declaredTotal": 30,
+      "unreceivedDeclared": 0,
+      "confirmedExpectedFamily": 30,
+      "modelCounts": {
+        "confirmed": 30
+      },
+      "versionCounts": {
+        "unresolved": 30
+      },
+      "unknownLabels": [],
+      "sha256": "819c4afda6cc36e830c3ba8296ace79b79d19923dc5e29668920c6214bb19afb"
+    },
+    {
+      "stage": "after",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:gecko:celta",
+      "expectedFamily": "Celta",
+      "received": 50,
+      "declaredTotal": 215,
+      "unreceivedDeclared": 165,
+      "confirmedExpectedFamily": 50,
+      "modelCounts": {
+        "confirmed": 50
+      },
+      "versionCounts": {
+        "unresolved": 50
+      },
+      "unknownLabels": [],
+      "sha256": "65a8c461e1908857190f79f264b87010402ffcd4b5fc8f42249e6960a7aa5866"
+    },
+    {
+      "stage": "after",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:reef:camaro",
+      "expectedFamily": "Camaro",
+      "received": 10,
+      "declaredTotal": 25,
+      "unreceivedDeclared": 15,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "1549015a5044b5d164e6062425b377abae54bd1f6e69b18c5c8ee3fec3c81719"
+    },
+    {
+      "stage": "after",
+      "mode": "technical-projection",
+      "operation": "search-catalog-20261023:validation:reef:celta",
+      "expectedFamily": "Celta",
+      "received": 10,
+      "declaredTotal": 76,
+      "unreceivedDeclared": 66,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "0242a95edbac588f32640aba8d233ecdde3f1cc90d80f611a78f4e1f672acc50"
+    },
+    {
+      "stage": "before",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:gecko:camaro",
+      "expectedFamily": "Camaro",
+      "received": 30,
+      "declaredTotal": 30,
+      "unreceivedDeclared": 0,
+      "confirmedExpectedFamily": 0,
+      "modelCounts": {
+        "unresolved": 30
+      },
+      "versionCounts": {
+        "unresolved": 30
+      },
+      "unknownLabels": [
+        "Camaro SS 6.2 V8 16V",
+        "Camaro Z-28 Targa/conv. 5.7",
+        "Camaro SS Conversível 6.2 V8 16V",
+        "Camaro SS Collection 6.2 V8 16V"
+      ],
+      "sha256": "819c4afda6cc36e830c3ba8296ace79b79d19923dc5e29668920c6214bb19afb"
+    },
+    {
+      "stage": "before",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:gecko:celta",
+      "expectedFamily": "Celta",
+      "received": 50,
+      "declaredTotal": 215,
+      "unreceivedDeclared": 165,
+      "confirmedExpectedFamily": 0,
+      "modelCounts": {
+        "unresolved": 50
+      },
+      "versionCounts": {
+        "unresolved": 50
+      },
+      "unknownLabels": [
+        "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+        "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+        "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+        "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+        "Celta 1.0/ Super 1.0 MPFI VHC 8V 5P",
+        "Celta Super 1.0 MPFI 8V Flexpower 3P",
+        "Celta Spirit 1.0 MPFI 8V Flexpower 3P",
+        "Celta Spirit 1.0 MPFI VHC 8V 3P",
+        "Celta Spirit 1.0 MPFI VHC 8V 5P",
+        "Celta Super 1.0 MPFI 8V Flexpower 5P"
+      ],
+      "sha256": "65a8c461e1908857190f79f264b87010402ffcd4b5fc8f42249e6960a7aa5866"
+    },
+    {
+      "stage": "before",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:reef:camaro",
+      "expectedFamily": "Camaro",
+      "received": 10,
+      "declaredTotal": 25,
+      "unreceivedDeclared": 15,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "1549015a5044b5d164e6062425b377abae54bd1f6e69b18c5c8ee3fec3c81719"
+    },
+    {
+      "stage": "before",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:reef:celta",
+      "expectedFamily": "Celta",
+      "received": 10,
+      "declaredTotal": 76,
+      "unreceivedDeclared": 66,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "0242a95edbac588f32640aba8d233ecdde3f1cc90d80f611a78f4e1f672acc50"
+    },
+    {
+      "stage": "after",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:gecko:camaro",
+      "expectedFamily": "Camaro",
+      "received": 30,
+      "declaredTotal": 30,
+      "unreceivedDeclared": 0,
+      "confirmedExpectedFamily": 30,
+      "modelCounts": {
+        "confirmed": 30
+      },
+      "versionCounts": {
+        "unresolved": 30
+      },
+      "unknownLabels": [],
+      "sha256": "819c4afda6cc36e830c3ba8296ace79b79d19923dc5e29668920c6214bb19afb"
+    },
+    {
+      "stage": "after",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:gecko:celta",
+      "expectedFamily": "Celta",
+      "received": 50,
+      "declaredTotal": 215,
+      "unreceivedDeclared": 165,
+      "confirmedExpectedFamily": 50,
+      "modelCounts": {
+        "confirmed": 50
+      },
+      "versionCounts": {
+        "unresolved": 50
+      },
+      "unknownLabels": [],
+      "sha256": "65a8c461e1908857190f79f264b87010402ffcd4b5fc8f42249e6960a7aa5866"
+    },
+    {
+      "stage": "after",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:reef:camaro",
+      "expectedFamily": "Camaro",
+      "received": 10,
+      "declaredTotal": 25,
+      "unreceivedDeclared": 15,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "1549015a5044b5d164e6062425b377abae54bd1f6e69b18c5c8ee3fec3c81719"
+    },
+    {
+      "stage": "after",
+      "mode": "native-fallback",
+      "operation": "search-catalog-20261023:validation:reef:celta",
+      "expectedFamily": "Celta",
+      "received": 10,
+      "declaredTotal": 76,
+      "unreceivedDeclared": 66,
+      "confirmedExpectedFamily": 10,
+      "modelCounts": {
+        "confirmed": 10
+      },
+      "versionCounts": {
+        "unresolved": 10
+      },
+      "unknownLabels": [],
+      "sha256": "0242a95edbac588f32640aba8d233ecdde3f1cc90d80f611a78f4e1f672acc50"
+    }
+  ]
+}

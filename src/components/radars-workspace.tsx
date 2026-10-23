@@ -398,12 +398,7 @@ export function RadarsWorkspace({
                 </strong>
               </div>
               <p>
-                {row.criteria.brand} {row.criteria.model} ·{" "}
-                {row.criteria.version || "Todas as versões"} ·{" "}
-                {row.criteria.catalog?.provider === "carrouter" &&
-                row.criteria.catalog.configurationName
-                  ? `${row.criteria.catalog.configurationName} · `
-                  : ""}
+                {row.criteria.brand} {row.criteria.model} · Todas as versões ·{" "}
                 {row.criteria.yearMin !== null
                   ? `de ${row.criteria.yearMin}`
                   : "sem ano mínimo"}{" "}

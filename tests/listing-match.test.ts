@@ -79,18 +79,17 @@ describe("confirmed, uncertain and incompatible matches", () => {
     expect(eligibility(unresolved, criteria)).toEqual([
       "Marca não classificada",
       "Modelo não classificado",
-      "Versão não classificada",
     ]);
   });
   it.each(["pending", "ambiguous", "unresolved"] as const)(
-    "keeps a %s version outside exact results",
+    "includes a matching model with a %s version while withholding price comparisons",
     (version) => {
       const row = {
         ...listing,
         identity: { brandId: "brand-1", modelId: "model-1" },
         catalogResolution: { model: "confirmed" as const, version },
       };
-      expect(listingMatchStatus(row, criteria)).toBe("uncertain");
+      expect(listingMatchStatus(row, criteria)).toBe("confirmed");
       expect(compareListing(row, [])).toMatchObject({
         status: "insufficient",
         count: 0,
@@ -103,13 +102,6 @@ describe("confirmed, uncertain and incompatible matches", () => {
   it.each([
     { identity: { brandId: "brand-2" } },
     { identity: { brandId: "brand-1", modelId: "model-2" } },
-    {
-      identity: {
-        brandId: "brand-1",
-        modelId: "model-1",
-        versionId: "version-2",
-      },
-    },
     {
       identity: undefined,
       catalogResolution: {
@@ -129,6 +121,38 @@ describe("confirmed, uncertain and incompatible matches", () => {
     const row = { ...listing, ...patch };
     expect(listingMatchStatus(row, criteria)).toBe("incompatible");
     expect(eligibility(row, criteria).length).toBeGreaterThan(0);
+  });
+  it("does not let legacy version, doors or configuration narrow the collection", () => {
+    const legacy = searchSchema.parse({
+      ...criteria,
+      doors: 2,
+      catalog: {
+        ...criteria.catalog,
+        configurationCode: "old-two-doors",
+        configurationName: "2 portas",
+      },
+    });
+    const otherVersion = {
+      ...listing,
+      doors: 4,
+      identity: {
+        ...listing.identity!,
+        versionId: "version-2",
+        configurationId: "four-doors",
+      },
+    };
+    expect(eligibility(otherVersion, legacy)).toEqual([]);
+    expect(listingMatchStatus(otherVersion, legacy)).toBe("confirmed");
+    // Showing all versions of the model must not make their prices comparable.
+    const peers = Array.from({ length: 6 }, (_, index): Listing => ({
+      ...otherVersion,
+      externalId: `different-version-${index}`,
+      url: `https://www.webmotors.com.br/comprar/test/${index + 20}`,
+    }));
+    expect(compareListing(listing, peers)).toMatchObject({
+      status: "insufficient",
+      count: 0,
+    });
   });
   it.each([
     { modelYear: null },

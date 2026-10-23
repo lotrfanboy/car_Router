@@ -234,6 +234,19 @@ export type SourceResult = {
   elapsedMs: number;
   creditsReserved: number;
   locationCredits?: number;
+  targets?: Array<{
+    brand: string;
+    model: string;
+    city: string;
+    state: string;
+    status: "ok" | "error" | "unconfigured";
+    message: string;
+    partial: boolean;
+    received: number;
+    total: number | null;
+    creditsReserved: number;
+    locationCredits: number;
+  }>;
   total: number | null;
   partial: boolean;
   applied?: {
@@ -248,7 +261,11 @@ export type SourceResult = {
   normalizationDiscards?: Record<string, number>;
   listings: Listing[];
 };
-export type SearchResult = { sources: SourceResult[] };
+export type SearchResult = {
+  sources: SourceResult[];
+  collectionVersion?: number;
+  searchRevision?: string;
+};
 
 /** Unknown evidence is reviewable; a known conflict takes precedence over it. */
 export function listingMatchStatus(
@@ -264,10 +281,7 @@ export function listingMatchStatus(
         ((!!row.identity?.modelId &&
           row.identity.modelId !== selected.modelCode) ||
           (row.catalogResolution?.model === "divergent" &&
-            row.catalogResolution.targetModelId === selected.modelCode))) ||
-      (!!selected.versionCode &&
-        !!row.identity?.versionId &&
-        row.identity.versionId !== selected.versionCode)
+            row.catalogResolution.targetModelId === selected.modelCode)))
     : (!!row.brand &&
         canonicalBrand(row.brand) !== canonicalBrand(criteria.brand)) ||
       (!!row.model &&
@@ -279,11 +293,6 @@ export function listingMatchStatus(
       : [];
   if (
     knownIdentityConflict ||
-    (!!criteria.doors && !!row.doors && criteria.doors !== row.doors) ||
-    (!!selected?.configurationCode &&
-      !criteria.doors &&
-      !!row.identity?.configurationId &&
-      row.identity.configurationId !== selected.configurationCode) ||
     (!!row.state && row.state !== criteria.state) ||
     (criteria.locationMode === "cities" &&
       !!row.city &&
@@ -307,22 +316,6 @@ export function listingMatchStatus(
 export function eligibility(row: Listing, s: SearchCriteria) {
   const reasons: string[] = [];
   const selected = s.catalog?.provider === "carrouter" ? s.catalog : undefined;
-  if (s.doors && row.doors !== s.doors)
-    reasons.push(
-      row.doors
-        ? "Número de portas diferente"
-        : "Número de portas não identificado",
-    );
-  if (
-    selected?.configurationCode &&
-    !s.doors &&
-    row.identity?.configurationId !== selected.configurationCode
-  )
-    reasons.push(
-      row.identity?.configurationId
-        ? "Configuração do modelo diferente"
-        : "Configuração do modelo não identificada",
-    );
   const brandMatches = selected
     ? row.identity?.brandId === selected.brandCode
     : !!row.brand && canonicalBrand(row.brand) === canonicalBrand(s.brand);
@@ -357,28 +350,6 @@ export function eligibility(row: Listing, s: SearchCriteria) {
       reasons.push("Modelo com correspondência ambígua");
     else if (selected?.modelCode) reasons.push("Modelo não classificado");
     else reasons.push("Modelo diferente ou não confirmado");
-  }
-  const versionMatches = selected?.versionCode
-    ? row.identity?.versionId === selected.versionCode
-    : !!row.version &&
-      (catalogKey(row.version) === catalogKey(s.version ?? "") ||
-        ` ${normalized(row.version)} `.includes(
-          ` ${normalized(s.version ?? "")} `,
-        ));
-  if (s.version && !versionMatches) {
-    const status = row.catalogResolution?.version;
-    if (
-      selected?.versionCode &&
-      status === "confirmed" &&
-      !!row.identity?.versionId
-    )
-      reasons.push("Versão comprovadamente diferente");
-    else if (status === "pending")
-      reasons.push("Versão com correspondência pendente");
-    else if (status === "ambiguous")
-      reasons.push("Versão com correspondência ambígua");
-    else if (selected?.versionCode) reasons.push("Versão não classificada");
-    else reasons.push("Versão diferente ou desconhecida");
   }
   const selectedCities = s.cities.length ? s.cities : s.city ? [s.city] : [];
   if (

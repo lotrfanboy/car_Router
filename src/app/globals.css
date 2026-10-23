@@ -2753,7 +2753,7 @@ tr:hover td {
 .discovery-notice {
   background: #245bcc09;
   border: 1px solid #245bcc30;
-  color: #c9ced4;
+  color: var(--ink);
   font-size: 12px;
   line-height: 1.75;
 }

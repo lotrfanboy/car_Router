@@ -1,10 +1,10 @@
 # Radar Automotivo
 
-**Busca — 22/10/2026:** ano independente, cidades opcionais e critérios/descartes explícitos. Marca, modelo e versão são lidos da revisão ativa do catálogo persistido no Supabase; versão continua opcional e modelos sem versão aceita permanecem pesquisáveis. Veja o [levantamento Reef/Carpedia, custos e restrições de adoção](docs/search-catalog-review.md) e a [validação desta etapa](docs/VALIDACAO-BUSCA-GENERICA-2026-10-22.md).
+**Busca — 23/10/2026:** marca e modelo usam o catálogo nativo completo de busca da Webmotors, com 136 marcas e 1.261 registros de modelo, agrupados em famílias revisadas. Configuração foi removida; versão é um filtro local dos resultados e nunca restringe a API. Os vínculos de saída são separados da identificação de anúncios e das versões técnicas. Veja [arquitetura, dados, validação e atualização do catálogo](docs/search-catalog.md).
 
 O fluxo principal agora é **Buscar carros → conferir a média dos semelhantes → salvar ou criar Radar**. Veja [uso, metodologia, preservação dos dados e configuração do Radar](docs/FOCO-BUSCA-RADAR.md). O monitoramento usa o agendador persistido no Supabase; sem um canal de e-mail configurado, a interface indica configuração pendente. A aplicação publicada está em [radar-automotivo-preview.onrender.com](https://radar-automotivo-preview.onrender.com).
 
-Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. A persistência de produção usa PostgreSQL no Supabase, sem consultas externas ou dados de demonstração na inicialização. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
+Aplicação pessoal para buscar carros em OLX/Gecko e Webmotors/Reef, comparar preços com anúncios semelhantes e salvar candidatos. O catálogo manual e seus históricos continuam disponíveis. As fontes precisam ser configuradas no servidor. A persistência de produção usa PostgreSQL no Supabase, sem dados de demonstração. A inicialização pode executar somente o lote finito de validação explicitamente autorizado; sem operação enfileirada, não consulta provedores. [Guia do MVP integrado](docs/mvp-buscas-integradas.md).
 
 ## Executar no Windows
 

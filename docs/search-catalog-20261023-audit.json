@@ -1,0 +1,1096 @@
+{
+  "rawBrands": 63,
+  "rawModels": 1113,
+  "rawVersions": 6112,
+  "technicalFamilies": 785,
+  "mergedBrands": 140,
+  "mergedModels": 1512,
+  "nativeMakes": 136,
+  "nativeLeaves": 1261,
+  "queryTargets": 1261,
+  "displayBrands": 135,
+  "displayModels": 1255,
+  "displayDuplicateGroups": 0,
+  "technicalFamiliesLinked": 528,
+  "technicalFamiliesWithoutSourceTarget": 257,
+  "technicalOnly": [
+    {
+      "brand": "AUDI",
+      "model": "RS7 Sportback Plus"
+    },
+    {
+      "brand": "AUDI",
+      "model": "S8 Plus"
+    },
+    {
+      "brand": "AUDI",
+      "model": "SQ6 Sportback e-tron Quattro"
+    },
+    {
+      "brand": "BMW",
+      "model": "220"
+    },
+    {
+      "brand": "BMW",
+      "model": "320i BR"
+    },
+    {
+      "brand": "BMW",
+      "model": "335iH"
+    },
+    {
+      "brand": "BMW",
+      "model": "i4 40"
+    },
+    {
+      "brand": "BMW",
+      "model": "M135"
+    },
+    {
+      "brand": "BMW",
+      "model": "M235"
+    },
+    {
+      "brand": "BMW",
+      "model": "X5 BR"
+    },
+    {
+      "brand": "BYD",
+      "model": "ATTO 2"
+    },
+    {
+      "brand": "BYD",
+      "model": "ET3"
+    },
+    {
+      "brand": "CAOA CHERY",
+      "model": "ICAR EQ1"
+    },
+    {
+      "brand": "CAOA CHERY",
+      "model": "NEW QQ"
+    },
+    {
+      "brand": "CHANGAN",
+      "model": "Chana"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Celer HB"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Celer SD"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Face"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Q Q"
+    },
+    {
+      "brand": "CHERY",
+      "model": "QQ 1.0"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Tiggo"
+    },
+    {
+      "brand": "CHERY",
+      "model": "TIGGO 2"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Tiggo FL 2.0 MT"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Onix Plus Joy"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Prisma Joy (2017)"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "S10 Diesel (2017)"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Vectra *"
+    },
+    {
+      "brand": "CHRYSLER",
+      "model": "Town e Country"
+    },
+    {
+      "brand": "CITROEN",
+      "model": "E-JUMPY"
+    },
+    {
+      "brand": "CITROEN",
+      "model": "Grand C4 Picasso"
+    },
+    {
+      "brand": "DONFENG",
+      "model": "SERES 3"
+    },
+    {
+      "brand": "FARIZON",
+      "model": "SV"
+    },
+    {
+      "brand": "FARIZON",
+      "model": "V6E"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "296"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "458"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "488"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "California T"
+    },
+    {
+      "brand": "FERRARI",
+      "model": "F8"
+    },
+    {
+      "brand": "FIAT",
+      "model": "E-SCUDO"
+    },
+    {
+      "brand": "FIAT",
+      "model": "Mille"
+    },
+    {
+      "brand": "FIAT",
+      "model": "Palio Weekend"
+    },
+    {
+      "brand": "FORD",
+      "model": "Courrier"
+    },
+    {
+      "brand": "FORD",
+      "model": "E-Transit"
+    },
+    {
+      "brand": "FORD",
+      "model": "KA (5 Portas)"
+    },
+    {
+      "brand": "FORD",
+      "model": "Ka Sedan"
+    },
+    {
+      "brand": "FORD",
+      "model": "KA+ (4 Portas)"
+    },
+    {
+      "brand": "FORD",
+      "model": "Mustang Dark Horse"
+    },
+    {
+      "brand": "FORD",
+      "model": "New Ecosport"
+    },
+    {
+      "brand": "FORD",
+      "model": "Ranger Raptor"
+    },
+    {
+      "brand": "FOTON",
+      "model": "ETOANO"
+    },
+    {
+      "brand": "FOTON",
+      "model": "EVIEW"
+    },
+    {
+      "brand": "FOTON",
+      "model": "EVIEW CONNECT"
+    },
+    {
+      "brand": "FOTON",
+      "model": "EWONDER"
+    },
+    {
+      "brand": "FOTON",
+      "model": "WONDER"
+    },
+    {
+      "brand": "GWM",
+      "model": "HAVAL H6 HEV"
+    },
+    {
+      "brand": "GWM",
+      "model": "HAVAL H6 PHEV"
+    },
+    {
+      "brand": "GWM",
+      "model": "ORA"
+    },
+    {
+      "brand": "GWM",
+      "model": "WEY"
+    },
+    {
+      "brand": "HAFEI",
+      "model": "Start Pickup"
+    },
+    {
+      "brand": "HAFEI",
+      "model": "Start Van"
+    },
+    {
+      "brand": "HAIMA",
+      "model": "2"
+    },
+    {
+      "brand": "HAIMA",
+      "model": "3"
+    },
+    {
+      "brand": "HAIMA",
+      "model": "7"
+    },
+    {
+      "brand": "HONDA",
+      "model": "ACCORD HYBRID"
+    },
+    {
+      "brand": "HONDA",
+      "model": "CIVIC HYBRID"
+    },
+    {
+      "brand": "HONDA",
+      "model": "CR-V HYBRID"
+    },
+    {
+      "brand": "HONDA",
+      "model": "HR-V (mod. 26)"
+    },
+    {
+      "brand": "HONDA",
+      "model": "HR-V (mod.25)"
+    },
+    {
+      "brand": "HONDA",
+      "model": "ZR-V (mod.26)"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "Gran Santa Fé"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "iX 35 FF BR"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "KONA EV"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "KONA HEV"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "New i30 FL"
+    },
+    {
+      "brand": "HYUNDAI",
+      "model": "Tucson Turbo"
+    },
+    {
+      "brand": "JAC",
+      "model": "Carnival"
+    },
+    {
+      "brand": "JAC",
+      "model": "EJV5.5"
+    },
+    {
+      "brand": "JAC",
+      "model": "IEV 40"
+    },
+    {
+      "brand": "JAC",
+      "model": "J S4"
+    },
+    {
+      "brand": "JAC",
+      "model": "J3 Turin"
+    },
+    {
+      "brand": "JAC",
+      "model": "T40 1.5 JETFLEX"
+    },
+    {
+      "brand": "JAC",
+      "model": "T40 1.6 DVVT CVT"
+    },
+    {
+      "brand": "JAC",
+      "model": "T50 1.6 DVVT CVT"
+    },
+    {
+      "brand": "JAC",
+      "model": "T60 1.5 TURBO"
+    },
+    {
+      "brand": "JAC",
+      "model": "T80 2.0 TURBO"
+    },
+    {
+      "brand": "JAGUAR",
+      "model": "F-TYPE (24 MY)"
+    },
+    {
+      "brand": "JEEP",
+      "model": "G CHEROKEE"
+    },
+    {
+      "brand": "JETOUR",
+      "model": "S06 DM"
+    },
+    {
+      "brand": "JETOUR",
+      "model": "T1 I-DM"
+    },
+    {
+      "brand": "JETOUR",
+      "model": "T2 I-DM"
+    },
+    {
+      "brand": "JINBEI",
+      "model": "Gran Topic"
+    },
+    {
+      "brand": "JINBEI",
+      "model": "Van 13P"
+    },
+    {
+      "brand": "JINBEI",
+      "model": "Van Cargo"
+    },
+    {
+      "brand": "JINBEI",
+      "model": "VKNVAN"
+    },
+    {
+      "brand": "KIA",
+      "model": "BONGO K2500"
+    },
+    {
+      "brand": "KIA",
+      "model": "BONGO K2500 4X2 SC"
+    },
+    {
+      "brand": "KIA",
+      "model": "BONGO K2500 4X4"
+    },
+    {
+      "brand": "KIA",
+      "model": "BONGO K2500 4X4 SC"
+    },
+    {
+      "brand": "KIA",
+      "model": "Cerato Koup"
+    },
+    {
+      "brand": "KIA",
+      "model": "EV5 2WD"
+    },
+    {
+      "brand": "KIA",
+      "model": "EV5 4WD"
+    },
+    {
+      "brand": "KIA",
+      "model": "EV9 GTL"
+    },
+    {
+      "brand": "KIA",
+      "model": "GCarnival"
+    },
+    {
+      "brand": "KIA",
+      "model": "K2500"
+    },
+    {
+      "brand": "KIA",
+      "model": "New Soul"
+    },
+    {
+      "brand": "KIA",
+      "model": "SPORTAGE 2026)"
+    },
+    {
+      "brand": "LAMBORGHINI",
+      "model": "Huracn"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "DISC SPT"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "Discovery Sport BR"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "Evoque"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "Evoque A9"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "Evoque BR"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RROVER"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "RRSPT"
+    },
+    {
+      "brand": "LAND ROVER",
+      "model": "VELAR"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "IS200"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "LS460"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "LS500H"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "NX200"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "NX200 4X4"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "NX300 4X4"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "RX350 4X4"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "RZ"
+    },
+    {
+      "brand": "LIFAN",
+      "model": "X70"
+    },
+    {
+      "brand": "MASERATI",
+      "model": "Gran"
+    },
+    {
+      "brand": "Mclaren",
+      "model": "570"
+    },
+    {
+      "brand": "Mclaren",
+      "model": "720S Coupe"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "315CDI STREET"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG E63S"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG E63S 4Matic+"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG GT S"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG SL63S EP"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "G350D"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "G580 EQ"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "GLB250"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "GLE 350d"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "GLE 450 AMG"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "GLS 350d"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "S560 L"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "Sprinter Street 313"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "Sprinter Street 314"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "Vito 111 CDI"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "Vito Tourer 119"
+    },
+    {
+      "brand": "MG",
+      "model": "MG4"
+    },
+    {
+      "brand": "MINI",
+      "model": "Cabrio"
+    },
+    {
+      "brand": "MINI",
+      "model": "Clubman"
+    },
+    {
+      "brand": "MINI",
+      "model": "Clubman ALL4"
+    },
+    {
+      "brand": "MINI",
+      "model": "Cooper (06/23)"
+    },
+    {
+      "brand": "MINI",
+      "model": "Cooper S"
+    },
+    {
+      "brand": "MINI",
+      "model": "HATCH"
+    },
+    {
+      "brand": "MINI",
+      "model": "JCW"
+    },
+    {
+      "brand": "MINI",
+      "model": "JCW (06/23)"
+    },
+    {
+      "brand": "MINI",
+      "model": "JCW-E"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "L200 Triton HPE"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "L200 Triton Outdoor"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "L200 Triton Sport"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "New Outlander"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "Pajero 4x4"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "Pajero 5 portas"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "Pajero Full 3 Portas"
+    },
+    {
+      "brand": "MITSUBISHI",
+      "model": "Pajero Full 5 Portas"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "Frontier 24MY"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "GT-R Nismo"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "GT-R Premium"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "KICKS MY22"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "New March"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "New Versa"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "Townstar"
+    },
+    {
+      "brand": "NISSAN",
+      "model": "V-DRIVE"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "207 Hatch *"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "207 HB"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "207 SW"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "E-208"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "E-EXPERT"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "E2008"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "PARTRAPID"
+    },
+    {
+      "brand": "PORSCHE",
+      "model": "Boxter"
+    },
+    {
+      "brand": "PORSCHE",
+      "model": "Cayenne (19MY)"
+    },
+    {
+      "brand": "PORSCHE",
+      "model": "Cayenne (new)"
+    },
+    {
+      "brand": "RELY",
+      "model": "Link"
+    },
+    {
+      "brand": "RELY",
+      "model": "Pick-Up"
+    },
+    {
+      "brand": "RELY",
+      "model": "Pick-Up Cabine Dupla"
+    },
+    {
+      "brand": "RELY",
+      "model": "Pick-Up Ex Basic"
+    },
+    {
+      "brand": "RELY",
+      "model": "Van"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "E-KWID"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Logan - P2"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Sandero RS"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Sandero Stepway"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Twizy"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Zoe LR"
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Zoe NR"
+    },
+    {
+      "brand": "SSANGYONG",
+      "model": "Musso"
+    },
+    {
+      "brand": "SSANGYONG",
+      "model": "TIVOLI"
+    },
+    {
+      "brand": "SSANGYONG",
+      "model": "XLV"
+    },
+    {
+      "brand": "SUBARU",
+      "model": "STI"
+    },
+    {
+      "brand": "SUBARU",
+      "model": "WRX"
+    },
+    {
+      "brand": "SUZUKI",
+      "model": "Jimny 4X4"
+    },
+    {
+      "brand": "SUZUKI",
+      "model": "Jimny Sierra"
+    },
+    {
+      "brand": "SUZUKI",
+      "model": "S-Cross 2WD"
+    },
+    {
+      "brand": "SUZUKI",
+      "model": "S-Cross 4WD"
+    },
+    {
+      "brand": "SUZUKI",
+      "model": "Swift Sport"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "COROLLA HB"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "Corolla Novo"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "RAV4 4x2"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "RAV4 4x4"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "RAV4H"
+    },
+    {
+      "brand": "TOYOTA",
+      "model": "YARIS CROSS FLEX"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "CC"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "CrossFox (Pneus On Road)"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Gol Ecomotion"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Gol G4"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Golf Variant"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "ID.BUZZ"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "New Fox"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Saveiro CD (Pneus On Road)"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Saveiro CE (Pneus On Road)"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Spacefox (2017)(Exceto rodas aro 16\")"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Touareg V6"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Touareg V8"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Up! TSI"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "C40 (ano modelo 2024)"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "S60 (aro17\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "S60 (aro18\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "S60 (Rodas 17\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V40 (aro 17\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V40 (aro 18\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V40 Cross Country"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V60 (aro 17\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V60 (aro 18\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "V60 (Rodas 17\")"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "XC40 (ano modelo 2024)"
+    },
+    {
+      "brand": "VOLVO",
+      "model": "XC90 (ano modelo 2024)"
+    },
+    {
+      "brand": "AUDI",
+      "model": "e-tron S"
+    },
+    {
+      "brand": "CAOA CHERY",
+      "model": "Arrizo 5 E"
+    },
+    {
+      "brand": "CHERY",
+      "model": "Celer"
+    },
+    {
+      "brand": "CHERY",
+      "model": "New QQ"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Onix Joy"
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Onix Plus"
+    },
+    {
+      "brand": "FIAT",
+      "model": "Weekend"
+    },
+    {
+      "brand": "FORD",
+      "model": "Ka Hatch"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "NX 450H PLUG-IN"
+    },
+    {
+      "brand": "LEXUS",
+      "model": "RX 450H PLUG-IN"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "320 E SPRINTER"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG GLC 63S EP"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG GT C"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "AMG GT R"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "EQB 250+"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "EQE 350"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "EQS 450"
+    },
+    {
+      "brand": "MERCEDES-BENZ",
+      "model": "EQS 450 4M"
+    },
+    {
+      "brand": "PEUGEOT",
+      "model": "207 Passion"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Golf GTI"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Golf TSI"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Saveiro CD"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Saveiro CE"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "Saveiro CS"
+    },
+    {
+      "brand": "VOLKSWAGEN",
+      "model": "up!"
+    }
+  ],
+  "sourceIds": 0,
+  "capturedAt": "2026-10-23T17:43:47.415Z",
+  "nativeRevision": "reef-makes-models-20261023-9f011baae24c7304",
+  "commercialRevision": "commercial-models-v2",
+  "reviewedFamilies": 188,
+  "reviewedBrandAliases": 1,
+  "evidence": {
+    "id": "reef-makes-models-20261023-9f011baae24c7304",
+    "url": "https://api.reefapi.com/webmotors/v1/makes_models",
+    "retrievedAt": "2026-10-23T17:43:47.415Z",
+    "sha256": "9f011baae24c7304c1e74a183c517403db522be81a121975b229b2770da45390",
+    "kind": "catalog"
+  },
+  "nativeSourceIdsReturned": false,
+  "sourceCompleteness": "complete",
+  "sourceUpstreamRequests": 1,
+  "sourceChargedCredits": 1,
+  "scope": "All 136 native make branches and 1261 model leaves returned by Reef Webmotors makes_models for vehicle_type car; not a claim to cover every vehicle ever made. Technical-only rows remain internal; they are not offered as unapproved remote search criteria.",
+  "nativeGroupsWithMultipleTargets": [
+    {
+      "brand": "JAGUAR",
+      "model": "XJS",
+      "targets": ["XJ-S", "XJS"]
+    },
+    {
+      "brand": "LEXUS",
+      "model": "IS 250",
+      "targets": ["IS250 F-SPORT", "IS 250"]
+    },
+    {
+      "brand": "LEXUS",
+      "model": "RX 350",
+      "targets": ["RX350 F-SPORT", "RX 350"]
+    },
+    {
+      "brand": "CHEVROLET",
+      "model": "Corvette",
+      "targets": ["CORVETTE", "CORVETTE GRAND SPORT"]
+    },
+    {
+      "brand": "RENAULT",
+      "model": "Oroch",
+      "targets": ["OROCH", "DUSTER OROCH"]
+    },
+    {
+      "brand": "WILLYS",
+      "model": "JEEP",
+      "targets": ["WILLYS/JEEP", "WILLYS OVERLAND/JEEP"]
+    }
+  ]
+}

@@ -19,7 +19,7 @@ export function buildOlxUrl(criteria: SearchCriteria, region: string) {
   );
   url.searchParams.set(
     "q",
-    [catalogBrandSearchName(criteria.brand), criteria.model, criteria.version]
+    [catalogBrandSearchName(criteria.brand), criteria.model]
       .filter(Boolean)
       .join(" "),
   );
@@ -34,7 +34,7 @@ export function buildOlxStateUrl(criteria: SearchCriteria) {
   );
   url.searchParams.set(
     "q",
-    [catalogBrandSearchName(criteria.brand), criteria.model, criteria.version]
+    [catalogBrandSearchName(criteria.brand), criteria.model]
       .filter(Boolean)
       .join(" "),
   );

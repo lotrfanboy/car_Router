@@ -60,7 +60,7 @@ afterEach(() => {
 
 const sources: Source[] = ["olx", "webmotors"];
 it.each(sources)(
-  "replays the saved AUDI A4 / PR failure through %s without requiring a crosswalk",
+  "replays AUDI A4 / PR using only documented %s search capabilities",
   async (source) => {
     const criteria = searchSchema.parse(failedSearch.criteria);
     const before = structuredClone(criteria);
@@ -77,6 +77,20 @@ it.each(sources)(
 
     const result = await fetchSource(source, criteria, reserve);
 
+    if (source === "webmotors") {
+      expect(result).toMatchObject({
+        status: "error",
+        creditsReserved: 0,
+        listings: [],
+        applied: { mapping: { status: "incompatible" } },
+      });
+      expect(result.message).toContain("não há vínculo de busca validado");
+      expect(reserve).not.toHaveBeenCalled();
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(criteria).toEqual(before);
+      return;
+    }
+
     expect(result).toMatchObject({
       status: "ok",
       received: 0,
@@ -86,38 +100,24 @@ it.each(sources)(
       applied: { mapping: { status: "uncertain" } },
     });
     expect(criteria).toEqual(before);
-    expect(reserve).toHaveBeenCalledExactlyOnceWith(
-      source === "olx" ? "gecko" : "reef",
-      source === "olx" ? 1 : 2,
-    );
+    expect(reserve).toHaveBeenCalledExactlyOnceWith("gecko", 1);
 
     const collect = fetcher.mock.calls.find(([url]) =>
-      url.endsWith(source === "olx" ? "/extract" : "/search"),
+      url.endsWith("/extract"),
     );
     expect(collect).toBeDefined();
     const payload = JSON.parse(String(collect![1]?.body));
-    if (source === "olx") {
-      expect(payload).toEqual({
-        target: "olx.com.br",
-        type: "plp",
-        url: expect.any(String),
-      });
-      const url = new URL(payload.url);
-      expect(url.pathname).toBe(
-        "/autos-e-pecas/carros-vans-e-utilitarios/estado-pr",
-      );
-      expect(url.searchParams.get("q")).toBe("AUDI A4");
-      expect(fetcher).toHaveBeenCalledTimes(3);
-    } else {
-      expect(payload).toEqual({
-        make: "AUDI",
-        model: "A4",
-        location: "pr",
-        page: 1,
-        page_size: 24,
-      });
-      expect(fetcher).toHaveBeenCalledTimes(1);
-    }
+    expect(payload).toEqual({
+      target: "olx.com.br",
+      type: "plp",
+      url: expect.any(String),
+    });
+    const url = new URL(payload.url);
+    expect(url.pathname).toBe(
+      "/autos-e-pecas/carros-vans-e-utilitarios/estado-pr",
+    );
+    expect(url.searchParams.get("q")).toBe("AUDI A4");
+    expect(fetcher).toHaveBeenCalledTimes(3);
     // Canonical IDs are provenance, never invented source filter IDs.
     expect(JSON.stringify(payload)).not.toContain(criteria.catalog!.brandCode);
     expect(JSON.stringify(payload)).not.toContain(criteria.catalog!.modelCode);
@@ -125,8 +125,29 @@ it.each(sources)(
 );
 
 it.each(sources)(
-  "does not turn matching text without a crosswalk into an exact %s result",
+  "keeps an approved %s query separate from unresolved returned-ad identity",
   async (source) => {
+    if (source === "webmotors") {
+      const catalog = catalogSchema.parse(failedSearch.catalog);
+      catalog.evidence.push({
+        id: "synthetic-native-search",
+        url: "https://catalog.test/webmotors/makes_models",
+        retrievedAt: "2026-10-23T00:00:00.000Z",
+        sha256: "0".repeat(64),
+        kind: "catalog",
+      });
+      catalog.queryTargets = [{
+        id: "synthetic-audi-a4-query",
+        source: "webmotors",
+        canonicalBrandId: failedSearch.criteria.catalog.brandCode,
+        canonicalModelId: failedSearch.criteria.catalog.modelCode,
+        sourceBrand: "AUDI",
+        sourceModel: "A4",
+        evidenceId: "synthetic-native-search",
+        status: "confirmed",
+      }];
+      vi.mocked(readVehicleCatalog).mockResolvedValue(catalogSchema.parse(catalog));
+    }
     // Synthetic responses exercise the adapter; these are not live listings.
     listings = [
       source === "olx"
@@ -146,7 +167,7 @@ it.each(sources)(
             listing_id: 1,
             url: "https://www.webmotors.com.br/comprar/audi/a4/synthetic/1",
             make: "AUDI",
-            model: "A4",
+            model: "A4 UNKNOWN",
             title: "AUDI A4",
             year_model: 2018,
             price: 90000,

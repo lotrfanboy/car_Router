@@ -5,8 +5,7 @@ import {
   type VehicleCatalog,
 } from "./vehicle-catalog";
 import { readVehicleCatalog } from "./catalog-store";
-import { normalizeCatalogCriteria } from "./commercial-models";
-import { planSourceQuery } from "./source-query";
+import { planSourceQuery, type SourceQueryMapping } from "./source-query";
 import {
   buildOlxUrl,
   buildOlxStateUrl,
@@ -384,60 +383,127 @@ export function normalizeReef(
     ];
   });
 }
-export async function fetchSource(
-  source: Source,
-  criteria: SearchCriteria,
-  reserve: (provider: string, credits: number) => Promise<void>,
-): Promise<SourceResult> {
-  const start = performance.now(),
-    observedAt = new Date().toISOString(),
-    config = providerConfig(source);
-  const result: SourceResult = {
+function emptySourceResult(source: Source): SourceResult {
+  return {
     source,
     status: "ok",
     message: "",
-    observedAt,
+    observedAt: new Date().toISOString(),
     elapsedMs: 0,
     creditsReserved: 0,
     total: null,
     partial: true,
     listings: [],
   };
+}
+function collectionError(error: unknown) {
+  return error instanceof Error &&
+    /^(Catálogo|Localização|Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
+      error.message,
+    )
+    ? error.message
+    : "Falha na consulta. Tente novamente mais tarde; não houve repetição automática.";
+}
+
+/** Plan once, then execute every approved native model in each selected city. */
+export async function fetchSource(
+  source: Source,
+  input: SearchCriteria,
+  reserve: (provider: string, credits: number) => Promise<void>,
+): Promise<SourceResult> {
+  const start = performance.now();
+  const result = emptySourceResult(source);
+  const config = providerConfig(source);
   if (!config.configured)
     return {
       ...result,
       status: "unconfigured",
       message: config.configurationMessage,
     };
-  const selectedCities = criteria.cities.length
-    ? criteria.cities
-    : criteria.city
-      ? [criteria.city]
-      : [];
-  if (criteria.locationMode === "cities" && selectedCities.length > 1) {
+  try {
+    const catalog = await readVehicleCatalog();
+    const plan = planSourceQuery(catalog, source, input);
+    const criteria = plan.criteria;
+    result.applied = { remote: [], local: [], mapping: plan.mapping };
+    if (!plan.queries.length) throw new Error(plan.mapping.message);
+    const selectedCities = criteria.cities.length
+      ? criteria.cities
+      : criteria.city
+        ? [criteria.city]
+        : [];
+    const locations =
+      criteria.locationMode === "cities" && selectedCities.length > 1
+        ? selectedCities.map((city) => ({ ...criteria, city, cities: [city] }))
+        : [criteria];
+    const jobs = locations.flatMap((scope) =>
+      plan.queries.map((query) => ({
+        criteria: scope,
+        query: {
+          ...query,
+          city: scope.city,
+          cities: scope.cities,
+          locationMode: scope.locationMode,
+        },
+      })),
+    );
     const parts: SourceResult[] = [];
-    for (const city of selectedCities)
+    for (const job of jobs) {
+      // Sequential reservations preserve the existing daily/trial budget guard.
+      // Query labels are already translated; do not re-plan them as local IDs.
       parts.push(
-        await fetchSource(
+        await fetchSingleTarget(
           source,
-          { ...criteria, city, cities: [city] },
+          job.criteria,
+          job.query,
+          catalog,
+          plan.mapping,
+          config,
           reserve,
         ),
       );
+    }
+    const targets = parts.map((part, index) => ({
+      brand: jobs[index].query.brand,
+      model: jobs[index].query.model,
+      city: jobs[index].criteria.city,
+      state: jobs[index].criteria.state,
+      status: part.status,
+      message: part.message,
+      partial: part.partial,
+      received: part.received ?? part.listings.length,
+      total: part.total,
+      creditsReserved: part.creditsReserved,
+      locationCredits: part.locationCredits ?? 0,
+    }));
+    if (parts.length === 1)
+      return {
+        ...parts[0],
+        targets,
+        elapsedMs: Math.round(performance.now() - start),
+      };
     const successful = parts.filter((part) => part.status === "ok");
+    const receivedListings = successful.flatMap((part) => part.listings);
     const listings = [
       ...new Map(
-        successful
-          .flatMap((part) => part.listings)
-          .map((row) => [row.externalId, row]),
+        receivedListings.map((row) => [`${row.source}:${row.externalId}`, row]),
       ).values(),
     ].map((row) => ({ ...row, reasons: eligibility(row, criteria) }));
+    const duplicates = receivedListings.length - listings.length;
+    const partial = parts.some((part) => part.partial || part.status !== "ok");
+    const errors = [
+      ...new Set(
+        parts
+          .filter((part) => part.status !== "ok")
+          .map((part) => part.message),
+      ),
+    ];
+    const coverage = partial
+      ? "Cobertura parcial: há consultas não concluídas ou páginas ainda não recebidas."
+      : "As primeiras páginas recebidas encerraram todos os recortes consultados.";
     return {
       ...result,
       status: successful.length ? "ok" : (parts[0]?.status ?? "error"),
-      message: successful.length
-        ? `${successful.length} de ${parts.length} cidades consultadas. Cada cidade usa uma consulta da fonte.`
-        : (parts[0]?.message ?? "Falha na consulta das cidades."),
+      message: `${successful.length} de ${parts.length} consultas concluídas (${plan.queries.length} modelo(s) da fonte em ${locations.length} recorte(s) de localização). ${coverage}${errors.length ? ` ${errors.join(" ")}` : ""}`,
       elapsedMs: Math.round(performance.now() - start),
       creditsReserved: parts.reduce(
         (sum, part) => sum + part.creditsReserved,
@@ -447,10 +513,9 @@ export async function fetchSource(
         (sum, part) => sum + (part.locationCredits ?? 0),
         0,
       ),
-      total: parts.every((part) => part.total !== null)
-        ? parts.reduce((sum, part) => sum + (part.total ?? 0), 0)
-        : null,
-      partial: parts.some((part) => part.partial || part.status !== "ok"),
+      // Native model/city scopes may overlap; adding totals would overstate inventory.
+      total: null,
+      partial,
       received: parts.reduce(
         (sum, part) => sum + (part.received ?? part.listings.length),
         0,
@@ -463,28 +528,33 @@ export async function fetchSource(
             counts[reason] = (counts[reason] ?? 0) + count;
           return counts;
         },
-        {
-          ...(successful.flatMap((part) => part.listings).length >
-          listings.length
-            ? {
-                "Anúncio repetido entre cidades":
-                  successful.flatMap((part) => part.listings).length -
-                  listings.length,
-              }
-            : {}),
-        },
+        duplicates ? { "Anúncio repetido entre consultas": duplicates } : {},
       ),
       applied: successful[0]?.applied ?? parts[0]?.applied,
+      targets,
       listings,
     };
+  } catch (error) {
+    result.status = "error";
+    result.message = collectionError(error);
   }
+  result.elapsedMs = Math.round(performance.now() - start);
+  return result;
+}
+
+async function fetchSingleTarget(
+  source: Source,
+  criteria: SearchCriteria,
+  query: SearchCriteria,
+  catalog: VehicleCatalog,
+  mapping: SourceQueryMapping,
+  config: ReturnType<typeof providerConfig>,
+  reserve: (provider: string, credits: number) => Promise<void>,
+): Promise<SourceResult> {
+  const start = performance.now();
+  const result = emptySourceResult(source);
+  const observedAt = result.observedAt;
   try {
-    const catalog = await readVehicleCatalog();
-    criteria = normalizeCatalogCriteria(catalog, criteria);
-    const plan = planSourceQuery(catalog, source, criteria);
-    result.applied = { remote: [], local: [], mapping: plan.mapping };
-    if (!plan.query) throw new Error(plan.mapping.message);
-    const { query, trim } = plan;
     const optionalFilters = [
       ...(criteria.yearMin !== null || criteria.yearMax !== null
         ? ["ano"]
@@ -494,41 +564,20 @@ export async function fetchSource(
       ...(criteria.privateOnly ? ["vendedor particular"] : []),
     ];
     result.applied = {
-      mapping: plan.mapping,
+      mapping,
       remote:
         source === "olx"
-          ? criteria.olxUrl
-            ? ["URL salva (filtros próprios da URL)"]
-            : [
-                "marca/modelo (texto)",
-                ...(criteria.version ? ["versão (texto)"] : []),
-                "estado/região",
-                ...(criteria.priceMax !== null ? ["preço máximo"] : []),
-              ]
-          : [
-              "marca",
-              "modelo",
-              "localização",
-              ...optionalFilters,
-              ...(trim ? ["versão"] : []),
-            ],
-      local: [
-        "marca",
-        "modelo",
-        ...(criteria.doors ? ["número de portas"] : []),
-        ...(criteria.catalog?.provider === "carrouter" &&
-        criteria.catalog.configurationCode &&
-        !criteria.doors
-          ? ["configuração do modelo"]
-          : []),
-        "localização",
-        ...(criteria.version ? ["versão"] : []),
-        ...optionalFilters,
-      ],
+          ? [
+              "marca/modelo (texto)",
+              "estado/região",
+              ...(criteria.priceMax !== null ? ["preço máximo"] : []),
+            ]
+          : ["marca", "modelo", "localização", ...optionalFilters],
+      local: ["marca", "modelo", "localização", ...optionalFilters],
     };
     const { db } = await import("./db");
     if (source === "olx") await checkGecko(config.key);
-    let olxUrl = criteria.olxUrl;
+    let olxUrl = "";
     let resolvedRegion: string | null = null;
     let needsVerification = false;
     if (source === "olx" && !olxUrl && criteria.locationMode === "cities") {
@@ -584,7 +633,6 @@ export async function fetchSource(
             {
               make: query.brand,
               model: query.model,
-              ...(trim ? { trim } : {}),
               location:
                 criteria.locationMode === "state"
                   ? criteria.state.toLowerCase()
@@ -675,13 +723,7 @@ export async function fetchSource(
       : "Todos os resultados declarados para este recorte foram recebidos.";
   } catch (error) {
     result.status = "error";
-    result.message =
-      error instanceof Error &&
-      /^(Catálogo|Localização|Fornecedor|Créditos|Limite|Consulta|Custo|A OLX|A Webmotors|Webmotors|Orçamento|Aguarde)/.test(
-        error.message,
-      )
-        ? error.message
-        : "Falha na consulta. Tente novamente mais tarde; não houve repetição automática.";
+    result.message = collectionError(error);
   }
   result.elapsedMs = Math.round(performance.now() - start);
   return result;

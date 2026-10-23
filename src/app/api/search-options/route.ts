@@ -7,6 +7,11 @@ export async function GET(request: NextRequest) {
   try {
     const params = request.nextUrl.searchParams;
     const type = params.get("type");
+    if (type === "versions" || type === "configurations")
+      return NextResponse.json(
+        { error: "Versões são filtradas nos resultados da busca." },
+        { status: 400 },
+      );
     if (type === "cities") {
       const state = params.get("state") ?? "";
       if (!states.includes(state))
@@ -22,15 +27,19 @@ export async function GET(request: NextRequest) {
       if (!response.ok) throw new Error("Catálogo de cidades indisponível.");
       return NextResponse.json(parseCatalogCities(await response.json()));
     }
-    if (
-      !["brands", "models", "versions", "configurations"].includes(type ?? "")
-    )
+    if (!["brands", "models"].includes(type ?? ""))
       return NextResponse.json(
         { error: "Catálogo inválido." },
         { status: 400 },
       );
     const catalog = await readVehicleCatalog();
-    if (!catalog.brands.length)
+    const searchableBrandIds = new Set(
+      (catalog.queryTargets ?? []).map((target) => target.canonicalBrandId),
+    );
+    const searchableModelIds = new Set(
+      (catalog.queryTargets ?? []).map((target) => target.canonicalModelId),
+    );
+    if (!searchableBrandIds.size)
       return NextResponse.json(
         {
           error:
@@ -39,52 +48,14 @@ export async function GET(request: NextRequest) {
         { status: 503 },
       );
     const brand = params.get("brand");
-    const model = params.get("model");
-    if (type !== "brands" && !catalog.brands.some((item) => item.id === brand))
+    if (type !== "brands" && (!brand || !searchableBrandIds.has(brand)))
       return NextResponse.json({ error: "Marca inválida." }, { status: 400 });
-    if (
-      (type === "versions" || type === "configurations") &&
-      !catalog.models.some(
-        (item) => item.id === model && item.brandId === brand,
-      )
-    )
-      return NextResponse.json(
-        { error: "Modelo não pertence à marca." },
-        { status: 400 },
-      );
-    const selectedModel = catalog.models.find(
-      (item) => item.id === model && item.brandId === brand,
-    );
-    if (type === "configurations")
-      return NextResponse.json(
-        (selectedModel?.configurations ?? []).map((item) => ({
-          code: item.id,
-          name: item.name,
-          doors: item.doors,
-          provider: "carrouter",
-          revision: catalog.revision,
-        })),
-      );
-    const configuration = params.get("configuration");
-    if (
-      configuration &&
-      !selectedModel?.configurations?.some((item) => item.id === configuration)
-    )
-      return NextResponse.json(
-        { error: "Configuração não pertence ao modelo." },
-        { status: 400 },
-      );
     const rows =
       type === "brands"
-        ? catalog.brands
-        : type === "models"
-          ? catalog.models.filter((item) => item.brandId === brand)
-          : catalog.versions.filter(
-              (item) =>
-                item.modelId === model &&
-                (!configuration ||
-                  item.configurationIds?.includes(configuration)),
-            );
+        ? catalog.brands.filter((item) => searchableBrandIds.has(item.id))
+        : catalog.models.filter(
+            (item) => item.brandId === brand && searchableModelIds.has(item.id),
+          );
     return NextResponse.json(
       rows
         .map((item) => catalogOption(item, catalog.revision))

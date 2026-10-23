@@ -1,0 +1,1093 @@
+{
+  "provenance": "Already authorized real provider validations, 2026-10-23. Public identity fields only; no contacts. Responses are sanitized snapshots, not full listing payloads. No test performs HTTP.",
+  "operations": [
+    {
+      "id": "search-catalog-20261023:validation:gecko:camaro",
+      "source": "olx",
+      "provider": "gecko",
+      "expectedFamily": "Camaro",
+      "credits": 1,
+      "observedAt": "2026-10-23T17:56:32.527Z",
+      "sha256": "819c4afda6cc36e830c3ba8296ace79b79d19923dc5e29668920c6214bb19afb",
+      "bytes": 8457,
+      "request": {
+        "target": "olx.com.br",
+        "type": "plp",
+        "url": "https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-pr?q=CHEVROLET+Camaro&sf=1"
+      },
+      "response": {
+        "received": 30,
+        "total": 30,
+        "records": [
+          {
+            "id": "1540979878",
+            "url": "https://pr.olx.com.br/regiao-de-ponta-grossa-e-guarapuava/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2024-1540979878",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1535985972",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2014-1535985972",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544537729",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-z-28-targa-conv-5-7-1994-1544537729",
+            "brand": "Chevrolet",
+            "model": "Camaro Z-28 Targa/conv. 5.7",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1524407692",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2014-1524407692",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545447995",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2014-1545447995",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544684418",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-conversivel-6-2-v8-16v-2019-1544684418",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Conversível 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544565010",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2012-1544565010",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544429796",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1544429796",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544285132",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1544285132",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1543925109",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1543925109",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1543920155",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2011-1543920155",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1384607835",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1384607835",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1533944424",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2011-1533944424",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1542529258",
+            "url": "https://pr.olx.com.br/regiao-de-ponta-grossa-e-guarapuava/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2011-1542529258",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1537865294",
+            "url": "https://pr.olx.com.br/regiao-de-francisco-beltrao-e-pato-branco/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2011-1537865294",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1540802099",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2012-1540802099",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1466931510",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2024-1466931510",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1531235460",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1531235460",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1510723032",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2014-1510723032",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1512030589",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2013-1512030589",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1536653384",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2012-1536653384",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1536118570",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-collection-6-2-v8-16v-2024-1536118570",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Collection 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1377418191",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2012-1377418191",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1535678980",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2014-1535678980",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1524110733",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-collection-6-2-v8-16v-2024-1524110733",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Collection 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1532285185",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-conversivel-6-2-v8-16v-2014-1532285185",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Conversível 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1532130946",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2024-1532130946",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1531157997",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-6-2-v8-16v-2012-1531157997",
+            "brand": "Chevrolet",
+            "model": "Camaro SS 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1531090893",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-collection-6-2-v8-16v-2024-1531090893",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Collection 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1530347972",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-camaro-ss-collection-6-2-v8-16v-2024-1530347972",
+            "brand": "Chevrolet",
+            "model": "Camaro SS Collection 6.2 V8 16V",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-catalog-20261023:validation:gecko:celta",
+      "source": "olx",
+      "provider": "gecko",
+      "expectedFamily": "Celta",
+      "credits": 1,
+      "observedAt": "2026-10-23T17:56:34.230Z",
+      "sha256": "65a8c461e1908857190f79f264b87010402ffcd4b5fc8f42249e6960a7aa5866",
+      "bytes": 15673,
+      "request": {
+        "target": "olx.com.br",
+        "type": "plp",
+        "url": "https://www.olx.com.br/autos-e-pecas/carros-vans-e-utilitarios/estado-pr?q=CHEVROLET+CELTA&sf=1"
+      },
+      "response": {
+        "received": 50,
+        "total": 215,
+        "records": [
+          {
+            "id": "1546922239",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2009-1546922239",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545015640",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1545015640",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546894977",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2003-1546894977",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546848276",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-5p-2007-1546848276",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546831253",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-1-0-mpfi-vhc-8v-5p-2011-1546831253",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/ Super 1.0 MPFI VHC 8V 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546822466",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2014-1546822466",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546810276",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-super-1-0-mpfi-8v-flexpower-3p-2007-1546810276",
+            "brand": "Chevrolet",
+            "model": "Celta Super 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546706740",
+            "url": "https://pr.olx.com.br/regiao-de-francisco-beltrao-e-pato-branco/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-1-0-mpfi-8v-flexpower-3p-2011-1546706740",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546677378",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2007-1546677378",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546665820",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-1-0-mpfi-8v-flexpower-3p-2011-1546665820",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1543910064",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2013-1543910064",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1537568257",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2010-1537568257",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545562221",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1545562221",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546589597",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2006-1546589597",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546568457",
+            "url": "https://pr.olx.com.br/regiao-de-ponta-grossa-e-guarapuava/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2013-1546568457",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544112423",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-5p-2012-1544112423",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546561643",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2011-1546561643",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1512859999",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-5p-2012-1512859999",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546536581",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1546536581",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1535989082",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2013-1535989082",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546530992",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-5p-2010-1546530992",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546530681",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-1-0-mpfi-vhc-8v-3p-2005-1546530681",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit 1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546530105",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2011-1546530105",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546271380",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2014-1546271380",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546514561",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2011-1546514561",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546394229",
+            "url": "https://pr.olx.com.br/regiao-de-francisco-beltrao-e-pato-branco/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2013-1546394229",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1534023887",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2012-1534023887",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544560567",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2016-1544560567",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546378041",
+            "url": "https://pr.olx.com.br/regiao-de-ponta-grossa-e-guarapuava/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-1-0-mpfi-vhc-8v-5p-2013-1546378041",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/ Super 1.0 MPFI VHC 8V 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546364650",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2009-1546364650",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546358576",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2008-1546358576",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1497291141",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2015-1497291141",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546334512",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-1-0-mpfi-vhc-8v-5p-2013-1546334512",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/ Super 1.0 MPFI VHC 8V 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546328070",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2013-1546328070",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546325339",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-1-0-mpfi-vhc-8v-5p-2016-1546325339",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit 1.0 MPFI VHC 8V 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544493420",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2014-1544493420",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546311980",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2008-1546311980",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546309864",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2001-1546309864",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1544468786",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-1-0-mpfi-vhc-8v-3p-2009-1544468786",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit 1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546276043",
+            "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2012-1546276043",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546207728",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2004-1546207728",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546206738",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2012-1546206738",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546196446",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-super-1-0-mpfi-8v-flexpower-5p-2013-1546196446",
+            "brand": "Chevrolet",
+            "model": "Celta Super 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546132389",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2014-1546132389",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546131644",
+            "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2014-1546131644",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1546063515",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2005-1546063515",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545992579",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-5p-2013-1545992579",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545979233",
+            "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-spirit-lt-1-0-mpfi-8v-flexp-5p-2013-1545979233",
+            "brand": "Chevrolet",
+            "model": "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545957346",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-life-ls-1-0-mpfi-8v-flexpower-3p-2011-1545957346",
+            "brand": "Chevrolet",
+            "model": "Celta Life/ LS 1.0 MPFI 8V Flexpower 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          {
+            "id": "1545949919",
+            "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/chevrolet-celta-1-0-super-n-piq-1-0-mpfi-vhc-8v-3p-2002-1545949919",
+            "brand": "Chevrolet",
+            "model": "Celta 1.0/super/n.piq.1.0 MPFI VHC 8V 3P",
+            "version": null,
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-catalog-20261023:validation:reef:camaro",
+      "source": "webmotors",
+      "provider": "reef",
+      "expectedFamily": "Camaro",
+      "credits": 2,
+      "observedAt": "2026-10-23T17:56:46.102Z",
+      "sha256": "1549015a5044b5d164e6062425b377abae54bd1f6e69b18c5c8ee3fec3c81719",
+      "bytes": 2747,
+      "request": {
+        "make": "CHEVROLET",
+        "model": "CAMARO",
+        "location": "pr",
+        "page": 1,
+        "page_size": 10
+      },
+      "response": {
+        "received": 10,
+        "total": 25,
+        "records": [
+          {
+            "id": 80858768,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2014/80858768",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 80524725,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2023-2024/80524725",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 79607407,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-collection-edition-automatico/2-portas/2023-2024/79607407",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS COLLECTION EDITION AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 379574
+          },
+          {
+            "id": 81291999,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2014/81291999",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 79346663,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-ss-coupe-v8-gasolina-2p-automatico/2-portas/2012-2013/79346663",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 SS COUPÉ V8 GASOLINA 2P AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 343955
+          },
+          {
+            "id": 79755438,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2012/79755438",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 81185834,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-ss-coupe-v8-gasolina-2p-automatico/2-portas/2012-2013/81185834",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 SS COUPÉ V8 GASOLINA 2P AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 343955
+          },
+          {
+            "id": 76934279,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2013-2014/76934279",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 80740800,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-automatico/2-portas/2023-2024/80740800",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 342247
+          },
+          {
+            "id": 77152462,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/camaro/62-v8-gasolina-ss-collection-edition-automatico/2-portas/2023-2024/77152462",
+            "brand": "CHEVROLET",
+            "model": "CAMARO",
+            "version": "6.2 V8 GASOLINA SS COLLECTION EDITION AUTOMÁTICO",
+            "brandId": 2,
+            "modelId": 2089,
+            "versionId": 379574
+          }
+        ]
+      }
+    },
+    {
+      "id": "search-catalog-20261023:validation:reef:celta",
+      "source": "webmotors",
+      "provider": "reef",
+      "expectedFamily": "Celta",
+      "credits": 2,
+      "observedAt": "2026-10-23T17:56:48.296Z",
+      "sha256": "0242a95edbac588f32640aba8d233ecdde3f1cc90d80f611a78f4e1f672acc50",
+      "bytes": 2601,
+      "request": {
+        "make": "CHEVROLET",
+        "model": "CELTA",
+        "location": "pr",
+        "page": 1,
+        "page_size": 10
+      },
+      "response": {
+        "received": 10,
+        "total": 76,
+        "records": [
+          {
+            "id": 81460340,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2011-2012/81460340",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 81222711,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2015-2016/81222711",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 81196690,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2015/81196690",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 70157919,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2015/70157919",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 81271604,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-life-8v-flex-2p-manual/2-portas/2009/81271604",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LIFE 8V FLEX 2P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 339976
+          },
+          {
+            "id": 75014208,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2013-2014/75014208",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 77174567,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2013-2014/77174567",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 77516142,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-life-8v-flex-2p-manual/2-portas/2009/77516142",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LIFE 8V FLEX 2P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 339976
+          },
+          {
+            "id": 80890868,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2012/80890868",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          },
+          {
+            "id": 81495280,
+            "url": "https://www.webmotors.com.br/comprar/chevrolet/celta/10-mpfi-lt-8v-flex-4p-manual/4-portas/2014-2015/81495280",
+            "brand": "CHEVROLET",
+            "model": "CELTA",
+            "version": "1.0 MPFI LT 8V FLEX 4P MANUAL",
+            "brandId": 2,
+            "modelId": 1143,
+            "versionId": 343629
+          }
+        ]
+      }
+    }
+  ]
+}
