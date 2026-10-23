@@ -94,6 +94,25 @@ it("keeps reviewed aliases brand-scoped and unambiguous", () => {
     );
 });
 
+it("exposes BMW 320i once as a search model, independently of OLX descriptions", () => {
+  const catalog = mergeSearchCatalog(
+    emptyCatalog,
+    nativeSnapshot as NativeSearchCatalogSnapshot,
+  );
+  const brand = catalog.brands.find((row) => row.name === "BMW")!;
+  const models = catalog.models.filter(
+    (row) => row.brandId === brand.id && modelLabelKey(row.name) === "320i",
+  );
+  expect(models).toHaveLength(1);
+  expect(
+    catalog.queryTargets?.filter(
+      (row) =>
+        row.canonicalBrandId === brand.id &&
+        row.canonicalModelId === models[0].id,
+    ),
+  ).toHaveLength(1);
+});
+
 it.each([
   ["AUDI", "A4 Avant", "A4"],
   ["AUDI", "A5 Cabriolet", "A5"],

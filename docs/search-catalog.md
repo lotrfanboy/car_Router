@@ -97,7 +97,7 @@ IDs de outros produtos OLX, como um catálogo de publicação de anúncios, não
 
 ## Versão somente nos resultados
 
-O formulário de coleta contém marca/modelo e os demais critérios comerciais existentes. Não possui campo Configuração nem seletor de versão para o fornecedor. A área dos resultados apresenta **Versão nos resultados**.
+O formulário de coleta contém marca/modelo e os demais critérios comerciais existentes. Não possui campo Configuração nem seletor de versão para o fornecedor. **Versão nos resultados** fica na área **O que você procura?**, logo depois de marca/modelo; fica indisponível até haver anúncios carregados. Sua posição no formulário não altera o contrato de coleta: a seleção não é enviada a nenhuma fonte nem salva como critério remoto.
 
 `src/lib/result-facets.ts` calcula as opções a partir de todos os anúncios da execução carregada (`currentRows`), antes de aplicar esse filtro e de dividir a exibição em confirmados, incertos ou incompatíveis. O filtro não usa apenas os primeiros cartões visíveis.
 
@@ -106,7 +106,7 @@ O formulário de coleta contém marca/modelo e os demais critérios comerciais e
 - **Não informada** aparece quando há registros sem versão identificável. Não se deduz versão a partir do título.
 - A versão explicitamente recebida da origem tem prioridade. Diferenças cosméticas de caixa, espaços e espaços em torno de hífens podem compartilhar uma opção.
 - Motor, transmissão, números significativos e termos como conversível não são removidos. `A-8` e `A-10`, por exemplo, permanecem diferentes.
-- Uma descrição completa OLX usada para refinar os resultados é identificada como **descrição OLX**, separada de uma versão explicitamente recebida. Ela não vira, por esse motivo, uma equivalência técnica com Webmotors.
+- Descrições completas OLX ficam agrupadas em **Descrições OLX** no seletor principal. Um segundo seletor aparece ao abrir esse grupo e permite refinar pela descrição específica. Repetições consecutivas do modelo são retiradas apenas do rótulo local (`320I 320i A 2.0…` aparece como `320i A 2.0…`); uma ocorrência do modelo permanece, para não ocultar nomes distintos como `Corolla Cross`. O nome original permanece no anúncio. Diferenças técnicas ou de acabamento não são fundidas por inferência, e descrições OLX não viram equivalências técnicas com Webmotors.
 - Grupos pertencentes a famílias diferentes não se misturam só porque sua versão possui a mesma grafia.
 
 O estado é local e temporário, associado à execução carregada. Outra busca/execução volta para Todas as versões. A troca não faz HTTP, não reserva crédito, não cria `SearchRun`, não salva um novo critério e não modifica dados de anúncios.

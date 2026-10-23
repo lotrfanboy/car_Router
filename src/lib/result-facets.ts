@@ -1,7 +1,13 @@
 import type { Listing } from "./discovery";
 
 export const unknownVersionFacet = "unknown";
-export type VersionFacet = { value: string; label: string; count: number };
+export const olxDescriptionsFacet = "olx-descriptions";
+export type VersionFacet = {
+  value: string;
+  label: string;
+  count: number;
+  kind: "version" | "olx-description" | "unknown";
+};
 
 // Presentation grouping only: this key never establishes a technical identity,
 // changes a provider query, or decides whether two cars are comparable in price.
@@ -14,6 +20,32 @@ const labelKey = (value: string) =>
     .replace(/\s*-\s*/g, "-");
 const label = (value: string | null | undefined) =>
   value?.trim().replace(/\s+/g, " ") ?? "";
+const escapePattern = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// OLX sometimes repeats the catalog model in its descriptive field (for
+// example "320I 320i A 2.0..."). Keep one model name so a distinct model
+// suffix (such as Corolla Cross) is never hidden by this presentation rule.
+function olxDescription(row: Listing, description: string) {
+  let remaining = description;
+  if (!row.model) return remaining;
+  const prefixFor = (name: string) =>
+    new RegExp(
+      `^${escapePattern(label(name))}(?=$|[\\s·:/-])(?:[\\s·:/-]+)?`,
+      "iu",
+    );
+  const modelPrefix = prefixFor(row.model);
+  if (row.brand) {
+    const withoutBrand = remaining.replace(prefixFor(row.brand), "").trim();
+    if (modelPrefix.test(withoutBrand)) remaining = withoutBrand;
+  }
+  while (modelPrefix.test(remaining)) {
+    const withoutOne = remaining.replace(modelPrefix, "").trim();
+    if (!modelPrefix.test(withoutOne)) break;
+    remaining = withoutOne;
+  }
+  return labelKey(remaining) === labelKey(row.model) ? "" : remaining;
+}
 
 function versionPresentation(row: Listing) {
   const sourceDescription = label(row.original?.model ?? row.sourceModel);
@@ -26,9 +58,14 @@ function versionPresentation(row: Listing) {
         !!sourceDescription &&
         labelKey(sourceDescription) !== labelKey(row.model ?? "")));
   const version = inferredDescription
-    ? sourceDescription || explicitVersion
+    ? olxDescription(row, sourceDescription) || explicitVersion
     : explicitVersion;
-  if (!version) return { value: unknownVersionFacet, label: "Não informada" };
+  if (!version)
+    return {
+      value: unknownVersionFacet,
+      label: "Não informada",
+      kind: "unknown" as const,
+    };
   const engine = label(row.engine);
   const transmission = label(row.transmission);
   const scope = [
@@ -45,7 +82,10 @@ function versionPresentation(row: Listing) {
       inferredDescription ? "olx-description" : "version",
       labelKey(description),
     ]),
-    label: inferredDescription ? `${description} · descrição OLX` : description,
+    label: description,
+    kind: inferredDescription
+      ? ("olx-description" as const)
+      : ("version" as const),
   };
 }
 
@@ -79,16 +119,20 @@ export function resultVersionFacets(rows: Listing[]): VersionFacet[] {
   const labels = new Map<string, number>();
   for (const option of options)
     labels.set(
-      labelKey(option.label),
-      (labels.get(labelKey(option.label)) ?? 0) + 1,
+      `${option.kind}:${labelKey(option.label)}`,
+      (labels.get(`${option.kind}:${labelKey(option.label)}`) ?? 0) + 1,
     );
   return options.map(({ scope, ...option }) =>
-    (labels.get(labelKey(option.label)) ?? 0) <= 1
+    (labels.get(`${option.kind}:${labelKey(option.label)}`) ?? 0) <= 1
       ? option
       : { ...option, label: `${option.label} · ${scope}` },
   );
 }
 
 export function matchesResultVersion(row: Listing, selected: string) {
-  return !selected || versionPresentation(row).value === selected;
+  if (!selected) return true;
+  const presented = versionPresentation(row);
+  return selected === olxDescriptionsFacet
+    ? presented.kind === "olx-description"
+    : presented.value === selected;
 }

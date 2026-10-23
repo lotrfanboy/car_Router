@@ -37,6 +37,10 @@
   font-size: 12px;
   font-weight: 500;
 }
+.discovery-layout .result-version-field {
+  width: 100%;
+  min-width: 0;
+}
 .discovery-layout input:not([type="checkbox"]),
 .discovery-layout select {
   width: 100%;

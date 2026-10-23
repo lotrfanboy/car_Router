@@ -2,6 +2,7 @@ import { expect, it } from "vitest";
 import type { Listing } from "../src/lib/discovery";
 import {
   matchesResultVersion,
+  olxDescriptionsFacet,
   resultVersionFacets,
   unknownVersionFacet,
 } from "../src/lib/result-facets";
@@ -88,6 +89,7 @@ it("offers unknown versions and does not infer a trim from title or missing fiel
     value: unknownVersionFacet,
     label: "Não informada",
     count: 1,
+    kind: "unknown",
   });
   expect(
     rows
@@ -97,21 +99,26 @@ it("offers unknown versions and does not infer a trim from title or missing fiel
   expect(rows.filter((row) => matchesResultVersion(row, ""))).toEqual(rows);
 });
 
-it("keeps inferred OLX descriptions separate from explicit portal versions", () => {
+it("keeps compact OLX descriptions separate from explicit portal versions", () => {
   const rows = [
     listing("olx", {
       source: "olx",
+      model: "Celta",
       version: "Celta Spirit 1.0",
       sourceModel: "Celta Spirit 1.0",
       versionOrigin: "inferred",
     }),
-    listing("explicit", { version: "Celta Spirit 1.0" }),
+    listing("explicit", { model: "Celta", version: "Celta Spirit 1.0" }),
   ];
   const facets = resultVersionFacets(rows);
   expect(facets).toHaveLength(2);
+  expect(facets.some((facet) => facet.label === "Celta Spirit 1.0")).toBe(true);
+  expect(facets.find((facet) => facet.label === "Celta Spirit 1.0")?.kind).toBe(
+    "olx-description",
+  );
   expect(
-    facets.some((facet) => facet.label === "Celta Spirit 1.0 · descrição OLX"),
-  ).toBe(true);
+    rows.filter((row) => matchesResultVersion(row, olxDescriptionsFacet)),
+  ).toHaveLength(1);
 });
 
 it("uses all collected rows before filtering and counts repeated source IDs only once", () => {
@@ -138,10 +145,80 @@ it("offers a complete OLX source description without inventing a technical trim"
   });
   const before = structuredClone(row);
   expect(resultVersionFacets([row])[0].label).toBe(
-    "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P · descrição OLX",
+    "Celta Spirit/ LT 1.0 MPFI 8V Flexp. 5P",
   );
   expect(row).toEqual(before);
   expect(resultVersionFacets([{ ...row, sourceModel: "Celta" }])[0].value).toBe(
     unknownVersionFacet,
   );
+});
+
+it("removes repeated BMW model names and merges only equal OLX descriptions", () => {
+  const rows = [
+    listing("olx-repeat", {
+      source: "olx",
+      brand: "BMW",
+      model: "320i",
+      version: null,
+      sourceModel: "320I 320i A 2.0 TB M Sport",
+      identity: { brandId: "bmw", modelId: "320i" },
+      transmission: "Automático",
+    }),
+    listing("olx-single", {
+      source: "olx",
+      brand: "BMW",
+      model: "320i",
+      version: null,
+      sourceModel: "320i A 2.0 TB M Sport",
+      identity: { brandId: "bmw", modelId: "320i" },
+      transmission: "Automático",
+    }),
+    listing("olx-other-trim", {
+      source: "olx",
+      brand: "BMW",
+      model: "320i",
+      version: null,
+      sourceModel: "320I A 2.0 TB Sport",
+      identity: { brandId: "bmw", modelId: "320i" },
+      transmission: "Automático",
+    }),
+  ];
+  const before = structuredClone(rows);
+  const facets = resultVersionFacets(rows);
+  expect(facets).toHaveLength(2);
+  expect(
+    facets.find((facet) => facet.label === "320i A 2.0 TB M Sport · Automático")
+      ?.count,
+  ).toBe(2);
+  expect(
+    facets.find((facet) => facet.label === "320I A 2.0 TB Sport · Automático")
+      ?.count,
+  ).toBe(1);
+  expect(
+    rows.filter((row) => matchesResultVersion(row, facets[0].value)),
+  ).toHaveLength(2);
+  expect(rows).toEqual(before);
+});
+
+it("keeps meaningful suffixes and does not strip an embedded model name", () => {
+  const rows = [
+    listing("cross", {
+      source: "olx",
+      model: "Corolla",
+      version: null,
+      sourceModel: "Corolla Cross 2.0",
+      identity: { brandId: "toyota", modelId: "corolla" },
+    }),
+    listing("embedded", {
+      source: "olx",
+      model: "Ka",
+      version: null,
+      sourceModel: "Kardian 1.0",
+      identity: { brandId: "ford", modelId: "ka" },
+    }),
+  ];
+  expect(resultVersionFacets(rows).map((facet) => facet.label)).toEqual([
+    "Corolla Cross 2.0",
+    "Kardian 1.0",
+  ]);
 });

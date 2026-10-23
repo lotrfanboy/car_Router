@@ -12,7 +12,11 @@ import {
   type Source,
 } from "@/lib/discovery";
 import { sortListings } from "@/lib/listing-comparison";
-import { matchesResultVersion, resultVersionFacets } from "@/lib/result-facets";
+import {
+  matchesResultVersion,
+  olxDescriptionsFacet,
+  resultVersionFacets,
+} from "@/lib/result-facets";
 import { states } from "@/lib/vehicle";
 import { ListingCard, observedWhen } from "./listing-card";
 import { SearchCombobox, type SearchOption } from "./search-combobox";
@@ -292,8 +296,16 @@ export function SearchWorkspace({
     () => resultVersionFacets(currentRows),
     [currentRows],
   );
+  const olxFacets = versionFacets.filter(
+    (option) => option.kind === "olx-description",
+  );
   const selectedVersion =
     versionFilter?.runId === run?.id ? (versionFilter?.value ?? "") : "";
+  const selectedVersionGroup = olxFacets.some(
+    (option) => option.value === selectedVersion,
+  )
+    ? olxDescriptionsFacet
+    : selectedVersion;
   const visibleRows = useMemo(
     () =>
       currentRows.filter((row) => matchesResultVersion(row, selectedVersion)),
@@ -632,6 +644,75 @@ export function SearchWorkspace({
                   : brandCatalog.error
                     ? "Catálogo estruturado indisponível. A entrada manual é temporária enquanto a fonte é definida."
                     : "Marca e modelo usam relações do catálogo importado. Trocar opções não consulta anúncios."}
+              </p>
+              <label className="result-version-field">
+                Versão nos resultados
+                <select
+                  name="resultVersion"
+                  value={selectedVersionGroup}
+                  disabled={!run}
+                  onChange={(event) =>
+                    setVersionFilter({
+                      runId: run!.id,
+                      value: event.target.value,
+                    })
+                  }
+                >
+                  <option value="">
+                    Todas as versões (
+                    {versionFacets.reduce(
+                      (sum, option) => sum + option.count,
+                      0,
+                    )}
+                    )
+                  </option>
+                  {versionFacets
+                    .filter((option) => option.kind !== "olx-description")
+                    .map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label} ({option.count})
+                      </option>
+                    ))}
+                  {olxFacets.length > 0 && (
+                    <option value={olxDescriptionsFacet}>
+                      Descrições OLX (
+                      {olxFacets.reduce((sum, option) => sum + option.count, 0)}
+                      )
+                    </option>
+                  )}
+                </select>
+              </label>
+              {selectedVersionGroup === olxDescriptionsFacet && (
+                <label className="result-version-field">
+                  Detalhar descrição OLX
+                  <select
+                    value={selectedVersion}
+                    onChange={(event) =>
+                      setVersionFilter({
+                        runId: run!.id,
+                        value: event.target.value,
+                      })
+                    }
+                  >
+                    <option value={olxDescriptionsFacet}>
+                      Todas as descrições OLX
+                    </option>
+                    {olxFacets.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label} ({option.count})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <p className="discovery-help muted">
+                {run
+                  ? "Filtra somente os anúncios da consulta exibida, sem nova coleta ou consumo de créditos."
+                  : "As versões aparecem após receber anúncios; selecionar uma versão não consulta as fontes."}
+                {run?.sources.some(
+                  (source) => source.status === "ok" && source.partial,
+                ) &&
+                  " A consulta tem cobertura parcial; uma versão ausente pode existir na fonte."}
               </p>
               <div className="form-grid two vehicle-year-row">
                 <label>
@@ -1021,43 +1102,6 @@ export function SearchWorkspace({
                   de {observedWhen(run.createdAt)}.
                 </p>
               )}
-              <div className="results-controls">
-                <label>
-                  Versão nos resultados
-                  <select
-                    name="resultVersion"
-                    value={selectedVersion}
-                    onChange={(event) =>
-                      setVersionFilter({
-                        runId: run.id,
-                        value: event.target.value,
-                      })
-                    }
-                  >
-                    <option value="">
-                      Todas as versões (
-                      {versionFacets.reduce(
-                        (sum, option) => sum + option.count,
-                        0,
-                      )}
-                      )
-                    </option>
-                    {versionFacets.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label} ({option.count})
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <p className="discovery-help muted">
-                Filtra somente os anúncios recebidos nesta consulta, sem nova
-                coleta ou consumo de créditos.
-                {run.sources.some(
-                  (source) => source.status === "ok" && source.partial,
-                ) &&
-                  " Há páginas ou resultados ainda não coletados; uma versão ausente aqui pode existir na fonte."}
-              </p>
               <div className="results-controls">
                 <h2>
                   {candidates.length}{" "}
