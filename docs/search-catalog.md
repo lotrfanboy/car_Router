@@ -245,7 +245,7 @@ As contagens abaixo vêm do snapshot real e da [auditoria completa da junção](
 | Créditos do lote, incluindo aquisição                      | **5 Reef e 2 Gecko**, dentro do teto; cinco operações concluídas, nenhuma interrompida ou repetida                                                                                                                        |
 | Verificação automatizada da entrega                        | **305 testes aprovados**, lint e build de produção concluídos                                                                                                                                                             |
 | Teste de navegador                                         | **Aprovado em 23/10/2026, 18:04:18 UTC**, viewports 1.440 e 390 px; troca de versão com zero HTTP, zero tentativas de fornecedor, sem consumo, overflow ou erros JavaScript; `test-results/commercial-models/report.json` |
-| Commit, deploy e verificação de saúde                      | Pendente da publicação e verificação final da entrega                                                                                                                                                                     |
+| Commit, deploy e verificação de saúde                      | `7dfa1d86b34b17b68194bc338d9d74d83b60a4a2`, direto na `main`; deploy Render `dep-dbdq4kdg1s2s73an2ed0`, `live` às 18:09:51 UTC de 23/10/2026                                                                              |
 
 O snapshot retornou nomes nativos, **sem IDs de marca/modelo**. Os vínculos desta aquisição usam os nomes aceitos no contrato, e nenhum ID externo foi fabricado. O fornecedor declarou um crédito Reef na aquisição; os demais quatro créditos Reef e dois Gecko pertencem às quatro validações. Os 17.953 bytes acima são do artefato sanitizado preservado; não representam o tamanho de transporte informado pelo fornecedor.
 
@@ -279,3 +279,15 @@ O ledger `ProviderSpend` foi conciliado após as cinco operações: **3 operaç�
 Em 23/10/2026, o build de produção foi exercitado com o catálogo técnico completo (63 marcas, 1.113 modelos e 6.112 versões), o snapshot nativo, 30 buscas legadas manuais e 232 anúncios persistidos. Foram 46 requisições locais, com até seis concorrentes, incluindo `/`, `/api/searches` e opções: todas HTTP 200. A página de saúde `/` levou no máximo **561,1 ms** no início; o maior tempo nas 40 requisições após aquecimento foi **126,2 ms**. Nenhum fornecedor foi consultado. Esse teste controla regressões locais; não representa latência garantida do plano Render.
 
 O `WeakMap` do planejador compartilha índices de IDs, famílias e rótulos, inclusive entre buscas manuais antigas. O carregamento do catálogo continua com single-flight e revisão a cada 30 segundos; a resolução não reconstrói as 6.112 versões por anúncio. O teste de complexidade verifica acessos aos índices, evitando depender só de medições de tempo.
+
+## Orçamento operacional no dia da validação
+
+Em 23/10/2026, o limite normal de dez créditos diários por fornecedor já estava atingido antes deste lote. A validação explicitamente autorizada acrescentou cinco créditos Reef e dois Gecko, levando os totais do dia a 15 e 12, respectivamente. Os limites normais e o ledger foram preservados. Novas coletas normais permanecem bloqueadas até a renovação diária em 00:00 UTC (21:00 de Brasília); ler resultados, selecionar marcas/modelos e filtrar versões não gasta créditos. O lote de validação terminou e não é repetido no próximo deploy.
+
+## Publicação
+
+A implementação foi publicada diretamente na `main`, commit [`7dfa1d8`](https://github.com/lotrfanboy/car_Router/commit/7dfa1d86b34b17b68194bc338d9d74d83b60a4a2). O [deploy Render](https://dashboard.render.com/web/srv-dbch2ud9fdbs73cqdsug/deploys/dep-dbdq4kdg1s2s73an2ed0) concluiu o build e ficou `live` às **18:09:51 UTC** de 23/10/2026. O startup validou o banco e não repetiu o lote pago. O registro posterior desta verificação é uma atualização somente documental; não altera o código publicado.
+
+A verificação de produção usa o estado do deploy, o health check configurado em `/`, eventos, logs e métricas do Render. A navegação funcional foi exercitada no build local de produção, e os fornecedores foram consultados no ambiente Render com suas credenciais existentes. O acesso HTTP direto ao domínio publicado não estava disponível no executor desta sessão; não se apresenta o teste local como navegação remota.
+
+Acompanhamento até **18:12:08 UTC** (mais de dois minutos após entrar no ar): nenhum evento de falha/reinício e nenhum log de erro. A instância publicada estava com aproximadamente **99 MB de memória** e **0,0035 CPU** na última amostra; pico de memória observado no início de 124 MB. O ledger permaneceu em cinco créditos Reef e dois Gecko para esta etapa, sem chamada adicional no deploy final. Esses números descrevem a janela observada, não uma garantia de disponibilidade futura.
