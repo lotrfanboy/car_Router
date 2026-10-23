@@ -229,12 +229,68 @@ export type SourceResult = {
   locationCredits?: number;
   total: number | null;
   partial: boolean;
-  applied?: { remote: string[]; local: string[] };
+  applied?: {
+    remote: string[];
+    local: string[];
+    mapping?: {
+      status: "confirmed" | "uncertain" | "incompatible";
+      message: string;
+    };
+  };
   received?: number;
   normalizationDiscards?: Record<string, number>;
   listings: Listing[];
 };
 export type SearchResult = { sources: SourceResult[] };
+
+/** Unknown evidence is reviewable; a known conflict takes precedence over it. */
+export function listingMatchStatus(
+  row: Listing,
+  criteria: SearchCriteria,
+): "confirmed" | "uncertain" | "incompatible" {
+  const selected =
+    criteria.catalog?.provider === "carrouter" ? criteria.catalog : undefined;
+  const knownIdentityConflict = selected
+    ? (!!row.identity?.brandId &&
+        row.identity.brandId !== selected.brandCode) ||
+      (!!selected.modelCode &&
+        ((!!row.identity?.modelId &&
+          row.identity.modelId !== selected.modelCode) ||
+          (row.catalogResolution?.model === "divergent" &&
+            row.catalogResolution.targetModelId === selected.modelCode))) ||
+      (!!selected.versionCode &&
+        !!row.identity?.versionId &&
+        row.identity.versionId !== selected.versionCode)
+    : (!!row.brand &&
+        canonicalBrand(row.brand) !== canonicalBrand(criteria.brand)) ||
+      (!!row.model &&
+        canonicalModel(row.model) !== canonicalModel(criteria.model));
+  const cities = criteria.cities.length
+    ? criteria.cities
+    : criteria.city
+      ? [criteria.city]
+      : [];
+  if (
+    knownIdentityConflict ||
+    (!!row.state && row.state !== criteria.state) ||
+    (criteria.locationMode === "cities" &&
+      !!row.city &&
+      !cities.some((city) => normalized(city) === normalized(row.city!))) ||
+    (row.modelYear !== null &&
+      ((criteria.yearMin !== null && row.modelYear < criteria.yearMin) ||
+        (criteria.yearMax !== null && row.modelYear > criteria.yearMax))) ||
+    (row.priceCents !== null &&
+      (row.priceCents <= 0 ||
+        (criteria.priceMax !== null &&
+          row.priceCents > criteria.priceMax * 100))) ||
+    (row.mileage !== null &&
+      criteria.mileageMax !== null &&
+      row.mileage > criteria.mileageMax) ||
+    (criteria.privateOnly && row.sellerType === "professional")
+  )
+    return "incompatible";
+  return eligibility(row, criteria).length ? "uncertain" : "confirmed";
+}
 
 export function eligibility(row: Listing, s: SearchCriteria) {
   const reasons: string[] = [];
@@ -242,7 +298,14 @@ export function eligibility(row: Listing, s: SearchCriteria) {
   const brandMatches = selected
     ? row.identity?.brandId === selected.brandCode
     : !!row.brand && canonicalBrand(row.brand) === canonicalBrand(s.brand);
-  if (!brandMatches) reasons.push("Marca diferente ou desconhecida");
+  if (!brandMatches)
+    reasons.push(
+      selected
+        ? row.identity?.brandId
+          ? "Marca comprovadamente diferente"
+          : "Marca não classificada"
+        : "Marca diferente ou desconhecida",
+    );
   const modelMatches = selected?.modelCode
     ? row.identity?.modelId === selected.modelCode
     : !!row.model && canonicalModel(row.model) === canonicalModel(s.model);

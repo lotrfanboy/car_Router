@@ -5,6 +5,7 @@ import { Search, SlidersHorizontal, Radio } from "lucide-react";
 import {
   searchSchema,
   criteriaLocation,
+  listingMatchStatus,
   sourceNames,
   type SearchCriteria,
   type SearchResult,
@@ -300,20 +301,15 @@ export function SearchWorkspace({
     run?.sources
       .filter((source) => source.status === "ok")
       .flatMap((source) => source.listings) ?? [];
-  const resultRows = currentRows.filter((row) => !row.reasons.length);
-  const unclassifiedRows = currentRows.filter((row) => {
-    const model = row.catalogResolution?.model;
-    const version = row.catalogResolution?.version;
-    return (
-      model === "unresolved" ||
-      model === "pending" ||
-      model === "ambiguous" ||
-      (!!display?.criteria.version &&
-        (version === "unresolved" ||
-          version === "pending" ||
-          version === "ambiguous"))
-    );
-  });
+  const resultRows = currentRows.filter(
+    (row) => display && listingMatchStatus(row, display.criteria) === "confirmed",
+  );
+  const unclassifiedRows = currentRows.filter(
+    (row) => display && listingMatchStatus(row, display.criteria) === "uncertain",
+  );
+  const incompatibleRows = currentRows.filter(
+    (row) => display && listingMatchStatus(row, display.criteria) === "incompatible",
+  );
   const hasValidComparison = resultRows.some(
     (row) => row.comparison?.status === "valid",
   );
@@ -993,7 +989,10 @@ export function SearchWorkspace({
           )}
           <div className="source-results">
             {sourceRun?.sources.map((s) => (
-              <details key={s.source} open={s.status !== "ok"}>
+              <details
+                key={s.source}
+                open={s.status !== "ok" || s.applied?.mapping?.status === "uncertain"}
+              >
                 <summary>
                   {sourceNames[s.source]} ·{" "}
                   {s.status === "ok"
@@ -1006,37 +1005,35 @@ export function SearchWorkspace({
                   {s.status === "ok"
                     ? ` · ${s.listings.filter((r) => !r.reasons.length).length} candidatos`
                     : ""}
+                  {s.applied?.mapping?.status === "uncertain" &&
+                    " · Correspondência com a fonte incerta"}
                 </summary>
                 <p>{s.message}</p>
                 {s.applied && (
-                  <p>
-                    Enviado à fonte: {s.applied.remote.join(", ")}. Conferência
-                    local dos critérios preenchidos:{" "}
-                    {s.applied.local.join(", ")}.
-                  </p>
+                  <>
+                    <p>
+                      Enviado à fonte: {s.applied.remote.join(", ")}. Conferência
+                      local dos critérios preenchidos:{" "}
+                      {s.applied.local.join(", ")}.
+                    </p>
+                    {s.applied.mapping && <p>{s.applied.mapping.message}</p>}
+                  </>
                 )}
                 <small>
                   {observedWhen(s.observedAt)} ·{" "}
                   {s.received ?? s.listings.length} recebidos ·{" "}
                   {s.listings.filter((row) => !row.reasons.length).length}{" "}
                   aprovados ·{" "}
-                  {s.listings.filter((row) => {
-                    const model = row.catalogResolution?.model;
-                    const version = row.catalogResolution?.version;
-                    return (
-                      model === "unresolved" ||
-                      model === "pending" ||
-                      model === "ambiguous" ||
-                      (!!display?.criteria.version &&
-                        (version === "unresolved" ||
-                          version === "pending" ||
-                          version === "ambiguous"))
-                    );
-                  }).length}{" "}
-                  não classificados ·{" "}
-                  {(s.received ?? s.listings.length) -
-                    s.listings.filter((row) => !row.reasons.length).length}{" "}
-                  com alguma restrição.
+                  {s.listings.filter((row) =>
+                    display && listingMatchStatus(row, display.criteria) === "uncertain",
+                  ).length}{" "}
+                  incertos ·{" "}
+                  {s.listings.filter((row) =>
+                    display && listingMatchStatus(row, display.criteria) === "incompatible",
+                  ).length}{" "}
+                  incompatíveis ·{" "}
+                  {(s.received ?? s.listings.length) - s.listings.length}{" "}
+                  descartados na normalização.
                 </small>
                 <ul aria-label="Descartes por motivo">
                   {Object.entries(
@@ -1054,7 +1051,7 @@ export function SearchWorkspace({
                     </li>
                   ))}
                 </ul>
-                <small>Um anúncio pode ter mais de uma classificação ou restrição.</small>
+                <small>As classificações são separadas; um anúncio pode ter mais de uma restrição.</small>
               </details>
             ))}
           </div>
@@ -1128,12 +1125,14 @@ export function SearchWorkspace({
                 <div className="empty-state">
                   <h2>
                     {run.sources.some((s) => s.status === "ok")
-                      ? "Nenhum candidato neste recorte"
+                      ? "Nenhuma correspondência confirmada neste recorte"
                       : "Busca indisponível"}
                   </h2>
                   <p>
                     {run.sources.some((s) => s.status === "ok")
-                      ? "As fontes que responderam não trouxeram candidatos que atendam a todos os filtros. A cobertura de uma página pode limitar os resultados."
+                      ? unclassifiedRows.length
+                        ? "Há anúncios com correspondência incerta para revisar abaixo. A falta de confirmação do catálogo não significa que o veículo não exista. Todos os filtros continuam sendo conferidos."
+                        : "Nenhum anúncio recebido teve todos os critérios confirmados. A cobertura de uma página pode limitar os resultados; isso não comprova ausência no mercado."
                       : "Nenhuma fonte concluiu a consulta. Confira a configuração e as falhas acima."}
                   </p>
                 </div>
@@ -1143,6 +1142,7 @@ export function SearchWorkspace({
                   key={`${row.source}:${row.externalId}`}
                   listing={row}
                   searchId={display?.searchId}
+                  matchStatus="confirmed"
                 />
               ))}
               {candidates.length > 0 && (
@@ -1156,8 +1156,7 @@ export function SearchWorkspace({
                 <details className="previous-results">
                   <summary>
                     {unclassifiedRows.length} resultado
-                    {unclassifiedRows.length === 1 ? "" : "s"} ainda não
-                    classificado{unclassifiedRows.length === 1 ? "" : "s"}
+                    {unclassifiedRows.length === 1 ? "" : "s"} com correspondência incerta
                   </summary>
                   <p>
                     Estes anúncios continuam visíveis para revisão, mas não
@@ -1168,6 +1167,27 @@ export function SearchWorkspace({
                       key={`unclassified:${row.source}:${row.externalId}`}
                       listing={row}
                       searchId={display?.searchId}
+                      matchStatus="uncertain"
+                    />
+                  ))}
+                </details>
+              )}
+              {incompatibleRows.length > 0 && (
+                <details className="previous-results">
+                  <summary>
+                    {incompatibleRows.length} resultado
+                    {incompatibleRows.length === 1 ? " incompatível" : "s incompatíveis"} com os filtros
+                  </summary>
+                  <p>
+                    Há pelo menos um dado confirmado fora dos critérios selecionados.
+                    Estes anúncios não entram na contagem de candidatos.
+                  </p>
+                  {incompatibleRows.map((row) => (
+                    <ListingCard
+                      key={`incompatible:${row.source}:${row.externalId}`}
+                      listing={row}
+                      searchId={display?.searchId}
+                      matchStatus="incompatible"
                     />
                   ))}
                 </details>

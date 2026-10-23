@@ -99,11 +99,13 @@ export function ListingCard({
   searchId,
   origin,
   onSavedChange,
+  matchStatus,
 }: {
   listing: Listing;
   searchId?: string;
   origin?: ListingOrigin;
   onSavedChange?: (saved: boolean) => void;
+  matchStatus?: "confirmed" | "uncertain" | "incompatible";
 }) {
   const [imageFailed, setImageFailed] = useState(false);
   const path = searchId
@@ -139,6 +141,20 @@ export function ListingCard({
         <h2>
           <Link href={path}>{listing.title}</Link>
         </h2>
+        {matchStatus && (
+          <p className="muted">
+            {matchStatus === "confirmed"
+              ? "Correspondência confirmada"
+              : matchStatus === "uncertain"
+                ? "Correspondência incerta — confira os dados do anúncio"
+                : "Incompatível com os filtros selecionados"}
+          </p>
+        )}
+        {matchStatus && matchStatus !== "confirmed" && listing.reasons.length > 0 && (
+          <ul aria-label="Restrições deste anúncio">
+            {listing.reasons.map((reason) => <li key={reason}>{reason}</li>)}
+          </ul>
+        )}
         <p className="listing-specs">
           {listing.version || "Versão desconhecida"}
           {listing.versionOrigin === "inferred" ? " (inferida)" : ""} ·{" "}

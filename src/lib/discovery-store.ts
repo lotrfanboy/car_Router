@@ -255,7 +255,7 @@ function criteriaKey(
             criteria.catalog?.provider === "carrouter"
               ? criteria.catalog
               : undefined,
-          collectionVersion: 2,
+          collectionVersion: 3,
         }
       : {}),
     name: "",

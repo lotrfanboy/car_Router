@@ -67,6 +67,10 @@ const identityComplete = (row: Listing) =>
   !!row.state &&
   row.modelYear !== null &&
   row.mileage !== null;
+const catalogIdentityUncertain = (row: Listing) =>
+  !!row.catalogResolution &&
+  (row.catalogResolution.model !== "confirmed" ||
+    row.catalogResolution.version !== "confirmed");
 const fingerprint = (row: Listing) =>
   identityComplete(row) && row.city
     ? [
@@ -115,6 +119,12 @@ export function compareListing(
     excludedPossibleDuplicates: 0,
     comparables: [],
   };
+  if (catalogIdentityUncertain(target)) {
+    result.limitations.push(
+      "Correspondência de modelo ou versão ainda não confirmada no catálogo; anúncios incertos não formam uma comparação exata.",
+    );
+    return result;
+  }
   if (!identityComplete(target)) {
     result.limitations.push(
       "Faltam modelo, versão, ano, km ou UF para selecionar semelhantes com segurança.",
@@ -159,10 +169,17 @@ export function compareListing(
     if (
       !validWholeVehiclePrice(row) ||
       !recent(row, now) ||
+      catalogIdentityUncertain(row) ||
       !identityComplete(row)
     )
       return false;
     if (
+      (["brandId", "modelId", "versionId"] as const).some(
+        (field) =>
+          row.identity?.[field] &&
+          target.identity?.[field] &&
+          row.identity[field] !== target.identity[field],
+      ) ||
       !same(row.brand, target.brand) ||
       !same(row.model, target.model) ||
       !same(row.version, target.version) ||

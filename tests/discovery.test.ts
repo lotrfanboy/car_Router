@@ -731,7 +731,7 @@ it("accounts for invalid records, duplicates and eligibility rejections separate
   expect(result.applied?.remote).not.toContain("versão");
 });
 
-it("reports malformed integration data as failure and missing mappings before a billed call", async () => {
+it("reports malformed integration data as failure and invalid catalog identity before a billed call", async () => {
   const { fetchSource } = await import("../src/lib/discovery-providers");
   const fetcher = vi.fn(async () => Response.json({ ok: true, data: {} }));
   vi.stubGlobal("fetch", fetcher);
@@ -754,7 +754,7 @@ it("reports malformed integration data as failure and missing mappings before a 
     reserve,
   );
   expect(result.status).toBe("error");
-  expect(result.message).toContain("sem correspondência");
+  expect(result.message).toContain("incompatível");
   expect(fetcher).not.toHaveBeenCalled();
   expect(reserve).not.toHaveBeenCalled();
 });

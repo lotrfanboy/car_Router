@@ -19,7 +19,9 @@ export function buildOlxUrl(criteria: SearchCriteria, region: string) {
   );
   url.searchParams.set(
     "q",
-    `${catalogBrandSearchName(criteria.brand)} ${criteria.model}`,
+    [catalogBrandSearchName(criteria.brand), criteria.model, criteria.version]
+      .filter(Boolean)
+      .join(" "),
   );
   url.searchParams.set("sf", "1");
   if (criteria.priceMax !== null)
@@ -32,7 +34,9 @@ export function buildOlxStateUrl(criteria: SearchCriteria) {
   );
   url.searchParams.set(
     "q",
-    `${catalogBrandSearchName(criteria.brand)} ${criteria.model}`,
+    [catalogBrandSearchName(criteria.brand), criteria.model, criteria.version]
+      .filter(Boolean)
+      .join(" "),
   );
   url.searchParams.set("sf", "1");
   if (criteria.priceMax !== null)

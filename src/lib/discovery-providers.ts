@@ -1,11 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
 import {
   resolveCatalogVehicle,
-  sourceCatalogName,
   emptyCatalog,
   type VehicleCatalog,
 } from "./vehicle-catalog";
 import { readVehicleCatalog } from "./catalog-store";
+import { planSourceQuery } from "./source-query";
 import {
   buildOlxUrl,
   buildOlxStateUrl,
@@ -465,40 +465,16 @@ export async function fetchSource(
             : {}),
         },
       ),
-      applied: successful[0]?.applied,
+      applied: successful[0]?.applied ?? parts[0]?.applied,
       listings,
     };
   }
   try {
     const catalog = await readVehicleCatalog();
-    const selected =
-      criteria.catalog?.provider === "carrouter" ? criteria.catalog : undefined;
-    const brandEntity = catalog.brands.find(
-      (item) => item.id === selected?.brandCode,
-    );
-    const modelEntity = catalog.models.find(
-      (item) =>
-        item.id === selected?.modelCode && item.brandId === brandEntity?.id,
-    );
-    const versionEntity = catalog.versions.find(
-      (item) =>
-        item.id === selected?.versionCode && item.modelId === modelEntity?.id,
-    );
-    if (
-      selected &&
-      (!sourceCatalogName(brandEntity, source) ||
-        (selected.modelCode && !sourceCatalogName(modelEntity, source)) ||
-        (selected.versionCode && !sourceCatalogName(versionEntity, source)))
-    )
-      throw new Error(
-        "Catálogo sem correspondência confirmada para esta seleção na fonte. Nenhuma coleta de anúncios foi executada nesta fonte.",
-      );
-    const query = {
-      ...criteria,
-      brand: sourceCatalogName(brandEntity, source) ?? criteria.brand,
-      model: sourceCatalogName(modelEntity, source) ?? criteria.model,
-    };
-    const trim = sourceCatalogName(versionEntity, source);
+    const plan = planSourceQuery(catalog, source, criteria);
+    result.applied = { remote: [], local: [], mapping: plan.mapping };
+    if (!plan.query) throw new Error(plan.mapping.message);
+    const { query, trim } = plan;
     const optionalFilters = [
       ...(criteria.yearMin !== null || criteria.yearMax !== null
         ? ["ano"]
@@ -508,12 +484,14 @@ export async function fetchSource(
       ...(criteria.privateOnly ? ["vendedor particular"] : []),
     ];
     result.applied = {
+      mapping: plan.mapping,
       remote:
         source === "olx"
           ? criteria.olxUrl
             ? ["URL salva (filtros próprios da URL)"]
             : [
                 "marca/modelo (texto)",
+                ...(criteria.version ? ["versão (texto)"] : []),
                 "estado/região",
                 ...(criteria.priceMax !== null ? ["preço máximo"] : []),
               ]
