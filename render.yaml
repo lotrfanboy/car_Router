@@ -9,7 +9,7 @@ services:
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
-        value: 24.19.0
+        value: 24.22.1
       - key: DATABASE_URL
         sync: false
       - key: GECKO_API_KEY
