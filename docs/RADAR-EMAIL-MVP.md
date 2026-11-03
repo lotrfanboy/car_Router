@@ -2,6 +2,34 @@
 
 Implementação sobre a main `64c17a5` de 23/10/2026. MVP com destinatário fixo no servidor; não há cadastro nem suporte multiusuário.
 
+## Ajustes locais de 03/11/2026
+
+- A tela `/radares` diferencia configuração incompleta de envio automático
+  desativado. Mostra o último teste e a última entrega confirmada pelo provedor.
+  “Atualizar situação” apenas lê o banco; não chama Resend nem coleta anúncios.
+- O teste é independente de qualquer radar. MECA SP é somente um registro de
+  teste, sem regra especial no fluxo de envio.
+- O script aceita HTTP exclusivamente em `localhost`, `127.0.0.1` ou `[::1]`
+  para testar o servidor local. Fora desses endereços, exige HTTPS. A URL
+  configurada deve apontar ao ambiente que se quer testar; não há troca
+  automática para produção.
+- `node scripts/radar-email-test.mjs --status ID_DA_PREVIA` consulta o estado
+  **desse teste**. Se ele foi aceito, faz somente uma leitura no Resend; não
+  repete o envio nem verifica outras mensagens. Sem permissão de leitura ou
+  confirmação do provedor, conserva `accepted`. A janela de consulta continua
+  sendo de 24 horas desde a criação do registro.
+- Prévias expiradas e testes inexistentes recebem mensagens específicas. O
+  script rejeita argumentos inválidos antes de qualquer chamada; configuração
+  incompleta no servidor encerra o comando com falha.
+- As credenciais do Render não vêm no checkout. No PC, preencha `.env` ou
+  `.env.radar.local`, mantendo as configurações de banco existentes, e reinicie
+  o servidor. O teste requer segredo do operador com 32 caracteres ou mais,
+  mas não requer scheduler ativo nem `RADAR_EMAIL_ENABLED=true`.
+
+Os resultados ao vivo e IDs de deploy descritos abaixo são históricos da
+entrega de 23/10. Estes ajustes são locais; não alteram produção nem comprovam
+envio real.
+
 ## Comportamento
 
 - O único cron é `radar-automotivo-tick` no Supabase CarRouter (`eudfrgjygikirkbaxmcl`): `*/30 * * * *`, POST autenticado em `/api/radars/tick`. O token continua no Vault/servidor. A migração existente de agendamento não foi reaplicada.

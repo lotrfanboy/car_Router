@@ -34,6 +34,39 @@ Para desenvolvimento:
 npm run dev
 ```
 
+### Credenciais no PC
+
+As configurações e chaves do Render não são copiadas pelo Git. Se a busca
+mostrar “Chave Gecko não configurada” ou “Chave Reef não configurada”, acrescente
+os campos de [.env.integrations.example](.env.integrations.example) ao `.env`
+**existente**, preencha as chaves diretamente nesse arquivo e reinicie
+`npm run dev`. Preserve as configurações do banco. Não envie chaves pelo chat
+nem as coloque em variáveis `NEXT_PUBLIC_*`.
+
+Webmotors também exige `REEF_FREE_TRIAL=true`, somente após confirmar os créditos
+promocionais disponíveis. A presença da chave não comprova saldo nem sucesso da
+próxima consulta. A tela Configurações mostra a situação sem consumir créditos.
+
+Para testar e-mail, acrescente os campos de [.env.radar.example](.env.radar.example)
+ao `.env` ou use `.env.radar.local`. Configure a chave Resend, o remetente autorizado,
+o destinatário e um `RADAR_CRON_SECRET` local de ao menos 32 caracteres.
+Use `RADAR_APP_URL=http://127.0.0.1:3000` (ajuste a porta) para apontar ao servidor
+local. Mantenha `RADAR_EMAIL_ENABLED=false` durante o teste. Não é necessário
+ativar o agendador nem cadastrar um radar.
+
+```powershell
+# Cria uma prévia, sem enviar. Revise remetente, destinatário e conteúdo.
+node scripts/radar-email-test.mjs
+# Somente após confirmar o envio da prévia revisada:
+node scripts/radar-email-test.mjs --send ID_DA_PREVIA
+# Consulta a entrega desse teste, sem reenviar nem buscar anúncios:
+node scripts/radar-email-test.mjs --status ID_DA_PREVIA
+```
+
+Em `/radares`, “Atualizar situação” apenas lê os registros de e-mail.
+“Aceito pelo provedor” ainda não confirma entrega. Veja os detalhes em
+[Radar: agendamento e e-mail](docs/RADAR-EMAIL-MVP.md).
+
 Em Linux/macOS, substitua `Copy-Item .env.example .env` por `cp .env.example .env`. O restante é igual. Os comandos de desenvolvimento e produção escutam apenas em **127.0.0.1**, sem publicação na rede.
 
 ## Funcionalidades

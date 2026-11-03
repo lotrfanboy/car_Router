@@ -4,11 +4,17 @@ import { authorizedTick } from "@/lib/radar";
 import {
   previewRadarTestEmail,
   confirmRadarTestEmail,
+  checkRadarTestEmail,
+  RadarEmailError,
 } from "@/lib/radar-email";
 import { apiError } from "@/lib/http";
 export const runtime = "nodejs";
 const input = z.discriminatedUnion("action", [
   z.object({ action: z.literal("preview") }),
+  z.object({
+    action: z.literal("status"),
+    deliveryId: z.string().min(1),
+  }),
   z.object({
     action: z.literal("send"),
     previewId: z.string().min(1),
@@ -23,9 +29,16 @@ export async function POST(request: Request) {
     return NextResponse.json(
       value.action === "preview"
         ? await previewRadarTestEmail()
-        : await confirmRadarTestEmail(value.previewId),
+        : value.action === "status"
+          ? await checkRadarTestEmail(value.deliveryId)
+          : await confirmRadarTestEmail(value.previewId),
     );
   } catch (error) {
+    if (error instanceof RadarEmailError)
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
     return apiError(error);
   }
 }

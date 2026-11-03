@@ -561,6 +561,134 @@ it("does not use a recipient Gmail as sender or disclose the API key in readines
     "offline-only",
   );
 });
+it("shows email readiness separately from automatic sending and exposes only safe test metadata", async () => {
+  configureEmail();
+  vi.stubEnv("RADAR_EMAIL_ENABLED", "false");
+  const preview = await email.previewRadarTestEmail();
+  if (!("id" in preview)) throw new Error("Expected a configured preview");
+  const result = await radar.listRadars();
+  expect(result.infrastructure.emailConfiguration).toMatchObject({
+    configured: true,
+    enabled: false,
+  });
+  expect(result.infrastructure.email).toBe(false);
+  expect(result.emailStatus.latestTest).toMatchObject({
+    id: preview.id,
+    status: "preview",
+    attempts: 0,
+  });
+  expect(result.emailStatus.lastDeliveredAt).toBeNull();
+  expect(JSON.stringify(result.emailStatus)).not.toMatch(
+    /owner@example|offline-only|payload|idempotencyKey/,
+  );
+  expect(fetch).not.toHaveBeenCalled();
+  expect(state.calls).toBe(0);
+});
+it("checks only the requested test delivery without sending, collecting, or enabling automatic email", async () => {
+  configureEmail();
+  vi.stubEnv("RADAR_EMAIL_ENABLED", "false");
+  const preview = await email.previewRadarTestEmail();
+  if (!("id" in preview)) throw new Error("Expected a configured preview");
+  await email.confirmRadarTestEmail(preview.id!);
+  await db.radarEmailDelivery.create({
+    data: {
+      kind: "test",
+      status: "accepted",
+      providerId: "other-message",
+      idempotencyKey: "unrelated-test",
+    },
+  });
+  vi.mocked(fetch).mockClear();
+  vi.mocked(fetch).mockResolvedValue(
+    new Response(
+      JSON.stringify({ id: "offline-message", last_event: "delivered" }),
+    ),
+  );
+  const result = await email.checkRadarTestEmail(preview.id!);
+  expect(result).toMatchObject({
+    status: "delivered",
+    attempts: 1,
+    deliveredAt: expect.any(Date),
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+  expect(vi.mocked(fetch).mock.calls[0][0]).toBe(
+    "https://api.resend.com/emails/offline-message",
+  );
+  expect(vi.mocked(fetch).mock.calls[0][1]?.method).toBeUndefined();
+  expect(
+    await db.radarEmailDelivery.findFirst({
+      where: { providerId: "other-message" },
+    }),
+  ).toMatchObject({ status: "accepted" });
+  expect((await email.radarEmailOverview()).lastDeliveredAt).toEqual(
+    result.deliveredAt,
+  );
+  await email.checkRadarTestEmail(preview.id!);
+  expect(fetch).toHaveBeenCalledTimes(1);
+  expect(email.radarEmailConfiguration().enabled).toBe(false);
+  expect(state.calls).toBe(0);
+  expect(await db.providerSpend.count()).toBe(0);
+});
+it("keeps acceptance unconfirmed when the provider cannot report delivery", async () => {
+  configureEmail();
+  const preview = await email.previewRadarTestEmail();
+  if (!("id" in preview)) throw new Error("Expected a configured preview");
+  await email.confirmRadarTestEmail(preview.id!);
+  vi.mocked(fetch).mockClear();
+  vi.mocked(fetch).mockResolvedValue(new Response(null, { status: 403 }));
+  expect(await email.checkRadarTestEmail(preview.id!)).toMatchObject({
+    status: "accepted",
+    deliveredAt: null,
+    attempts: 1,
+  });
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
+it("reports expired previews and rejects missing tests without any provider call", async () => {
+  configureEmail();
+  const preview = await email.previewRadarTestEmail();
+  if (!("id" in preview)) throw new Error("Expected a configured preview");
+  await db.radarEmailDelivery.update({
+    where: { id: preview.id! },
+    data: { createdAt: new Date(Date.now() - 3600001) },
+  });
+  expect((await email.radarEmailOverview()).latestTest?.status).toBe("expired");
+  expect(await email.checkRadarTestEmail(preview.id!)).toMatchObject({
+    status: "expired",
+    attempts: 0,
+  });
+  await expect(email.confirmRadarTestEmail(preview.id!)).rejects.toMatchObject({
+    status: 409,
+  });
+  await expect(email.checkRadarTestEmail("missing")).rejects.toMatchObject({
+    status: 404,
+  });
+  expect(fetch).not.toHaveBeenCalled();
+});
+it("requires operator authentication for test status and explicit confirmation for sending", async () => {
+  const { POST } = await import("../src/app/api/radars/email-test/route");
+  const request = (body: unknown, authenticated = true) =>
+    new Request("https://app.example.test/api/radars/email-test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(authenticated
+          ? { Authorization: `Bearer ${process.env.RADAR_CRON_SECRET}` }
+          : {}),
+      },
+      body: JSON.stringify(body),
+    });
+  expect(
+    (await POST(request({ action: "status", deliveryId: "missing" }, false)))
+      .status,
+  ).toBe(401);
+  expect(
+    (await POST(request({ action: "send", previewId: "missing" }))).status,
+  ).toBe(400);
+  expect(
+    (await POST(request({ action: "status", deliveryId: "missing" }))).status,
+  ).toBe(404);
+  expect(fetch).not.toHaveBeenCalled();
+});
 it("does not collect a paused or legacy unlimited radar; concurrent ticks claim one bounded execution", async () => {
   const paused = await create({ enabled: false });
   const legacy = await create({ enabled: false, runsRemaining: null });

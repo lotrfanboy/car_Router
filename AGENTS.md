@@ -1,9 +1,10 @@
 ## Fluxo de manutenção deste projeto
 
-Este projeto é um MVP. O GitHub é a fonte de verdade, e as manutenções autorizadas pelo usuário devem ser registradas diretamente na `main` de `lotrfanboy/car_Router`.
+Este projeto é um MVP. Na etapa atual, trabalhar no checkout do PC e fazer commits locais na `main`. O usuário fará o envio para `lotrfanboy/car_Router` no GitHub, salvo pedido explícito para publicar.
 
 - Não criar branches locais ou remotas, worktrees de feature ou pull requests para as manutenções deste projeto, salvo pedido explícito do usuário para mudar esse fluxo.
-- Validar as alterações e fazer o commit diretamente na `main` do GitHub.
+- Validar as alterações e fazer o commit na `main` local. Não executar push automaticamente.
+- Não alterar Render ou Supabase de produção sem pedido explícito. Registros como MECA SP são apenas dados de teste; não criar regras ou dependências específicas para eles.
 - Conferir o estado atual da `main` antes de publicar, preservar alterações concorrentes e nunca usar force-push para sobrescrevê-las.
 - Esta diretriz é específica deste repositório e prevalece sobre preferências genéricas de fluxo com branches e PRs.
 

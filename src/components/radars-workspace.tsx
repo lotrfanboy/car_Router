@@ -8,6 +8,14 @@ import {
 } from "@/lib/discovery";
 import { money } from "@/lib/vehicle";
 import { listingPath, observedWhen } from "./listing-card";
+import {
+  RadarEmailStatus,
+  type RadarEmailConfiguration,
+} from "./radar-email-status";
+import {
+  radarEmailDeliveryLabels,
+  type RadarEmailOverview,
+} from "@/lib/radar-email-status";
 type RadarMode = "new_listings" | "discount";
 type RadarChannel = "in_app" | "email" | "both";
 const channelLabels: Record<RadarChannel, string> = {
@@ -87,6 +95,13 @@ export function RadarsWorkspace({
     [loading, setLoading] = useState(true),
     [missing, setMissing] = useState<string[]>([]),
     [emailReady, setEmailReady] = useState(false),
+    [emailConfiguration, setEmailConfiguration] =
+      useState<RadarEmailConfiguration | null>(null),
+    [emailStatus, setEmailStatus] = useState<RadarEmailOverview>({
+      latestTest: null,
+      lastDeliveredAt: null,
+    }),
+    [refreshing, setRefreshing] = useState(false),
     [formMode, setFormMode] = useState<RadarMode>("new_listings"),
     [formChannel, setFormChannel] = useState<RadarChannel>("in_app"),
     [deleteId, setDeleteId] = useState("");
@@ -102,6 +117,15 @@ export function RadarsWorkspace({
     setRows(data.radars);
     setMissing(data.infrastructure.missing);
     setEmailReady(data.infrastructure.email);
+    setEmailConfiguration(
+      data.infrastructure.emailConfiguration ?? {
+        configured: false,
+        enabled: false,
+      },
+    );
+    setEmailStatus(
+      data.emailStatus ?? { latestTest: null, lastDeliveredAt: null },
+    );
     setSearches((await s.json()).searches);
   }, []);
   useEffect(() => {
@@ -110,6 +134,17 @@ export function RadarsWorkspace({
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [load]);
+  async function refresh() {
+    setRefreshing(true);
+    setError("");
+    try {
+      await load();
+    } catch {
+      setError("Não foi possível atualizar a situação. Tente novamente.");
+    } finally {
+      setRefreshing(false);
+    }
+  }
   async function mutate(
     id: string | undefined,
     body: unknown,
@@ -195,11 +230,13 @@ export function RadarsWorkspace({
           </ul>
         </div>
       )}
-      {!loading && !emailReady && (
-        <p className="pending-setup">
-          E-mail não configurado. Você pode receber avisos aqui no aplicativo; o
-          canal de e-mail não impede esse monitoramento.
-        </p>
+      {!loading && emailConfiguration && (
+        <RadarEmailStatus
+          configuration={emailConfiguration}
+          overview={emailStatus}
+          refreshing={refreshing || busy}
+          onRefresh={() => void refresh()}
+        />
       )}
       {error && (
         <p className="error-box" role="alert">
@@ -309,8 +346,20 @@ export function RadarsWorkspace({
               {!emailReady && formChannel !== "in_app" && (
                 <p className="comparison-pending">
                   {formChannel === "both"
-                    ? "Os avisos ficarão no aplicativo. O e-mail aguarda configuração."
-                    : "O monitoramento por e-mail aguardará a configuração desse canal. Escolha o aplicativo para receber avisos aqui."}
+                    ? emailConfiguration?.configured
+                      ? "Os avisos ficarão no aplicativo enquanto o envio automático de e-mail estiver desativado."
+                      : "Os avisos ficarão no aplicativo. O e-mail aguarda configuração."
+                    : emailConfiguration?.configured
+                      ? "O monitoramento somente por e-mail aguardará a habilitação do envio automático."
+                      : "O monitoramento por e-mail aguardará a configuração desse canal. Escolha o aplicativo para receber avisos aqui."}
+                </p>
+              )}
+              {formChannel !== "in_app" && (
+                <p className="muted">
+                  A primeira coleta cria a base, sem enviar e-mail. Nas
+                  seguintes, o resumo reúne anúncios novos e confirmados para
+                  este radar. Quedas de preço e correspondências incertas ficam
+                  no aplicativo.
                 </p>
               )}
               <label>
@@ -523,16 +572,8 @@ export function RadarsWorkspace({
                   <summary>Resumos por e-mail</summary>
                   {row.emailDeliveries.map((delivery) => (
                     <p key={delivery.id}>
-                      {{
-                        pending: "Resumo pendente",
-                        retry: "Entrega pendente de nova tentativa",
-                        sending: "Solicitando envio",
-                        unknown: "Resultado incerto; conferir no provedor",
-                        accepted:
-                          "Aceito pelo provedor; entrega ainda não confirmada",
-                        delivered: "Entrega confirmada pelo provedor",
-                        failed: "Entrega não concluída; revisar",
-                      }[delivery.status] ?? delivery.status}
+                      {radarEmailDeliveryLabels[delivery.status] ??
+                        delivery.status}
                       {` · ${delivery.attempts} tentativa(s). `}
                       {delivery.lastError}
                     </p>

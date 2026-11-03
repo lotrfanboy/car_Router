@@ -14,6 +14,7 @@ import {
   queueRadarEmails,
   deliverPendingRadarEmails,
   reconcileRadarEmails,
+  radarEmailOverview,
 } from "./radar-email";
 import { radarState } from "./radar-state";
 import {
@@ -110,6 +111,7 @@ export async function listRadars() {
   });
   return {
     infrastructure,
+    emailStatus: await radarEmailOverview(),
     radars: await Promise.all(
       rows.map(async (row) => {
         const criteria = await currentSearchCriteria(

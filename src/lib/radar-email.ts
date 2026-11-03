@@ -9,6 +9,58 @@ const setting = (name: string) => secret(name, ".env.radar.local");
 const MAX_ATTEMPTS = 3;
 const RETRY_WINDOW = 23 * 3600000; // Resend retains keys for 24h; never cross that boundary.
 
+export class RadarEmailError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+  ) {
+    super(message);
+  }
+}
+
+const deliveryStatusSelect = {
+  id: true,
+  status: true,
+  attempts: true,
+  createdAt: true,
+  acceptedAt: true,
+  deliveredAt: true,
+  lastError: true,
+} as const;
+
+function visibleDeliveryStatus<T extends { status: string; createdAt: Date }>(
+  row: T,
+) {
+  return {
+    ...row,
+    status:
+      row.status === "preview" &&
+      Date.now() - row.createdAt.getTime() >= 3600000
+        ? "expired"
+        : row.status,
+  };
+}
+
+/** Database reads only. Opening the screen cannot send or contact the provider. */
+export async function radarEmailOverview() {
+  const [latestTest, delivered] = await Promise.all([
+    db.radarEmailDelivery.findFirst({
+      where: { kind: "test" },
+      orderBy: { createdAt: "desc" },
+      select: deliveryStatusSelect,
+    }),
+    db.radarEmailDelivery.findFirst({
+      where: { status: "delivered", deliveredAt: { not: null } },
+      orderBy: { deliveredAt: "desc" },
+      select: { deliveredAt: true },
+    }),
+  ]);
+  return {
+    latestTest: latestTest ? visibleDeliveryStatus(latestTest) : null,
+    lastDeliveredAt: delivered?.deliveredAt ?? null,
+  };
+}
+
 /** MVP server configuration. Replace here with the radar owner's verified email later. */
 export function resolveRadarRecipient() {
   const result = z.email().safeParse(setting("RADAR_EMAIL_TO"));
@@ -269,10 +321,11 @@ export async function deliverPendingRadarEmails(onlyId?: string) {
 }
 
 /** Read provider state; acceptance alone never means delivery. No new POST here. */
-export async function reconcileRadarEmails() {
+export async function reconcileRadarEmails(onlyId?: string) {
   if (!radarEmailConfiguration().configured) return;
   const rows = await db.radarEmailDelivery.findMany({
     where: {
+      ...(onlyId ? { id: onlyId } : {}),
       status: "accepted",
       createdAt: { gte: new Date(Date.now() - 86400000) },
     },
@@ -347,7 +400,10 @@ export async function confirmRadarTestEmail(id: string) {
   });
   const row = await db.radarEmailDelivery.findUnique({ where: { id } });
   if (!row || row.kind !== "test" || row.status === "preview")
-    throw new Error("Prévia inexistente ou expirada.");
+    throw new RadarEmailError(
+      "Prévia inexistente ou expirada. Gere uma nova prévia.",
+      409,
+    );
   await deliverPendingRadarEmails(id);
   const result = await db.radarEmailDelivery.findUniqueOrThrow({
     where: { id },
@@ -357,4 +413,20 @@ export async function confirmRadarTestEmail(id: string) {
     status: result.status,
     providerId: result.providerId,
   };
+}
+
+/** Explicit status check: only GETs to Resend for this test, never another send. */
+export async function checkRadarTestEmail(id: string) {
+  const row = await db.radarEmailDelivery.findFirst({
+    where: { id, kind: "test" },
+    select: deliveryStatusSelect,
+  });
+  if (!row) throw new RadarEmailError("Teste de e-mail não encontrado.", 404);
+  await reconcileRadarEmails(id);
+  return visibleDeliveryStatus(
+    await db.radarEmailDelivery.findUniqueOrThrow({
+      where: { id },
+      select: deliveryStatusSelect,
+    }),
+  );
 }
