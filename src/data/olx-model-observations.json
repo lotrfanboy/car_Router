@@ -1,0 +1,822 @@
+{
+  "revision": "olx-exact-labels-20261104",
+  "provenance": "Reviewed offline from 150 public OLX observations already persisted by the user-authorized 2026-11-03 three-credit collection. Hash is SHA-256 of JSON.stringify({source,externalId,url,observed_at,brand,model,version,source_identity}) in that key order. No seller contacts, photos, prices or account credentials are included. A confirmed entry establishes only the commercial badge for the exact structured brand/model label; no source IDs, technical version or unseen description are inferred. GT and Kompressor descriptions remain pending. On 2026-11-04 two full labels from the separately user-saved Passat search were reviewed against downloaded and visually checked official Inmetro/VW PDFs. Their supportingEvidence retains public source URLs and byte hashes; only family identity is established.",
+  "observations": [
+    {
+      "source": "olx",
+      "externalId": "1513976619",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2018-1513976619",
+      "observed_at": "2026-11-03T18:25:06.673Z",
+      "brand": "BMW",
+      "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "320i",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "4a3872f3f936183348867a459a956b63f27104b9e680b9be45e168046f20d515"
+    },
+    {
+      "source": "olx",
+      "externalId": "1529529197",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1529529197",
+      "observed_at": "2026-11-03T18:25:06.673Z",
+      "brand": "BMW",
+      "model": "320I 320i",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "320i",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "aba743801cefe805658d7fe3df65e50d055c8ef18db40c7b78635e45d0ce6682"
+    },
+    {
+      "source": "olx",
+      "externalId": "1527388018",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2023-1527388018",
+      "observed_at": "2026-11-03T18:25:06.673Z",
+      "brand": "BMW",
+      "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "320i",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "cd58b14f3303b92217c0ed7211e3b1d0b601e7130873d88934c7bbaafc297fc5"
+    },
+    {
+      "source": "olx",
+      "externalId": "1541319529",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1541319529",
+      "observed_at": "2026-11-03T18:25:06.673Z",
+      "brand": "BMW",
+      "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "320i",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "2fe1065bfb565be8dea4450e27ab5a56cbb4425babd8a0bf3b34a5a65968b9b7"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549826553",
+      "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-gt-sport-2-0-turbo-16v-184cv-5p-2015-1549826553",
+      "observed_at": "2026-11-03T18:25:06.673Z",
+      "brand": "BMW",
+      "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "320i",
+      "reviewStatus": "pending",
+      "labelOnly": true,
+      "reviewNote": "Badge is visible, but GT body/Kompressor equivalence with the native family is not established by the saved evidence; retain pending.",
+      "sha256": "b1e1b97c06bd4e857bab8287784011bafea4ea04b50e656ceec2d31bba5cb570"
+    },
+    {
+      "source": "olx",
+      "externalId": "1358914017",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-prestige-1-4-tfsi-flex-s-tronic-2021-1358914017",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "Q3 Prestige 1.4 TFSI Flex S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Q3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "63f0dc0736b77cc88f4559b98cd7b684f2d829a158117733fa9c7d8248a89233"
+    },
+    {
+      "source": "olx",
+      "externalId": "1547344020",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2018-1547344020",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Q3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "748734347856cc48c88e9af6f2f380f1b9a709e912936ad1e51043f5e55f8115"
+    },
+    {
+      "source": "olx",
+      "externalId": "1422882312",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-prestige-plus-1-4-tfsi-flex-s-tronic-2022-1422882312",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Q3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "e0ee92f4be91818c587ae4d1996fd31baa882377f235c3a00f6d27b68f3aefd7"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549154548",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-sportback-1-4-tfsi-5p-s-tronic-2018-1549154548",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A1",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "ff3a0f725b8128b95cec7f9a86d8a30c89116568fb64bddcd995e59d9021e490"
+    },
+    {
+      "source": "olx",
+      "externalId": "1517073663",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-2-4-30v-tip-multitronic-2000-1517073663",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 2.4 30V Tip./multitronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "dc1b2a08539f3eca2722dafd0d3efaa5b666c6eceb55aed2cc6cefa85156bdca"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549862873",
+      "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-attra-16v-tb-fsi-s-tronic-2015-1549862873",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "45696a70cbf407f5d540938b8a7b1825ec2ee30f3dce282eb4585551a2abf4ca"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549839652",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportback-1-4-tfsi-s-tronic-2015-1549839652",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sportback 1.4 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "978ee719b3d8b9c04b3bd16fe6cf76e4277a15b6dee51f3835b92cc65bc237c6"
+    },
+    {
+      "source": "olx",
+      "externalId": "1523730277",
+      "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-black-s-line-1-4-tfsi-s-tronic-2021-1523730277",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "Q3 Black S Line 1.4 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Q3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "88e7606401dbe2645bce4e297b3ebac0c3215e11b1a4fc1760e19a8592b34e58"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549790603",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-2-0-16v-tfsi-183-180cv-multitronic-2010-1549790603",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 2.0 16V TFSI 183/180cv Multitronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "be9145563d2425223b046adfc16fd5bb47595094dc731ac856859a1d9a43e39a"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549776434",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2016-1549776434",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "95056bf7f7099a22f5478e791191307df9cad623736f278d406e3a447b19ef27"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549769554",
+      "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-1-8-tip-multitronic-turbo-2015-1549769554",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 1.8 Tip./ Multitronic Turbo",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "c4592ecbe54526d71672065182fbbd4fb617b27cb8156ad976343d2ffd56e39d"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549759145",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-prestige-plus-1-4-tfsi-s-tronic-2020-1549759145",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sedan Prestige Plus 1.4 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "17453636ab3f44a4bdfb252340115925ca37ca718e840480bfab4616333995f4"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549714266",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-avant-prest-plus-2-0-tfsi-s-tronic-2019-1549714266",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 Avant Prest. Plus 2.0 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "918e8882795350a6b53c087da7a055e374ba182b67b4ace4eaa25c196ba2388b"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549709791",
+      "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-1-4-tfsi-122cv-s-tronic-3p-2012-1549709791",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A1 1.4 TFSI 122cv S-tronic 3P",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A1",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "18af69ea949b500022cd1b4edc2420a9f61e2f6e20fab4b94e91578c07b7a1fb"
+    },
+    {
+      "source": "olx",
+      "externalId": "1508161495",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-prestige-plus-2-0-tfsi-190cv-s-tronic-2021-1508161495",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 Prestige Plus 2.0 TFSI 190cv S Tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "e4d434108b5a91c365602ec67464145b15c7971f56409a3294a0a97258d0780d"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549649027",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-audi-avant-lim-ed-2-0-tfsi-s-tronic-2018-1549649027",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 Audi Avant Lim. ED. 2.0 TFSI S Tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "6edddae319756aca75964b8d6f1a497c73835f33fd6a7c1fca04a23eabe57ce2"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549571858",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-a3-sed-p-plus-tech-1-4-flex-tfsi-tip-2020-1549571858",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 A3 Sed. P. Plus Tech 1.4 Flex TFSI TIP",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "45f5d5f5e3923c6aa3c25999e18d66d140dd034a0e39a0d09e0d35c0a826ea55"
+    },
+    {
+      "source": "olx",
+      "externalId": "1548713330",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-ambiente-2-0-tfsi-190cv-s-tronic-2018-1548713330",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 Ambiente 2.0 TFSI 190cv S Tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "16b3894400e9619a16ee634ba07d8b942cc25d2d6a39d85e6d02f4a612bc9e46"
+    },
+    {
+      "source": "olx",
+      "externalId": "1536995337",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-prestige-1-4-tfsi-s-tronic-2020-1536995337",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "f09704a8a8c260e95fc0468c433fac4a9db492b46b30b4e0330d3bd1acee3b47"
+    },
+    {
+      "source": "olx",
+      "externalId": "1548618389",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportb-prestige-plus-1-4-tfsi-s-tron-2020-1548618389",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sportb. Prestige Plus 1.4 TFSI S-tron",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "616efd4612ac4f2ad15568acd1755bc3b9de164da48015628b4bdbcd836e5b43"
+    },
+    {
+      "source": "olx",
+      "externalId": "1542509057",
+      "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-s-line-2-0-tfsi-s-tronic-2024-1542509057",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sedan S-line 2.0 TFSI S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "0e0a5b0d918daf2860a85d0c6b4f7cc9fd28334f5c8ace06e252125cc1ff62f9"
+    },
+    {
+      "source": "olx",
+      "externalId": "1514138356",
+      "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-prestige-2-0-tfsi-190cv-s-tronic-2022-1514138356",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A4 Prestige 2.0 TFSI 190cv S-tronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "7bf18858f80ea38f105481762992bb0362ae74bf53e2e33cd498410c6ddc9be4"
+    },
+    {
+      "source": "olx",
+      "externalId": "1513078389",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-rs4-2-9-avant-v6-tfsi-quattro-tiptronic-2019-1513078389",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "RS4 2.9 Avant V6 TFSI Quattro Tiptronic",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "RS4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "3ca271efdacb123d44f37dd15cf8520fbff03fa6d13547d652cf071cbea264d7"
+    },
+    {
+      "source": "olx",
+      "externalId": "1539633308",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportb-s-line-limited-1-4-tfsi-tip-2022-1539633308",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "A3 Sportb. S-line Limited 1.4 TFSI TIP",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "A3",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "03d5bc06de68a428a60b88ea2daf4f2619e43e32525a7a701ac27fe682412eac"
+    },
+    {
+      "source": "olx",
+      "externalId": "1477852006",
+      "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-rs4-2-7-avant-v6-30v-bi-tb-quattro-380cv-2019-1477852006",
+      "observed_at": "2026-11-03T18:25:13.595Z",
+      "brand": "Audi",
+      "model": "RS4 2.7 Avant V6 30V Bi-TB Quattro 380cv",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "RS4",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "93e337c13e5830b90cc14c43cb2dc675dfb541e239c7afb0925ab163d1f4bef7"
+    },
+    {
+      "source": "olx",
+      "externalId": "1547597751",
+      "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1547597751",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "db63bde9d110dd01801a10325874eaf0a428efe3fb30a0c6185ead44b8752980"
+    },
+    {
+      "source": "olx",
+      "externalId": "1549923215",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2012-1549923215",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "4c17cccc2452714b71a2d9cb7ead7e09582b5a0e7a1e1deaf67d9462d725bbb4"
+    },
+    {
+      "source": "olx",
+      "externalId": "1543838913",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2015-1543838913",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "910305f3556943e0470f233ad59a57b0f593dc60057b7896e313fa741ff7b331"
+    },
+    {
+      "source": "olx",
+      "externalId": "1548220418",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2018-1548220418",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "ae10c2616fa1058a3dfa9c6c262a8a821e794d100ee900f320138436b48d7086"
+    },
+    {
+      "source": "olx",
+      "externalId": "1541358617",
+      "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2019-1541358617",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "d7b87761794a981cd232a6687200bf39650c93ba616e38b24842aab17d2328d6"
+    },
+    {
+      "source": "olx",
+      "externalId": "1491752960",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-coupe-sport-1-6-tb-16v-aut-2018-1491752960",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Coupe Sport 1.6 TB 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "9f89a212998c29293d11707eea8dd71595d89cff9747605c3136a0dd69929b77"
+    },
+    {
+      "source": "olx",
+      "externalId": "1524613280",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-classic-classic-plus-elegance-2012-1524613280",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 Classic/classic Plus/elegance",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "772a0b1f5d3862437d0dd48c21b0458759d85f77a562821d81466066e0bdd4c7"
+    },
+    {
+      "source": "olx",
+      "externalId": "1506416635",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-estate-avant-1-6-tb-16v-aut-2016-1506416635",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Estate Avant. 1.6 TB 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "cba78a2e7094eb31d2a87fc52a18dc555d3f726708b06978754053313c503e39"
+    },
+    {
+      "source": "olx",
+      "externalId": "1471637311",
+      "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-coupe-1-8-16v-156cv-aut-2012-1471637311",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 CGI Coupe 1.8 16V 156cv Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "The saved structured brand/model explicitly names this badge; exact full label only. Technical trim/version is not established.",
+      "sha256": "b1dc588af052133ead1ed7951dfa1de8ecad3d2833e4a88904ec50106c5a9643"
+    },
+    {
+      "source": "olx",
+      "externalId": "1547620725",
+      "url": "https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-kompressor-classic-1-6-16v-aut-2011-1547620725",
+      "observed_at": "2026-11-03T18:25:17.117Z",
+      "brand": "Mercedes-Benz",
+      "model": "C-180 Kompressor Classic 1.6 16V Aut.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "C 180",
+      "reviewStatus": "pending",
+      "labelOnly": true,
+      "reviewNote": "Badge is visible, but GT body/Kompressor equivalence with the native family is not established by the saved evidence; retain pending.",
+      "sha256": "f41f48f7c772a9b7555ff8b128aa273fe42ba3e71523c51cbf31f2968cf6fc77"
+    },
+    {
+      "source": "olx",
+      "externalId": "1482601899",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1482601899",
+      "observed_at": "2026-11-03T19:02:18.770Z",
+      "brand": "Volkswagen",
+      "model": "Passat Highline 2.0 TSI 220cv Tip.",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "Passat",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "Exact full structured brand/model label reviewed against the cited independent official family evidence. No title/prefix inference, source IDs, technical trim, production year or remote query permissions. Page 22, VOLKSWAGEN, Novo Passat, Highline. Model-family corroboration only; does not validate the OLX power/transmission abbreviation or model year.",
+      "sha256": "8b0db4e687bfd376ae83aa0c77c94c998b7ad401b8e20df9f4e6c3de6d433d4c",
+      "reviewedAt": "2026-11-04T11:36:05.642Z",
+      "supportingEvidence": [
+        {
+          "url": "https://www.gov.br/inmetro/pt-br/assuntos/regulamentacao/avaliacao-da-conformidade/programa-brasileiro-de-etiquetagem/tabelas-de-eficiencia-energetica/veiculos-automotivos-pbe-veicular/veiculos-leves-2016/@@download/file",
+          "sha256": "7d81d15d864e080f3fcf1e1da3a276581df3c3208492c243cf1dc391cc50e50d",
+          "retrievedAt": "2026-11-04T11:36:05.642Z",
+          "locator": "Page 22, VOLKSWAGEN, Novo Passat, Highline. Model-family corroboration only; does not validate the OLX power/transmission abbreviation or model year."
+        }
+      ]
+    },
+    {
+      "source": "olx",
+      "externalId": "1541643378",
+      "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-nivus-highline-1-0-200-tsi-flex-aut-2022-1541643378",
+      "observed_at": "2026-11-03T19:02:18.770Z",
+      "brand": "Volkswagen",
+      "model": "Nivus Highline 1.0 200 TSI Flex AUT",
+      "version": null,
+      "source_identity": {
+        "brandId": null,
+        "modelId": null,
+        "versionId": null
+      },
+      "commercialModel": "NIVUS",
+      "reviewStatus": "confirmed",
+      "labelOnly": true,
+      "reviewNote": "Exact full structured brand/model label reviewed against the cited independent official family evidence. No title/prefix inference, source IDs, technical trim, production year or remote query permissions. Page 1, Nivus title and available Highline 200 TSI variant, petrol/ethanol and automatic. Family corroboration only; publication date is not model year.",
+      "sha256": "b55977ea35cb42e7a59d42d772ca1d41cb6526c23db7162457216d0928bd7952",
+      "reviewedAt": "2026-11-04T11:36:05.642Z",
+      "supportingEvidence": [
+        {
+          "url": "https://vw-digital-cdn-br.itd.vw.com.br/assets/newsroom-cdn-br-ps/00f45826da9cda0f51129a1f7a2792eb.pdf",
+          "sha256": "d2cc8d7e1c5e73174d45fa862cfdf596cda71e0619c166445215c339f5af2ab6",
+          "retrievedAt": "2026-11-04T11:36:05.642Z",
+          "locator": "Page 1, Nivus title and available Highline 200 TSI variant, petrol/ethanol and automatic. Family corroboration only; publication date is not model year."
+        }
+      ]
+    }
+  ]
+}

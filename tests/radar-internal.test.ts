@@ -320,7 +320,7 @@ it("sends one durable digest for all confirmed new opportunities, excluding unce
   expect(payload.subject).toContain("12 nova(s)");
   expect(payload.text).not.toContain("test-uncertain");
   expect(payload.text).not.toContain("test-baseline");
-  expect(payload.text).toContain("/radares#radar-");
+  expect(payload.text).toContain(`/radares/${row.id}`);
   expect(payload.text).toContain("https://pr.olx.com.br/");
   expect(payload).not.toHaveProperty("cc");
   expect(payload).not.toHaveProperty("bcc");

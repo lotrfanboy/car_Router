@@ -1,1 +1,1 @@
-export { default } from "./buscar/page";
+export { default } from "./visao-geral/page";

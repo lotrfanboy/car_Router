@@ -1,4 +1,8 @@
-import type { Listing } from "./discovery";
+import {
+  listingMatchStatus,
+  type Listing,
+  type SearchCriteria,
+} from "./discovery";
 
 export const unknownVersionFacet = "unknown";
 export const olxDescriptionsFacet = "olx-descriptions";
@@ -135,4 +139,14 @@ export function matchesResultVersion(row: Listing, selected: string) {
   return selected === olxDescriptionsFacet
     ? presented.kind === "olx-description"
     : presented.value === selected;
+}
+
+/** Version choices describe confirmed candidates, never unrelated/rejected cars. */
+export function candidateVersionFacets(
+  rows: Listing[],
+  criteria: SearchCriteria,
+) {
+  return resultVersionFacets(
+    rows.filter((row) => listingMatchStatus(row, criteria) === "confirmed"),
+  );
 }

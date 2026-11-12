@@ -1,8 +1,15 @@
-import { RadarsWorkspace } from "@/components/radars-workspace";
+import { RadarsOverview } from "@/components/radars-overview";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ busca?: string }>;
+  searchParams: Promise<{ busca?: string; novo?: string }>;
 }) {
-  return <RadarsWorkspace initialSearchId={(await searchParams).busca} />;
+  const params = await searchParams;
+  return (
+    <RadarsOverview
+      key={`${params.busca ?? ""}:${params.novo ?? ""}`}
+      initialSearchId={params.busca}
+      initialOpen={params.novo === "1"}
+    />
+  );
 }

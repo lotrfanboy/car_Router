@@ -561,6 +561,7 @@ async function fetchSingleTarget(
         : []),
       ...(criteria.priceMax !== null ? ["preço máximo"] : []),
       ...(criteria.mileageMax !== null ? ["quilometragem máxima"] : []),
+      ...(criteria.mileageMin != null ? ["quilometragem mínima"] : []),
       ...(criteria.privateOnly ? ["vendedor particular"] : []),
     ];
     result.applied = {
@@ -645,6 +646,9 @@ async function fetchSingleTarget(
                 : {}),
               ...(criteria.priceMax !== null
                 ? { price_max: criteria.priceMax }
+                : {}),
+              ...(criteria.mileageMin != null
+                ? { mileage_min: criteria.mileageMin }
                 : {}),
               ...(criteria.mileageMax !== null
                 ? { mileage_max: criteria.mileageMax }

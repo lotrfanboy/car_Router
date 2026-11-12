@@ -1,4 +1,5 @@
 "use client";
+import { FipeLookup } from "@/components/fipe-lookup";
 
 import { use, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -33,14 +34,22 @@ import {
   OPPORTUNITY_RULES,
 } from "@/lib/intelligence";
 import { money, number, location, type Vehicle } from "@/lib/vehicle";
+import { technicalFacts } from "@/lib/technical-facts";
 import styles from "@/components/vehicle-detail.module.css";
 
 export default function Details({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ origem?: string }>;
 }) {
   const { id } = use(params);
+  const query = use(searchParams);
+  const origin =
+    query.origem === "salvos" || query.origem === "comparar"
+      ? query.origem
+      : undefined;
   const { vehicles } = useWorkspace();
   const vehicle = vehicles.find((item) => item.id === id);
   if (!vehicle)
@@ -51,10 +60,16 @@ export default function Details({
         action={false}
       />
     );
-  return <VehicleDetails key={vehicle.id} vehicle={vehicle} />;
+  return <VehicleDetails key={vehicle.id} vehicle={vehicle} origin={origin} />;
 }
 
-function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
+function VehicleDetails({
+  vehicle: v,
+  origin,
+}: {
+  vehicle: Vehicle;
+  origin?: "salvos" | "comparar";
+}) {
   const { vehicles, favorite, selected, toggleCompare, reload, notify } =
     useWorkspace();
   const router = useRouter();
@@ -78,6 +93,7 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
     comparableIds.has(vehicle.id),
   );
   const registeredPrice = priceRecordDate(v);
+  const technical = technicalFacts(v);
   async function remove() {
     setDeleting(true);
     setError("");
@@ -99,9 +115,16 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
   return (
     <>
       <Link
-        href="/veiculos"
+        href={
+          origin === "comparar"
+            ? "/comparar"
+            : origin === "salvos"
+              ? "/salvos"
+              : "/veiculos"
+        }
         className="back-link"
         onClick={(event) => {
+          if (origin) return;
           if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
             return;
           try {
@@ -116,11 +139,15 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
         }}
       >
         <ArrowLeft size={16} />
-        Voltar ao radar
+        {origin === "comparar"
+          ? "Voltar à comparação"
+          : origin === "salvos"
+            ? "Voltar aos seus veículos"
+            : "Voltar ao catálogo manual"}
       </Link>
       <header className={styles.heading}>
         <div>
-          <div className="eyebrow">{v.brand} / ANÁLISE DO VEÍCULO</div>
+          <div className="eyebrow">{v.brand} / CADASTRO MANUAL</div>
           <h1>{v.model}</h1>
           <p>
             {v.version || "Versão não informada"} · {v.manufactureYear}/
@@ -189,8 +216,9 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
             {[
               ["Ano/modelo", v.modelYear],
               ["Quilometragem", `${number(v.mileage)} km`],
-              ["Combustível", v.fuel],
-              ["Câmbio", v.transmission],
+              ["Motor", technical.engine],
+              ["Combustível", technical.fuel],
+              ["Câmbio", technical.transmission],
             ].map(([label, value]) => (
               <div key={label}>
                 <dt>{label}</dt>
@@ -198,6 +226,12 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
               </div>
             ))}
           </dl>
+          {Object.values(technical.origins).includes("version") && (
+            <p className={styles.subtle}>
+              Informações técnicas extraídas literalmente da versão do cadastro
+              são apenas descritivas; confirme no veículo e na documentação.
+            </p>
+          )}
           <button
             className="button primary full"
             aria-pressed={selected.includes(v.id)}
@@ -375,6 +409,7 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
         </section>
       </div>
       <PriceHistory history={history} />
+      <FipeLookup priceCents={v.priceCents} modelYear={v.modelYear} />
       <PurchaseSimulator
         key={v.id}
         vehicle={v}
@@ -401,8 +436,9 @@ function VehicleDetails({ vehicle: v }: { vehicle: Vehicle }) {
             ["Versão", v.version],
             ["Fabricação / modelo", `${v.manufactureYear} / ${v.modelYear}`],
             ["Quilometragem", `${number(v.mileage)} km`],
-            ["Combustível", v.fuel],
-            ["Câmbio", v.transmission],
+            ["Motor", technical.engine],
+            ["Combustível", technical.fuel],
+            ["Câmbio", technical.transmission],
             ["Localização", location(v)],
             ["Portal ou canal", v.source],
             ["Tipo de vendedor", v.sellerType || "Não informado"],

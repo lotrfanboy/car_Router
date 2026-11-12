@@ -114,16 +114,27 @@ export const searchSchema = z
     yearMin: z.number().int().min(1900).max(2100).nullable(),
     yearMax: z.number().int().min(1900).max(2100).nullable(),
     priceMax: optionalNumber,
+    mileageMin: z.number().int().min(0).max(10000000).nullable().optional(),
     mileageMax: z.number().int().min(0).max(10000000).nullable(),
     privateOnly: z.boolean(),
     sources: z
       .array(z.enum(["olx", "webmotors"]))
-      .min(1)
+      .min(1, "Selecione ao menos uma fonte para a busca.")
       .max(2)
       .refine((x) => new Set(x).size === x.length),
     olxUrl: z.string().trim().max(2000).default(""),
   })
   .superRefine((s, ctx) => {
+    if (
+      s.mileageMin != null &&
+      s.mileageMax != null &&
+      s.mileageMin > s.mileageMax
+    )
+      ctx.addIssue({
+        code: "custom",
+        message: "A quilometragem mínima não pode superar a máxima.",
+        path: ["mileageMax"],
+      });
     if (s.yearMin && s.yearMax && s.yearMin > s.yearMax)
       ctx.addIssue({
         code: "custom",
@@ -307,6 +318,9 @@ export function listingMatchStatus(
     (row.mileage !== null &&
       criteria.mileageMax !== null &&
       row.mileage > criteria.mileageMax) ||
+    (row.mileage !== null &&
+      criteria.mileageMin != null &&
+      row.mileage < criteria.mileageMin) ||
     (criteria.privateOnly && row.sellerType === "professional")
   )
     return "incompatible";
@@ -379,6 +393,11 @@ export function eligibility(row: Listing, s: SearchCriteria) {
     (row.mileage === null || row.mileage > s.mileageMax)
   )
     reasons.push("Quilometragem acima do limite ou desconhecida");
+  if (
+    s.mileageMin != null &&
+    (row.mileage === null || row.mileage < s.mileageMin)
+  )
+    reasons.push("Quilometragem abaixo do mínimo ou desconhecida");
   if (s.privateOnly && row.sellerType !== "private")
     reasons.push("Particular não confirmado");
   return reasons;

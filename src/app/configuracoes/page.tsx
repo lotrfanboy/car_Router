@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { PageHeading } from "@/components/vehicle-ui";
 import { useWorkspace } from "@/components/workspace";
+import { RadarDiagnostics } from "@/components/radar-diagnostics";
 import { OPPORTUNITY_RULES } from "@/lib/intelligence";
 type Integration = {
   source: string;
@@ -20,6 +21,18 @@ type Integration = {
 };
 export default function Settings() {
   const { vehicles } = useWorkspace();
+  const radarDisclosure = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const reveal = () => {
+      if (window.location.hash === "#radares" && radarDisclosure.current) {
+        radarDisclosure.current.open = true;
+        radarDisclosure.current.scrollIntoView({ block: "start" });
+      }
+    };
+    reveal();
+    window.addEventListener("hashchange", reveal);
+    return () => window.removeEventListener("hashchange", reveal);
+  }, []);
   const [integrations, setIntegrations] = useState<Integration[] | null>(null);
   const [error, setError] = useState("");
   async function load() {
@@ -48,9 +61,10 @@ export default function Settings() {
       <PageHeading
         eyebrow="TRANSPARÊNCIA POR PRINCÍPIO"
         title="Configurações"
-        description="Suas fontes, a qualidade da base e os critérios por trás de cada análise."
+        description="Organize seu espaço, consulte referências e confira suas integrações."
       />
-      <section className="panel">
+      <details className="panel legacy-data-access">
+        <summary>Como as comparações são calculadas</summary>
         <h2>Média dos anúncios semelhantes</h2>
         <p>
           A busca usa a média aritmética de pelo menos cinco anúncios recentes,
@@ -68,7 +82,36 @@ export default function Settings() {
         <Link href="/buscar" className="text-link">
           Buscar carros
         </Link>
-      </section>
+      </details>
+      <details className="panel legacy-data-access">
+        <summary>Catálogo manual e análises</summary>
+        <p>
+          Seus cadastros, favoritos e históricos anteriores continuam
+          disponíveis. Os anúncios salvos da busca usam a nova jornada Salvos e
+          Comparar.
+        </p>
+        <div className="listing-actions">
+          <Link href="/veiculos" className="button">
+            Catálogo manual
+          </Link>
+          <Link href="/favoritos" className="button">
+            Favoritos do catálogo
+          </Link>
+          <Link href="/catalogo/comparar" className="button">
+            Comparador do catálogo manual
+          </Link>
+          <Link href="/mercado" className="button">
+            Análises do catálogo
+          </Link>
+          <Link href="/catalogo/visao-geral" className="button">
+            Visão geral do catálogo
+          </Link>
+        </div>
+      </details>
+      <details className="panel legacy-data-access" ref={radarDisclosure}>
+        <summary>Monitoramento e diagnóstico dos radares</summary>
+        <RadarDiagnostics />
+      </details>
       <div className="settings-layout">
         <section className="panel">
           <div className="section-heading">
@@ -127,13 +170,17 @@ export default function Settings() {
             <div>
               <strong>Referência FIPE</strong>
               <small>
-                Sem fornecedor ou correspondência verificada configurados.
+                Base mensal local, atualizada por importação autorizada.
               </small>
             </div>
-            <span className="integration-state">Não conectada</span>
+            <Link href="/fipe" className="button">
+              Consultar FIPE
+            </Link>
             <p>
-              O valor informado no cadastro é uma referência manual. Não será
-              convertido em FIPE nem usado para criar uma classificação sozinho.
+              Selecione marca, versão, ano-modelo e combustível na consulta. A
+              FIPE é uma referência nacional e mensal, não uma avaliação
+              individual. O valor manual permanece separado; não há
+              correspondência automática.
             </p>
           </div>
         </section>
@@ -160,13 +207,16 @@ export default function Settings() {
           </p>
           <h3>Fotografias</h3>
           <p className="settings-copy">
-            Informe apenas imagens do próprio anúncio que você possa exibir. A
-            origem é mostrada no veículo; imagens indisponíveis recebem um
-            estado neutro. Os conectores atuais não fornecem galerias.
+            Escolha uma imagem do computador (JPEG, PNG ou WebP, até 8 MB) ou
+            informe uma URL. Arquivos enviados ficam em
+            validation-private/manual-images: inclua essa pasta no backup junto
+            com o SQLite. URLs externas continuam dependendo da disponibilidade
+            da origem.
           </p>
         </section>
       </div>
-      <section className="panel methodology-panel" id="metodologia">
+      <details className="panel methodology-panel" id="metodologia">
+        <summary>Critérios detalhados do catálogo manual</summary>
         <div className="eyebrow">METODOLOGIA LEGADA · CATÁLOGO PESSOAL</div>
         <h2>Análises secundárias do catálogo pessoal.</h2>
         <p className="settings-copy">
@@ -245,7 +295,7 @@ export default function Settings() {
             </li>
           </ul>
         </details>
-      </section>
+      </details>
     </>
   );
 }

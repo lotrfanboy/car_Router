@@ -1,0 +1,30 @@
+{
+  "downloadedAt": "2026-11-03T20:33:56.710Z",
+  "source": "Google Fonts official repository",
+  "files": [
+    {
+      "name": "Syne-Variable.ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/syne/Syne%5Bwght%5D.ttf",
+      "sha256": "ce5ac77142a65cab2248a1a2ebb740b1d4d9c20b52488877d3ff664d1356104a",
+      "bytes": 146980
+    },
+    {
+      "name": "syne-OFL.txt",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/syne/OFL.txt",
+      "sha256": "cc43cdce6f91c57989af8459341c276655e34224e954fa69c2ad700831a742d8",
+      "bytes": 4402
+    },
+    {
+      "name": "PlusJakartaSans-Variable.ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/PlusJakartaSans%5Bwght%5D.ttf",
+      "sha256": "89b3fb38aa0d275d7a731d0d817a4f1622b316b4d7fbdedcf02ee9099ff68bc8",
+      "bytes": 176288
+    },
+    {
+      "name": "plusjakartasans-OFL.txt",
+      "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/plusjakartasans/OFL.txt",
+      "sha256": "995c7199cab65954f545996326755daee7b63cc6b42b06c13da1f9502ab08a99",
+      "bytes": 4402
+    }
+  ]
+}

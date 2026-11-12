@@ -3,13 +3,38 @@ import { db } from "@/lib/db";
 import { apiError, checkOrigin } from "@/lib/http";
 import { SearchError } from "@/lib/discovery-store";
 import { saveRadar } from "@/lib/radar";
+import {
+  saveRadarPreferences,
+  pauseRadar,
+  resumeRadar,
+} from "@/lib/radar-preferences";
+import { getRadarDetail } from "@/lib/radar-detail";
+export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ id: string }> };
+export async function GET(_request: Request, ctx: Context) {
+  try {
+    const detail = await getRadarDetail((await ctx.params).id);
+    return detail
+      ? NextResponse.json(detail)
+      : NextResponse.json({ error: "Radar não encontrado." }, { status: 404 });
+  } catch (e) {
+    return apiError(e);
+  }
+}
 export async function PUT(request: Request, ctx: Context) {
   const rejected = checkOrigin(request);
   if (rejected) return rejected;
   try {
+    const input = await request.json();
+    const { id } = await ctx.params;
     return NextResponse.json(
-      await saveRadar(await request.json(), (await ctx.params).id),
+      await (input?.action === "pause"
+        ? pauseRadar(id)
+        : input?.action === "resume"
+          ? resumeRadar(id)
+          : input?.experience === "managed"
+            ? saveRadarPreferences(input, id)
+            : saveRadar(input, id)),
     );
   } catch (e) {
     return e instanceof SearchError

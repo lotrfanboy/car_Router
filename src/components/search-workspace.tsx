@@ -1,4 +1,10 @@
 "use client";
+import {
+  parseMoneyInput,
+  moneyInput,
+  parseMileageInput,
+  mileageInput,
+} from "@/lib/manual-form-values";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Search, SlidersHorizontal, Radio } from "lucide-react";
@@ -15,7 +21,7 @@ import { sortListings } from "@/lib/listing-comparison";
 import {
   matchesResultVersion,
   olxDescriptionsFacet,
-  resultVersionFacets,
+  candidateVersionFacets,
 } from "@/lib/result-facets";
 import { states } from "@/lib/vehicle";
 import { ListingCard, observedWhen } from "./listing-card";
@@ -52,6 +58,7 @@ type Draft = {
   state: string;
   yearMin: string;
   yearMax: string;
+  mileageMin: string;
   mileageMax: string;
   priceMax: string;
   privateOnly: boolean;
@@ -65,6 +72,7 @@ const emptyDraft = (): Draft => ({
   state: "PR",
   yearMin: "",
   yearMax: "",
+  mileageMin: "",
   mileageMax: "",
   priceMax: "",
   privateOnly: false,
@@ -83,8 +91,18 @@ const draftFrom = (criteria: SearchCriteria): Draft => ({
           : [],
   yearMin: String(criteria.yearMin ?? ""),
   yearMax: String(criteria.yearMax ?? ""),
-  mileageMax: String(criteria.mileageMax ?? ""),
-  priceMax: String(criteria.priceMax ?? ""),
+  mileageMin:
+    criteria.mileageMin == null
+      ? ""
+      : Number(criteria.mileageMin).toLocaleString("pt-BR"),
+  mileageMax:
+    criteria.mileageMax == null
+      ? ""
+      : Number(criteria.mileageMax).toLocaleString("pt-BR"),
+  priceMax:
+    criteria.priceMax == null
+      ? ""
+      : moneyInput(Math.round(criteria.priceMax * 100)),
 });
 const hasSuccess = (run?: Run | null) =>
   !!run &&
@@ -207,6 +225,7 @@ export function SearchWorkspace({
       Boolean(
         row?.criteria.yearMin ||
         row?.criteria.yearMax ||
+        row?.criteria.mileageMin ||
         row?.criteria.mileageMax ||
         row?.criteria.priceMax ||
         row?.criteria.privateOnly,
@@ -293,14 +312,23 @@ export function SearchWorkspace({
     [run],
   );
   const versionFacets = useMemo(
-    () => resultVersionFacets(currentRows),
-    [currentRows],
+    () =>
+      display ? candidateVersionFacets(currentRows, display.criteria) : [],
+    [currentRows, display],
   );
   const olxFacets = versionFacets.filter(
     (option) => option.kind === "olx-description",
   );
-  const selectedVersion =
+  const requestedVersion =
     versionFilter?.runId === run?.id ? (versionFilter?.value ?? "") : "";
+  const selectedVersion =
+    requestedVersion === olxDescriptionsFacet
+      ? olxFacets.length
+        ? requestedVersion
+        : ""
+      : versionFacets.some((f) => f.value === requestedVersion)
+        ? requestedVersion
+        : "";
   const selectedVersionGroup = olxFacets.some(
     (option) => option.value === selectedVersion,
   )
@@ -337,8 +365,9 @@ export function SearchWorkspace({
     [...value.cities].sort(),
     value.yearMin,
     value.yearMax,
-    value.priceMax,
-    value.mileageMax,
+    value.priceMax.trim() ? parseMoneyInput(value.priceMax) : null,
+    value.mileageMin.trim() ? parseMileageInput(value.mileageMin) : null,
+    value.mileageMax.trim() ? parseMileageInput(value.mileageMax) : null,
     value.privateOnly,
     [...value.sources].sort(),
   ];
@@ -410,8 +439,15 @@ export function SearchWorkspace({
         : undefined,
       yearMin: optional(draft.yearMin),
       yearMax: optional(draft.yearMax),
-      mileageMax: optional(draft.mileageMax),
-      priceMax: optional(draft.priceMax),
+      mileageMin: draft.mileageMin.trim()
+        ? parseMileageInput(draft.mileageMin)
+        : undefined,
+      mileageMax: draft.mileageMax.trim()
+        ? parseMileageInput(draft.mileageMax)
+        : null,
+      priceMax: draft.priceMax.trim()
+        ? parseMoneyInput(draft.priceMax) / 100
+        : null,
       olxUrl: "",
     });
     if (!parsed.success) {
@@ -489,7 +525,7 @@ export function SearchWorkspace({
           );
         } else
           setError(
-            "Nenhuma fonte concluiu a consulta. Seus filtros e resultados anteriores foram preservados.",
+            "Nenhuma fonte concluiu a consulta. Seus filtros foram preservados.",
           );
       }
       try {
@@ -522,7 +558,7 @@ export function SearchWorkspace({
         (e instanceof Error
           ? e.message
           : "Não foi possível concluir a busca.") +
-          " Seus filtros e resultados anteriores foram preservados.",
+          " Seus filtros foram preservados.",
       );
     } finally {
       pending.current = false;
@@ -646,7 +682,7 @@ export function SearchWorkspace({
                     : "Marca e modelo usam relações do catálogo importado. Trocar opções não consulta anúncios."}
               </p>
               <label className="result-version-field">
-                Versão nos resultados
+                Versões dos candidatos
                 <select
                   name="resultVersion"
                   value={selectedVersionGroup}
@@ -708,7 +744,7 @@ export function SearchWorkspace({
               <p className="discovery-help muted">
                 {run
                   ? "Filtra somente os anúncios da consulta exibida, sem nova coleta ou consumo de créditos."
-                  : "As versões aparecem após receber anúncios; selecionar uma versão não consulta as fontes."}
+                  : "As versões aparecem após confirmar candidatos; selecionar uma versão não consulta as fontes."}
                 {run?.sources.some(
                   (source) => source.status === "ok" && source.partial,
                 ) &&
@@ -810,35 +846,72 @@ export function SearchWorkspace({
                 onToggle={(event) => setAdvancedOpen(event.currentTarget.open)}
               >
                 <summary>Mais filtros</summary>
+                <div className="km-range">
+                  <label>
+                    Quilometragem mínima (km)
+                    <input
+                      name="mileageMin"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      maxLength={12}
+                      placeholder="Sem mínimo"
+                      value={draft.mileageMin}
+                      onChange={(event) => {
+                        const v = event.target.value;
+                        if (
+                          /^[0-9.]*$/.test(v) &&
+                          v.replaceAll(".", "").length <= 8
+                        )
+                          change("mileageMin", mileageInput(v));
+                      }}
+                    />
+                  </label>
+                  <label>
+                    Quilometragem máxima (km)
+                    <input
+                      name="mileageMax"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      maxLength={12}
+                      placeholder="Sem máximo"
+                      value={draft.mileageMax}
+                      onChange={(event) => {
+                        const v = event.target.value;
+                        if (
+                          /^[0-9.]*$/.test(v) &&
+                          v.replaceAll(".", "").length <= 8
+                        )
+                          change("mileageMax", mileageInput(v));
+                      }}
+                    />
+                  </label>
+                </div>
                 <label>
-                  Quilometragem máxima
-                  <input
-                    name="mileageMax"
-                    type="number"
-                    min="0"
-                    max="10000000"
-                    placeholder="Sem limite"
-                    value={draft.mileageMax}
-                    onChange={(event) =>
-                      change("mileageMax", event.target.value)
-                    }
-                  />
-                </label>
-                <label>
-                  Orçamento máximo (R$)
+                  Preço máximo (R$)
                   <input
                     name="priceMax"
-                    type="number"
-                    min="1"
-                    max="10000000"
-                    placeholder="Opcional"
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    maxLength={24}
+                    placeholder="Sem limite de preço"
                     value={draft.priceMax}
-                    onChange={(event) => change("priceMax", event.target.value)}
+                    onChange={(event) => {
+                      if (/^[0-9.,\s]*$/.test(event.target.value))
+                        change("priceMax", event.target.value);
+                    }}
+                    onBlur={() => {
+                      const v = parseMoneyInput(draft.priceMax);
+                      if (Number.isFinite(v)) change("priceMax", moneyInput(v));
+                    }}
                   />
                 </label>
                 <p className="discovery-help muted">
-                  O orçamento filtra a consulta. A referência também pode usar
-                  anúncios mais caros já observados, sem ampliar esta busca.
+                  O preço máximo filtra a consulta. A referência também pode
+                  usar anúncios mais caros já observados, sem ampliar esta
+                  busca.
                 </p>
                 <label className="discovery-check">
                   <input
@@ -871,10 +944,12 @@ export function SearchWorkspace({
                       }
                     />
                     {sourceNames[source]}
-                    {!integrations.find((item) => item.source === source)
-                      ?.configured
-                      ? " · configuração pendente"
-                      : ""}
+                    {loading
+                      ? " · verificando configuração"
+                      : !integrations.find((item) => item.source === source)
+                            ?.configured
+                        ? " · configuração pendente"
+                        : ""}
                   </label>
                 ))}
               </fieldset>
@@ -996,7 +1071,7 @@ export function SearchWorkspace({
                     ? ` · ${s.listings.filter((r) => !r.reasons.length).length} candidatos`
                     : ""}
                   {s.applied?.mapping?.status === "uncertain" &&
-                    " · Correspondência com a fonte incerta"}
+                    " · Consulta por texto"}
                 </summary>
                 <p>{s.message}</p>
                 {s.applied && (
@@ -1080,12 +1155,31 @@ export function SearchWorkspace({
             <>
               <p className="muted">
                 Critérios aplicados: {display?.criteria.brand}{" "}
-                {display?.criteria.model} · versão refinada nos resultados ·{" "}
-                {display ? criteriaLocation(display.criteria) : ""} · ano de{" "}
+                {display?.criteria.model} ·{" "}
+                {selectedVersion
+                  ? `filtro nos resultados: ${versionFacets.find((f) => f.value === selectedVersion)?.label ?? "Descrições OLX"}`
+                  : "todas as versões"}{" "}
+                · {display ? criteriaLocation(display.criteria) : ""} · ano de{" "}
                 {display?.criteria.yearMin ?? "qualquer"} até{" "}
                 {display?.criteria.yearMax ?? "qualquer"} · preço máximo{" "}
-                {display?.criteria.priceMax ?? "sem limite"} · km máximo{" "}
-                {display?.criteria.mileageMax ?? "sem limite"} ·{" "}
+                {display?.criteria.priceMax == null
+                  ? "sem limite"
+                  : moneyInput(
+                      Math.round(display.criteria.priceMax * 100),
+                    )}{" "}
+                · km mínimo{" "}
+                {display?.criteria.mileageMin == null
+                  ? "sem mínimo"
+                  : Number(display.criteria.mileageMin).toLocaleString(
+                      "pt-BR",
+                    )}{" "}
+                · km máximo{" "}
+                {display?.criteria.mileageMax == null
+                  ? "sem limite"
+                  : Number(display.criteria.mileageMax).toLocaleString(
+                      "pt-BR",
+                    )}{" "}
+                ·{" "}
                 {display?.criteria.privateOnly
                   ? "somente particulares"
                   : "todos os vendedores"}{" "}

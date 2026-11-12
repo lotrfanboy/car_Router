@@ -34,6 +34,8 @@ const sourceMapping = z.object({
   sourceBrandId: id.nullable().optional(),
   sourceModelId: id.nullable().optional(),
   sourceModelLabel: name.nullable().optional(),
+  // This observation evidenced a literal label with no provider IDs.
+  labelOnly: z.boolean().optional(),
   sourceVersionId: id.nullable().optional(),
   sourceVersionLabel: name.nullable().optional(),
   canonicalBrandId: id.nullable().optional(),
@@ -301,6 +303,8 @@ function mappingMatches(
   row: SourceVehicle,
 ) {
   if (mapping.source !== row.source) return false;
+  if (mapping.labelOnly && (row.brandId || row.modelId || row.versionId))
+    return false;
   if (
     mapping.sourceBrandId &&
     (!row.brandId || mapping.sourceBrandId !== row.brandId)
@@ -456,6 +460,13 @@ export function resolveCatalogVehicle(
       return !row.brandId || !knownIds.size || knownIds.has(row.brandId);
     });
     if (candidates.length === 1) brand = index.brandsById.get(candidates[0]);
+  }
+  // A literal structured make is independent evidence of the brand, even
+  // when its technical model description still needs a source crosswalk.
+  // Never use this fallback to bypass a provider brand ID or a known binding.
+  if (!brand && !row.brandId && row.brand) {
+    const literal = catalog.brands.filter((item) => same(item.name, row.brand));
+    if (literal.length === 1) brand = literal[0];
   }
   let models = brand ? (index.modelsByBrand.get(brand!.id) ?? []) : [];
   let model = resolve(models, row.source, row.modelId, row.model);
@@ -636,6 +647,29 @@ export function resolveCatalogVehicle(
     } else if (confirmedVersionIds.length > 1) versionStatus = "ambiguous";
     else if (versionMappings.some((mapping) => mapping.status === "pending"))
       versionStatus = "pending";
+  }
+  // Conflicting reviews must not be bypassed by a native model or version fallback.
+  const positiveModelIds = new Set([
+    ...confirmedModelIds,
+    ...(model ? [model.id] : []),
+  ]);
+  const pendingModelReview = modelMappings.some((m) => m.status === "pending");
+  const disputedModel =
+    positiveModelIds.size > 1 ||
+    modelMappings.some(
+      (m) =>
+        m.status === "ambiguous" ||
+        (m.status === "divergent" &&
+          !!m.notCanonicalModelId &&
+          positiveModelIds.has(m.notCanonicalModelId)),
+    ) ||
+    (pendingModelReview && positiveModelIds.size > 0);
+  if (disputedModel || pendingModelReview) {
+    model = undefined;
+    version = undefined;
+    versionStatus = "unresolved";
+    modelStatus = disputedModel ? "ambiguous" : "pending";
+    targetModelId = undefined;
   }
   const approvedModelMappings = modelMappings.filter(
     (item) =>

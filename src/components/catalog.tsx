@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
+  Plus,
   Search,
   SlidersHorizontal,
   LayoutGrid,
@@ -202,13 +203,19 @@ export function Catalog({ favorites = false }: { favorites?: boolean }) {
         eyebrow={
           favorites ? "SEU ACOMPANHAMENTO" : "ENCONTRE. COMPARE. DECIDA."
         }
-        title={favorites ? "Favoritos" : "Radar de veículos"}
+        title={favorites ? "Favoritos do catálogo manual" : "Catálogo manual"}
         description={
           favorites
             ? "Seus veículos de interesse, buscas salvas e alterações registradas."
             : "Explore preços, compare possibilidades e encontre o que faz sentido."
         }
       >
+        <Link href="/veiculos/novo" className="button primary">
+          <Plus size={16} /> Incluir manualmente
+        </Link>
+        <Link href="/salvos" className="button">
+          Ver anúncios e cadastros juntos
+        </Link>
         <Link href="/buscar" className="button">
           <Search size={15} /> Buscar nos portais <ArrowUpRight size={14} />
         </Link>

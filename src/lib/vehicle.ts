@@ -57,10 +57,13 @@ const url = z
     z
       .url()
       .max(2048)
-      .refine(
-        (v) => ["http:", "https:"].includes(new URL(v).protocol),
-        "Use uma URL http ou https.",
-      ),
+      .refine((v) => {
+        try {
+          return ["http:", "https:"].includes(new URL(v).protocol);
+        } catch {
+          return false;
+        }
+      }, "Use uma URL http ou https."),
   ])
   .optional()
   .nullable()
@@ -96,14 +99,24 @@ export const vehicleSchema = z
       .nullable()
       .optional()
       .transform((v) => v || null),
-    source: z.string().trim().min(1, "Informe a origem.").max(100),
+    source: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .transform((value) => value || "Cadastro manual"),
     sellerType: z
       .union([z.literal(""), z.enum(sellerTypes as [string, ...string[]])])
       .nullable()
       .optional()
       .transform((v) => v || null),
     originalUrl: url,
-    imageUrl: url,
+    imageUrl: z.union([
+      url,
+      z
+        .string()
+        .regex(/^\/api\/vehicle-images\/[a-f0-9-]{36}\.(?:jpg|png|webp)$/),
+    ]),
     notes: optionalText(5000),
   })
   .refine((v) => v.modelYear >= v.manufactureYear, {

@@ -1,0 +1,544 @@
+.workspace {
+  min-width: 0;
+  color: #eef0f3;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.heading h1 {
+  margin: 10px 0 12px;
+  font-size: clamp(30px, 3vw, 42px);
+  letter-spacing: -0.045em;
+  line-height: 1.16;
+}
+.heading p {
+  max-width: 620px;
+  color: #b5b7c0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+.toolbar,
+.compareControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 20px;
+  padding: 22px 0;
+  border-top: 1px solid #383b42;
+  border-bottom: 1px solid #383b42;
+  margin-bottom: 20px;
+}
+.toolbar label,
+.compareControls label {
+  display: grid;
+  gap: 8px;
+  color: #c8c9d0;
+  font-size: 13px;
+}
+.toolbar input,
+.toolbar select,
+.compareControls select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #62646e;
+  border-radius: 6px;
+  padding: 12px 14px;
+  background: #1a1c20;
+  color: #eef0f3;
+}
+.search {
+  flex: 1;
+  min-width: min(280px, 100%);
+}
+.toolbar > label:last-child {
+  min-width: 220px;
+}
+.listHeading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  justify-content: space-between;
+  margin: 22px 0;
+  font-size: 13px;
+  color: #b5b7c0;
+}
+.listHeading p {
+  color: #eef0f3;
+}
+.savedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.savedCard {
+  border: 1px solid #383b42;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 0;
+  background: #1a1c20;
+}
+.selectRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 52px;
+  padding: 12px 20px;
+  background: #202227;
+  border-bottom: 1px solid #383b42;
+  font-size: 13px;
+  color: #eef0f3;
+}
+.selectRow input,
+.difference input {
+  width: 18px;
+  height: 18px;
+  accent-color: #ffb3b4;
+  flex-shrink: 0;
+}
+.savedCard :global(.listing-card.with-photo) {
+  grid-template-columns: minmax(0, 1fr);
+  border: 0;
+  border-radius: 0;
+}
+.savedCard :global(.listing-photo) {
+  height: 235px;
+  min-height: 0;
+  background: #121419;
+}
+.savedCard :global(.listing-photo img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.savedCard :global(.listing-body) {
+  padding: 22px;
+}
+.savedCard :global(.listing-body h2) {
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+.savedCard :global(.listing-metrics) {
+  margin: 20px 0;
+}
+.savedCard :global(.listing-actions) {
+  gap: 10px;
+}
+.savedCard :global(.listing-observed) {
+  font-size: 12px;
+  color: #b5b7c0;
+}
+.selection {
+  position: sticky;
+  bottom: 16px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 24px 0 0;
+  padding: 16px;
+  background: #292128;
+  border: 1px solid #a56e7b;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px #0006;
+}
+.selection strong {
+  margin-right: auto;
+  font-size: 14px;
+}
+.empty {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  padding: clamp(24px, 5vw, 64px);
+  border: 1px solid #383b42;
+  border-radius: 10px;
+  background: #1a1c20;
+  margin: 24px 0;
+}
+.empty > svg {
+  color: #ffb3b4;
+}
+.empty h2 {
+  font-size: 25px;
+  line-height: 1.3;
+  max-width: 620px;
+}
+.empty p {
+  color: #b5b7c0;
+  max-width: 560px;
+  line-height: 1.7;
+}
+.footnote {
+  margin: 24px 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #b5b7c0;
+  max-width: 900px;
+}
+.compareControls > label:first-child {
+  min-width: min(100%, 300px);
+  flex: 1;
+}
+.compareControls select {
+  max-width: 100%;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+.compareControls .difference {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 10px;
+}
+.notice {
+  padding: 18px 20px;
+  border: 1px solid #685740;
+  background: #302719;
+  color: #f4d9a5;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+.compareScroll {
+  max-width: 100%;
+  overflow: auto;
+  border: 1px solid #383b42;
+  border-radius: 10px;
+  background: #1a1c20;
+}
+.compareScroll:focus-visible {
+  outline: 2px solid #ffb3b4;
+  outline-offset: 4px;
+}
+.compareTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 14px;
+}
+.compareTable th,
+.compareTable td {
+  padding: 20px;
+  vertical-align: top;
+  border-right: 1px solid #383b42;
+  border-bottom: 1px solid #383b42;
+  color: #eef0f3;
+  line-height: 1.65;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.compareTable th:last-child,
+.compareTable td:last-child {
+  border-right: 0;
+}
+.compareTable thead th {
+  width: 245px;
+  background: #1a1c20;
+  font-weight: 500;
+}
+.compareTable thead th:first-child {
+  width: 150px;
+  color: #b5b7c0;
+  font-size: 12px;
+}
+.compareTable thead th:first-child p {
+  margin-top: 16px;
+}
+.compareTable tbody th,
+.compareTable tfoot th {
+  width: 150px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #17191d;
+  color: #b5b7c0;
+}
+.compareTable tbody tr:hover td {
+  background: #202227;
+}
+.compareTable tbody .group th {
+  padding: 14px 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-size: 11px;
+  font-weight: 650;
+  color: #ffb3b4;
+  background: #252028;
+}
+.compareTable small {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #b5b7c0;
+}
+.compareTable thead th:first-child,
+.compareTable tbody th[scope="row"],
+.compareTable tfoot th {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  box-shadow: 1px 0 0 #383b42;
+}
+.comparePhoto {
+  position: relative;
+  height: 180px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #121419;
+}
+.comparePhoto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoEmpty {
+  height: 100%;
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  font-size: 13px;
+  color: #b5b7c0;
+}
+.comparePhoto .remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #62646e;
+  border-radius: 50%;
+  background: #111317;
+  color: #eef0f3;
+}
+.source {
+  display: block;
+  font-size: 12px;
+  color: #ffb3b4;
+  margin-bottom: 8px;
+}
+.compareTable .carTitle {
+  display: block;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 650;
+  color: #eef0f3;
+  text-decoration: none;
+}
+.carTitle:hover {
+  text-decoration: underline;
+}
+.lowest {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 12px;
+  color: #9ce0b8;
+}
+.tablePrice {
+  font-size: 23px;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: #eef0f3;
+}
+.compareTable .detailLink {
+  display: block;
+  padding-top: 12px;
+  color: #ffb3b4;
+  font-size: 12px;
+  min-height: 44px;
+}
+@media (max-width: 760px) {
+  .heading {
+    flex-direction: column;
+    align-items: start;
+    gap: 20px;
+  }
+  .savedGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .toolbar {
+    gap: 16px;
+  }
+  .toolbar label,
+  .toolbar > label:last-child {
+    width: 100%;
+    min-width: 0;
+  }
+  .savedCard :global(.listing-photo) {
+    height: 210px;
+  }
+  .savedCard :global(.listing-body) {
+    padding: 18px;
+  }
+  .selection {
+    bottom: 8px;
+    gap: 10px;
+    padding: 12px;
+  }
+  .selection > svg {
+    display: none;
+  }
+  .selection strong {
+    width: 100%;
+  }
+  .selection > a {
+    flex: 1;
+  }
+  .compareControls {
+    align-items: stretch;
+  }
+  .compareControls > label:first-child {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .compareTable th,
+  .compareTable td {
+    padding: 16px;
+  }
+  .heading h1 {
+    font-size: 32px;
+  }
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.originTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 25px 0;
+}
+.originTabs button {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #62646e;
+  border-radius: 7px;
+  padding: 10px 16px;
+  background: #1a1c20;
+  color: #d8dae1;
+}
+.originTabs .originActive {
+  border-color: #ffb3b4;
+  background: #32232c;
+  color: #ffd9dc;
+}
+.originTabs span {
+  font-size: 12px;
+  background: #34363e;
+  color: #eef0f3;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.manualBadge,
+.listingBadge {
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+.manualBadge {
+  color: #b8e4ff;
+  background: #1c3341;
+}
+.listingBadge {
+  color: #ffd3d7;
+  background: #3b2028;
+}
+.catalogLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin: 20px 0;
+}
+.catalogLinks a {
+  color: #ffb3b4;
+  font-size: 13px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.savedCard :global(.vehicle-card) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.selectedStrip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.selectedStrip > div {
+  position: relative;
+  border: 1px solid;
+  border-radius: 7px;
+  padding: 14px 52px 14px 16px;
+  background: #1a1c20;
+  min-width: 0;
+}
+.selectedStrip span {
+  display: block;
+  font-size: 12px;
+}
+.selectedStrip strong {
+  display: block;
+  margin-top: 7px;
+  color: #eef0f3;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.selectedStrip button {
+  position: absolute;
+  top: 9px;
+  right: 4px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: #eef0f3;
+}
+.analysisTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid #48414b;
+  margin: 28px 0;
+  padding-bottom: 12px;
+}
+.analysisTabs button {
+  color: #b5b7c0;
+  border: 1px solid #62646e;
+  border-radius: 6px;
+  padding: 12px 18px;
+  min-height: 48px;
+}
+.analysisTabs button[aria-selected="true"] {
+  color: #ffd9dc;
+  background: #3b2028;
+  border-color: #ffb3b4;
+}
+.compareTable td a:not(.button) {
+  display: block;
+  color: #ffb3b4;
+  padding: 10px 0;
+  min-height: 44px;
+}
+.compareTable td strong {
+  color: #eef0f3;
+  font-size: 21px;
+}

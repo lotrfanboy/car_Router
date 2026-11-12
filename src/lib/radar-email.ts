@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { db } from "./db";
+import { radarAppUrl } from "./radar-app-url";
 import { secret } from "./discovery-providers";
 import { publicListingUrl, sourceNames, type Listing } from "./discovery";
 import { money } from "./vehicle";
@@ -119,9 +120,12 @@ export function buildRadarEmail(
   const to = resolveRadarRecipient();
   if (!to || !radarEmailConfiguration().configured)
     throw new Error("E-mail não configurado.");
-  const app = httpsUrl(setting("RADAR_APP_URL"));
-  if (!app) throw new Error("RADAR_APP_URL precisa de HTTPS.");
-  const radarLink = `${app.replace(/\/$/, "")}/radares#radar-${encodeURIComponent(radarId)}`;
+  const app = radarAppUrl(setting("RADAR_APP_URL"));
+  if (!app)
+    throw new Error(
+      "RADAR_APP_URL precisa de HTTPS, ou HTTP local com SQLite.",
+    );
+  const radarLink = `${app.replace(/\/$/, "")}/radares/${encodeURIComponent(radarId)}`;
   const intro =
     "Novas oportunidades observadas desde a base deste radar. A primeira observação não confirma a data real de publicação.";
   const rows = listings.map((row) => {

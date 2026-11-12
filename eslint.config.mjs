@@ -6,6 +6,7 @@ export default defineConfig([
   ...nextTs,
   globalIgnores([
     ".next/**",
+    "validation-private/**",
     "next-env.d.ts",
     "src/generated/**",
     "supabase/.temp/**",

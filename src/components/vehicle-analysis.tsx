@@ -5,6 +5,7 @@ import { RefreshCw } from "lucide-react";
 import { money, type Vehicle, type PriceObservation } from "@/lib/vehicle";
 import { simulatePurchase } from "@/lib/intelligence";
 import styles from "./vehicle-detail.module.css";
+import { FinancingSimulator } from "./financing-simulator";
 
 export function recordedDate(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {
@@ -18,20 +19,24 @@ export function percent(value: number | null | undefined) {
     : `${new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 }).format(value)}%`;
 }
 
-export function usePriceHistory(vehicleId: string, priceCents: number) {
+export function usePriceHistory(
+  vehicleId: string,
+  priceCents: number,
+  endpoint?: string,
+) {
   const [attempt, setAttempt] = useState(0);
   const [state, setState] = useState<{
     key: string;
     rows: PriceObservation[];
     error: string;
   }>({ key: "", rows: [], error: "" });
-  const key = `${vehicleId}:${priceCents}:${attempt}`;
+  const key = `${endpoint ?? vehicleId}:${priceCents}:${attempt}`;
   useEffect(() => {
     const controller = new AbortController();
     async function load() {
       try {
         const response = await fetch(
-          `/api/vehicles/${encodeURIComponent(vehicleId)}/prices`,
+          endpoint ?? `/api/vehicles/${encodeURIComponent(vehicleId)}/prices`,
           { cache: "no-store", signal: controller.signal },
         );
         if (!response.ok)
@@ -68,7 +73,7 @@ export function usePriceHistory(vehicleId: string, priceCents: number) {
     }
     void load();
     return () => controller.abort();
-  }, [key, vehicleId]);
+  }, [key, vehicleId, endpoint]);
   return {
     rows: state.key === key ? state.rows : [],
     loading: state.key !== key,
@@ -79,10 +84,15 @@ export function usePriceHistory(vehicleId: string, priceCents: number) {
 
 export function PriceHistory({
   history,
+  origin = "manual",
+  idPrefix = "vehicle",
 }: {
   history: ReturnType<typeof usePriceHistory>;
+  origin?: "manual" | "listing";
+  idPrefix?: string;
 }) {
   const rows = history.rows;
+  const titleId = `price-history-${idPrefix}`;
   const min = rows.length ? Math.min(...rows.map((row) => row.priceCents)) : 0;
   const max = rows.length ? Math.max(...rows.map((row) => row.priceCents)) : 0;
   const range = Math.max(max - min, max * 0.05, 1);
@@ -96,19 +106,18 @@ export function PriceHistory({
     row,
   }));
   return (
-    <section
-      className={`panel ${styles.section}`}
-      aria-labelledby="price-history-title"
-    >
+    <section className={`panel ${styles.section}`} aria-labelledby={titleId}>
       <div className={styles.sectionHeading}>
         <div>
           <span className="eyebrow">REGISTROS PRESERVADOS</span>
-          <h2 id="price-history-title">Trajetória do preço</h2>
+          <h2 id={titleId}>Trajetória do preço</h2>
         </div>
         <span className={styles.subtle}>
           {rows.length > 0
-            ? `${rows.length} registros`
-            : "Histórico do cadastro"}
+            ? `${rows.length} ${rows.length === 1 ? "registro" : "registros"}`
+            : origin === "listing"
+              ? "Histórico das observações"
+              : "Histórico do cadastro"}
         </span>
       </div>
       {history.loading ? (
@@ -129,9 +138,11 @@ export function PriceHistory({
             <h3>O próximo registro conta mais uma parte.</h3>
             <p>
               {rows.length
-                ? `Primeiro preço cadastrado: ${money(rows[0].priceCents)}, em ${recordedDate(rows[0].observedAt)}.`
+                ? `${origin === "listing" ? "Primeiro preço observado" : "Primeiro preço cadastrado"}: ${money(rows[0].priceCents)}, em ${recordedDate(rows[0].observedAt)}.`
                 : "Não há registros de preço disponíveis para este anúncio."}{" "}
-              Ao editar o preço, o valor anterior permanece no histórico.
+              {origin === "listing"
+                ? "Novas observações podem acrescentar registros a este histórico."
+                : "Ao editar o preço, o valor anterior permanece no histórico."}
             </p>
           </div>
         </div>
@@ -145,7 +156,7 @@ export function PriceHistory({
             <svg
               viewBox="0 0 800 185"
               role="img"
-              aria-label={`Preço cadastrado de ${money(rows[0].priceCents)} a ${money(rows[rows.length - 1].priceCents)}. Valores e datas disponíveis na tabela.`}
+              aria-label={`${origin === "listing" ? "Preço observado" : "Preço cadastrado"} de ${money(rows[0].priceCents)} a ${money(rows[rows.length - 1].priceCents)}. Valores e datas disponíveis na tabela.`}
             >
               <path
                 d="M24 40H776 M24 98H776 M24 155H776"
@@ -216,7 +227,9 @@ export function PriceHistory({
                             ? "Cadastro inicial"
                             : row.reason === "edited"
                               ? "Edição do cadastro"
-                              : "Registro preservado"}
+                              : origin === "listing"
+                                ? "Observação da fonte"
+                                : "Registro preservado"}
                         </td>
                       </tr>
                     );
@@ -228,8 +241,11 @@ export function PriceHistory({
         </>
       )}
       <p className={styles.footnote}>
-        O histórico reflete preços registrados neste catálogo. Não comprova
-        tempo em estoque, disponibilidade atual ou venda do veículo.
+        {origin === "listing"
+          ? "O histórico reflete preços observados nesta fonte."
+          : "O histórico reflete preços registrados neste catálogo."}{" "}
+        Não comprova tempo em estoque, disponibilidade atual ou venda do
+        veículo.
       </p>
     </section>
   );
@@ -255,12 +271,14 @@ const simulationFields: [keyof SimulationValues, string][] = [
   ["otherCosts", "Outros custos"],
   ["targetMargin", "Margem-alvo sobre a venda (%)"],
 ];
-export function PurchaseSimulator({
+function ResaleSimulator({
   vehicle,
   suggestedSaleCents,
+  contextNote,
 }: {
-  vehicle: Vehicle;
+  vehicle: Pick<Vehicle, "priceCents">;
   suggestedSaleCents: number | null;
+  contextNote?: string;
 }) {
   const [values, setValues] = useState<SimulationValues>(() => ({
     purchasePrice: String(vehicle.priceCents / 100),
@@ -307,9 +325,10 @@ export function PurchaseSimulator({
       </div>
       <p className={styles.intro}>
         Ajuste a compra, a venda e os custos do seu cenário.{" "}
-        {suggestedSaleCents != null
-          ? "A hipótese inicial usa a mediana dos comparáveis com amostra suficiente. São preços anunciados, não vendas realizadas."
-          : "Não há base comparável suficiente para sugerir um preço. Informe sua hipótese de venda."}{" "}
+        {contextNote ??
+          (suggestedSaleCents != null
+            ? "A hipótese inicial usa a mediana dos comparáveis com amostra suficiente. São preços anunciados, não vendas realizadas."
+            : "Não há base comparável suficiente para sugerir um preço. Informe sua hipótese de venda.")}{" "}
         Não há garantia de retorno.
       </p>
       <div className={styles.simulationLayout}>
@@ -440,5 +459,45 @@ export function PurchaseSimulator({
         </div>
       </div>
     </section>
+  );
+}
+
+export function PurchaseSimulator(props: {
+  vehicle: Pick<Vehicle, "priceCents">;
+  suggestedSaleCents: number | null;
+  contextNote?: string;
+}) {
+  const [mode, setMode] = useState<"financing" | "resale">("financing");
+  return (
+    <div className="financial-tools">
+      <div
+        className="financial-tools-switch"
+        role="group"
+        aria-label="Tipo de planejamento financeiro"
+      >
+        <button
+          className="button"
+          type="button"
+          aria-pressed={mode === "financing"}
+          onClick={() => setMode("financing")}
+        >
+          Financiar a compra
+        </button>
+        <button
+          className="button"
+          type="button"
+          aria-pressed={mode === "resale"}
+          onClick={() => setMode("resale")}
+        >
+          Compra e revenda
+        </button>
+      </div>
+      <div hidden={mode !== "financing"}>
+        <FinancingSimulator priceCents={props.vehicle.priceCents} />
+      </div>
+      <div hidden={mode !== "resale"}>
+        <ResaleSimulator {...props} />
+      </div>
+    </div>
   );
 }

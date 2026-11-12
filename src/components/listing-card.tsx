@@ -3,9 +3,13 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { Bookmark, ExternalLink, ArrowUpRight } from "lucide-react";
 import { type Listing, sourceNames } from "@/lib/discovery";
+import { technicalFacts } from "@/lib/technical-facts";
 import { money, number } from "@/lib/vehicle";
 export type ListingOrigin = "salvos" | "comparar-anuncios";
-export const listingPath = (row: Pick<Listing, "source" | "externalId">, origin?: ListingOrigin) =>
+export const listingPath = (
+  row: Pick<Listing, "source" | "externalId">,
+  origin?: ListingOrigin,
+) =>
   `/anuncios/${row.source}/${encodeURIComponent(row.externalId)}${origin ? `?origem=${origin}` : ""}`;
 export const observedWhen = (value: string) =>
   new Date(value).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
@@ -108,13 +112,12 @@ export function ListingCard({
   matchStatus?: "confirmed" | "uncertain" | "incompatible";
 }) {
   const [imageFailed, setImageFailed] = useState(false);
+  const technical = technicalFacts(listing);
   const path = searchId
     ? `${listingPath(listing)}?busca=${encodeURIComponent(searchId)}`
     : listingPath(listing, origin);
   return (
-    <article
-      className="listing-card with-photo"
-    >
+    <article className="listing-card with-photo">
       {listing.imageUrl && !imageFailed ? (
         <Link className="listing-photo" href={path} prefetch={false}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -127,7 +130,11 @@ export function ListingCard({
           />
         </Link>
       ) : (
-        <div className="listing-photo listing-photo-unavailable" role="img" aria-label="Foto indisponível para este anúncio">
+        <div
+          className="listing-photo listing-photo-unavailable"
+          role="img"
+          aria-label="Foto indisponível para este anúncio"
+        >
           Foto indisponível
         </div>
       )}
@@ -139,7 +146,9 @@ export function ListingCard({
           </span>
         </div>
         <h2>
-          <Link href={path} prefetch={false}>{listing.title}</Link>
+          <Link href={path} prefetch={false}>
+            {listing.title}
+          </Link>
         </h2>
         {matchStatus && (
           <p className="muted">
@@ -150,11 +159,15 @@ export function ListingCard({
                 : "Incompatível com os filtros selecionados"}
           </p>
         )}
-        {matchStatus && matchStatus !== "confirmed" && listing.reasons.length > 0 && (
-          <ul aria-label="Restrições deste anúncio">
-            {listing.reasons.map((reason) => <li key={reason}>{reason}</li>)}
-          </ul>
-        )}
+        {matchStatus &&
+          matchStatus !== "confirmed" &&
+          listing.reasons.length > 0 && (
+            <ul aria-label="Restrições deste anúncio">
+              {listing.reasons.map((reason) => (
+                <li key={reason}>{reason}</li>
+              ))}
+            </ul>
+          )}
         <p className="listing-specs">
           {listing.version || "Versão desconhecida"}
           {listing.versionOrigin === "inferred" ? " (inferida)" : ""} ·{" "}
@@ -164,10 +177,33 @@ export function ListingCard({
             : `${number(listing.mileage)} km`}{" "}
           · {listing.city ?? "Cidade não informada"}/{listing.state ?? "—"}
         </p>
+        <div className="listing-technical-chips">
+          {(
+            [
+              ["engine", "Motor"],
+              ["transmission", "Câmbio"],
+              ["fuel", "Combustível"],
+            ] as const
+          ).map(([key, label]) =>
+            technical[key] ? (
+              <span
+                key={key}
+                title={
+                  technical.origins[key] === "version"
+                    ? "Descrito na versão da fonte"
+                    : "Informado pela fonte"
+                }
+              >
+                {label}: {technical[key]}
+                {technical.origins[key] === "version" ? " · versão" : ""}
+              </span>
+            ) : null,
+          )}
+        </div>
         <RelativePrice listing={listing} />
         <div className="listing-actions">
           <Link href={path} className="text-link" prefetch={false}>
-            Conferir semelhantes <ArrowUpRight size={14} />
+            Detalhes e análises <ArrowUpRight size={14} />
           </Link>
           <a
             className="button small"

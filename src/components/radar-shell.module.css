@@ -1,0 +1,331 @@
+.shell {
+  --ink: #e2e2e8;
+  --muted: #aaa9b3;
+  --line: #333539;
+  --surface: #1a1c20;
+  --accent: #ffb3b4;
+  --bg: #111317;
+  --radar-muted: #aaa9b3;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font:
+    15px/1.65 var(--font-radar-body),
+    sans-serif;
+  color-scheme: dark;
+}
+.shell * {
+  box-sizing: border-box;
+}
+.shell h1,
+.shell h2,
+.shell h3 {
+  font-family: var(--font-radar-heading), sans-serif;
+  color: var(--ink);
+}
+.shell h1 {
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: -1.4px;
+  font-weight: 700;
+}
+.shell h2 {
+  font-size: 20px;
+  font-weight: 650;
+}
+.shell a {
+  color: inherit;
+}
+.shell button,
+.shell input,
+.shell select {
+  font: inherit;
+}
+.shell :focus-visible {
+  outline: 2px solid #ffb3b4;
+  outline-offset: 4px;
+}
+.shell :global(.muted) {
+  color: var(--muted);
+}
+.shell :global(.button) {
+  min-height: 44px;
+  border: 1px solid #4b454b;
+  border-radius: 4px;
+  background: #282a2e;
+  color: #e2e2e8;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.shell :global(.button.primary) {
+  background: #8b1e2d;
+  border-color: #8b1e2d;
+  color: #fff;
+}
+.shell :global(.button.primary:hover) {
+  background: #a32435;
+}
+.shell :global(.button:hover) {
+  border-color: #bd8d96;
+}
+.shell :global(.button:disabled) {
+  opacity: 0.55;
+  cursor: wait;
+}
+.shell :global(.text-button),
+.shell :global(.text-link) {
+  color: #ffb3b4;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.shell :global(.icon-button) {
+  color: #e2e2e8;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+}
+.shell :global(.panel) {
+  background: #1a1c20;
+  border: 1px solid #333539;
+  border-radius: 8px;
+}
+.shell :global(.error-box) {
+  background: #3b2028;
+  color: #ffd3d7;
+  border: 1px solid #9c5b66;
+}
+.shell :global(.discovery-notice) {
+  background: #24242d;
+  color: #e2e2e8;
+  border-color: #4b454b;
+}
+.header {
+  max-width: 1440px;
+  margin: auto;
+  min-height: 88px;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border-bottom: 1px solid #282a2e;
+}
+.brand {
+  font-family: var(--font-radar-heading), sans-serif;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+.brand svg,
+.brandDot {
+  color: #ffb3b4;
+}
+.navigation,
+.navigationOpen {
+  display: flex;
+  gap: 22px;
+  align-self: stretch;
+  align-items: center;
+}
+.navigation a,
+.navigationOpen a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  color: #b5b7c0;
+  position: relative;
+}
+.navigation a[aria-current],
+.navigationOpen a[aria-current] {
+  color: #ffb3b4;
+}
+.navigation a[aria-current]::after {
+  content: "";
+  height: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffb3b4;
+}
+.signature {
+  margin-left: auto;
+  color: #8e8d97;
+  font-size: 9px;
+  letter-spacing: 1px;
+  max-width: 125px;
+}
+.menu {
+  display: none;
+  min-height: 44px;
+  min-width: 44px;
+}
+.main {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px;
+  outline: none;
+}
+.main:global(#conteudo) {
+  padding: 48px;
+}
+.footer {
+  max-width: 1344px;
+  margin: 0 auto;
+  padding: 28px 0 36px;
+  border-top: 1px solid #282a2e;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: 11px;
+  color: #aaa9b3;
+}
+.footer .brand {
+  font-size: 19px;
+  color: #e2e2e8;
+}
+.footer > span {
+  margin-right: auto;
+}
+@media (max-width: 1100px) {
+  .header {
+    gap: 30px;
+  }
+  .signature {
+    display: none;
+  }
+  .navigation,
+  .navigationOpen {
+    margin-left: auto;
+  }
+  .footer {
+    margin: 0 32px;
+  }
+  .main,
+  .main:global(#conteudo) {
+    padding: 36px 32px;
+  }
+}
+@media (max-width: 1100px) {
+  .header {
+    padding: 16px 20px;
+    min-height: 76px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 23px;
+  }
+  .menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+  .navigation {
+    display: none;
+  }
+  .navigationOpen {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin: 0;
+    padding: 12px 0 0;
+  }
+  .navigationOpen a {
+    padding: 8px;
+  }
+  .shell h1 {
+    font-size: 28px;
+    letter-spacing: -0.7px;
+  }
+  .main,
+  .main:global(#conteudo) {
+    padding: 28px 20px;
+  }
+  .footer {
+    margin: 0 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 24px 0;
+  }
+  .footer > span {
+    flex-basis: 100%;
+    order: 3;
+  }
+}
+
+.navigation {
+  margin-left: auto;
+}
+.shell h2 {
+  letter-spacing: -0.025em;
+  line-height: 1.4;
+}
+
+/* The current page remains marked; hover and keyboard focus preview the target. */
+.navigation a::after,
+.navigationOpen a::after {
+  content: "";
+  height: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffb3b4;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 160ms ease;
+}
+.navigation a[aria-current]::after,
+.navigationOpen a[aria-current]::after,
+.navigation a:hover::after,
+.navigationOpen a:hover::after,
+.navigation a:focus-visible::after,
+.navigationOpen a:focus-visible::after {
+  transform: scaleX(1);
+}
+.navigation a:hover,
+.navigationOpen a:hover {
+  color: #ffb3b4;
+}
+.shell :global(.button),
+.shell :global(.icon-button),
+.shell input,
+.shell select,
+.shell textarea {
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    color 140ms ease;
+}
+.shell input:hover:not(:disabled),
+.shell select:hover:not(:disabled),
+.shell textarea:hover:not(:disabled) {
+  border-color: #9d818a;
+}
+.shell :global(.button:active:not(:disabled)) {
+  filter: brightness(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation a::after,
+  .navigationOpen a::after,
+  .shell :global(.button),
+  .shell :global(.icon-button),
+  .shell input,
+  .shell select,
+  .shell textarea {
+    transition: none;
+  }
+}

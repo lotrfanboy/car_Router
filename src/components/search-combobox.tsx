@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { commitComboboxEnter } from "@/lib/search-combobox-keyboard";
 
 export type SearchOption = {
   code: string;
@@ -130,12 +131,27 @@ export function SearchCombobox({
           value={value}
           autoComplete="off"
           onFocus={() => setOpen(true)}
+          onClick={() => setOpen(true)}
           onChange={(event) => {
             onChange(event.target.value);
             setActive(-1);
             setOpen(true);
           }}
           onKeyDown={(event) => {
+            if (
+              commitComboboxEnter(
+                event,
+                { open, loading, error, active, options: filtered },
+                {
+                  choose,
+                  close: () => {
+                    setOpen(false);
+                    setActive(-1);
+                  },
+                },
+              )
+            )
+              return;
             if (event.key === "Escape") {
               setOpen(false);
               setActive(-1);
@@ -155,16 +171,6 @@ export function SearchCombobox({
                   ? -1
                   : Math.max(index - 1, 0),
               );
-            } else if (
-              event.key === "Enter" &&
-              open &&
-              !loading &&
-              !error &&
-              active >= 0 &&
-              filtered[active]
-            ) {
-              event.preventDefault();
-              choose(filtered[active]);
             }
           }}
         />

@@ -1,0 +1,5254 @@
+{
+  "groups": [
+    {
+      "name": "BMW 320i - SC - 2018+",
+      "criteria": {
+        "name": "BMW 320i - SC - 2018+",
+        "brand": "BMW",
+        "model": "320i",
+        "catalog": {
+          "provider": "carrouter",
+          "revision": "unconfigured",
+          "brandCode": "portal:webmotors:brand:27df9ed9a477af0fcfe369c8",
+          "brandName": "BMW",
+          "modelCode": "portal:webmotors:model:c0814ec798fecf72014b6861",
+          "modelName": "320i"
+        },
+        "locationMode": "state",
+        "city": "",
+        "cities": [],
+        "state": "SC",
+        "yearMin": 2018,
+        "yearMax": null,
+        "priceMax": null,
+        "mileageMax": null,
+        "privateOnly": false,
+        "sources": [
+          "olx"
+        ],
+        "olxUrl": ""
+      },
+      "expected": {
+        "confirmed": 39,
+        "uncertain": 1,
+        "incompatible": 10
+      },
+      "listings": [
+        {
+          "source": "olx",
+          "externalId": "1513976619",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2018-1513976619",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2018",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 10900000,
+          "mileage": 67500,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1500415698",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2022-1500415698",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 21788000,
+          "mileage": 39788,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1502324144",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2022-1502324144",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 20500000,
+          "mileage": 48500,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529178591",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2016-1529178591",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2016",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 11990000,
+          "mileage": 115000,
+          "city": "Tubarão",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529529197",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1529529197",
+          "title": "BMW 320I 320i 2024",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26790000,
+          "mileage": 57000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529534453",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1529534453",
+          "title": "BMW 320I 320i 2024",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 28890000,
+          "mileage": 57000,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1527388018",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2023-1527388018",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 21990000,
+          "mileage": 32899,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1527387995",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2023-1527387995",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 21990000,
+          "mileage": 32899,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1527388007",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2023-1527388007",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 21990000,
+          "mileage": 32899,
+          "city": "Palhoça",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542839642",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2025-1542839642",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2025",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2025,
+          "priceCents": 29999000,
+          "mileage": 23000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546564075",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2020-1546564075",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2020",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 17490000,
+          "mileage": 72000,
+          "city": "Itapema",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541319532",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2022-1541319532",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 17590000,
+          "mileage": 56000,
+          "city": "Itajaí",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541319516",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2022-1541319516",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 17590000,
+          "mileage": 56000,
+          "city": "Criciúma",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541319529",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1541319529",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2015",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 8490000,
+          "mileage": 134000,
+          "city": "Criciúma",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1538924326",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1538924326",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2015",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 8490000,
+          "mileage": 134000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541319506",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2022-1541319506",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 17590000,
+          "mileage": 56000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1535780605",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2020-1535780605",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2020",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 17790000,
+          "mileage": 57311,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1511601134",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2023-1511601134",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 25389000,
+          "mileage": 61167,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549145876",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2025-1549145876",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2025",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2025,
+          "priceCents": 29999000,
+          "mileage": 23000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544733329",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1544733329",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2015",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 9990000,
+          "mileage": 109315,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549859474",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2024-1549859474",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 27990000,
+          "mileage": 33500,
+          "city": "Itapema",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549837519",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2023-1549837519",
+          "title": "BMW 320I 320i 2023",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 25990000,
+          "mileage": 42000,
+          "city": "Ibirama",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529815451",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2017-1529815451",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2017",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 11490000,
+          "mileage": 114000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529815452",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2017-1529815452",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2017",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 11490000,
+          "mileage": 114000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529815453",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2017-1529815453",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2017",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 11490000,
+          "mileage": 114000,
+          "city": "Palhoça",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549826553",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-gt-sport-2-0-turbo-16v-184cv-5p-2015-1549826553",
+          "title": "BMW 320I A GT Sport 2.0 Turbo 16V 184cv 5P 2015",
+          "brand": "BMW",
+          "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+          "sourceModel": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 9599000,
+          "mileage": 191000,
+          "city": "Jaraguá do Sul",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1516244573",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1516244573",
+          "title": "BMW 320I 320i 2024",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 28289000,
+          "mileage": 53157,
+          "city": "Criciúma",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549022628",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2025-1549022628",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2025",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2025,
+          "priceCents": 30800000,
+          "mileage": 14600,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544512359",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1544512359",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2015",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 9490000,
+          "mileage": 109000,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548629960",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2022-1548629960",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 23000000,
+          "mileage": 31723,
+          "city": "Tubarão",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1534254015",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2020-1534254015",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2020",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 17500000,
+          "mileage": 54000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548937649",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2025-1548937649",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2025",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2025,
+          "priceCents": 31200000,
+          "mileage": 49000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544454161",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-turbo-activeflex-16v-184cv-4p-2015-1544454161",
+          "title": "BMW 320I A 2.0 Turbo/activeflex 16V 184cv 4P 2015",
+          "brand": "BMW",
+          "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceModel": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 9390000,
+          "mileage": 113000,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 Turbo/activeflex 16V 184cv 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548020692",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2021-1548020692",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2021",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 18989900,
+          "mileage": 60300,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1536771964",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2023-1536771964",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 24990000,
+          "mileage": 51200,
+          "city": "Palhoça",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549612525",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2024-1549612525",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26990000,
+          "mileage": 24600,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1534171235",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2024-1534171235",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26790000,
+          "mileage": 57000,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1533860414",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2023-1533860414",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 25790000,
+          "mileage": 54800,
+          "city": "Brusque",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541809147",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-gt-sport-2-0-turbo-16v-184cv-5p-2022-1541809147",
+          "title": "BMW 320I A GT Sport 2.0 Turbo 16V 184cv 5P 2022",
+          "brand": "BMW",
+          "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+          "sourceModel": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 19288800,
+          "mileage": 62500,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A GT Sport 2.0 Turbo 16V 184cv 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1528095984",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2022-1528095984",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 19990000,
+          "mileage": 62680,
+          "city": "Itajaí",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541786232",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2025-1541786232",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2025",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2025,
+          "priceCents": 31299000,
+          "mileage": 22980,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542495018",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2024-1542495018",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26790000,
+          "mileage": 46700,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541342626",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1541342626",
+          "title": "BMW 320I 320i 2024",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 28990000,
+          "mileage": 41000,
+          "city": "Criciúma",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547762231",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2023-1547762231",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2023",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2023,
+          "priceCents": 19990000,
+          "mileage": 49000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1531891538",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2022-1531891538",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2022",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 21600000,
+          "mileage": 79000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549478691",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2021-1549478691",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2021",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 19990000,
+          "mileage": 66000,
+          "city": "Timbó",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1520532002",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2024-1520532002",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26900000,
+          "mileage": 62400,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1478573731",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-2-0-tb-m-sport-activeflex-16v-4p-2024-1478573731",
+          "title": "BMW 320I A 2.0 TB M Sport Activeflex 16V 4P 2024",
+          "brand": "BMW",
+          "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceModel": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26900000,
+          "mileage": 62400,
+          "city": "Brusque",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A 2.0 TB M Sport Activeflex 16V 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547820013",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-320i-2024-1547820013",
+          "title": "BMW 320I 320i 2024",
+          "brand": "BMW",
+          "model": "320I 320i",
+          "sourceModel": "320I 320i",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 26790000,
+          "mileage": 57000,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I 320i",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549436244",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/bmw-320i-a-modern-sport-tb-2-0-a-flex-16v-4p-2018-1549436244",
+          "title": "BMW 320I A Modern/sport TB 2.0/a.flex 16V 4P 2018",
+          "brand": "BMW",
+          "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceModel": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9990000,
+          "mileage": 88000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:06.673Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "BMW",
+            "model": "320I A Modern/sport TB 2.0/a.flex 16V 4P",
+            "version": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audi A4 - PR - 2016+",
+      "criteria": {
+        "name": "Audi A4 - PR - 2016+",
+        "brand": "AUDI",
+        "model": "A4",
+        "catalog": {
+          "provider": "carrouter",
+          "revision": "unconfigured",
+          "brandCode": "portal:webmotors:brand:b51026e4444f98ecdbe1d7cb",
+          "brandName": "AUDI",
+          "modelCode": "portal:webmotors:model:eea020373530c69f25a7e32b",
+          "modelName": "A4"
+        },
+        "locationMode": "state",
+        "city": "",
+        "cities": [],
+        "state": "PR",
+        "yearMin": 2016,
+        "yearMax": null,
+        "priceMax": null,
+        "mileageMax": null,
+        "privateOnly": false,
+        "sources": [
+          "olx"
+        ],
+        "olxUrl": ""
+      },
+      "expected": {
+        "confirmed": 5,
+        "uncertain": 0,
+        "incompatible": 45
+      },
+      "listings": [
+        {
+          "source": "olx",
+          "externalId": "1358914017",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-prestige-1-4-tfsi-flex-s-tronic-2021-1358914017",
+          "title": "Audi Q3 Prestige 1.4 TFSI Flex S-tronic 2021",
+          "brand": "Audi",
+          "model": "Q3 Prestige 1.4 TFSI Flex S-tronic",
+          "sourceModel": "Q3 Prestige 1.4 TFSI Flex S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 15790000,
+          "mileage": 36000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 Prestige 1.4 TFSI Flex S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547344020",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2018-1547344020",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2018",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 8490000,
+          "mileage": 80000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1471242313",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1471242313",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8988800,
+          "mileage": 92388,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1422882312",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-prestige-plus-1-4-tfsi-flex-s-tronic-2022-1422882312",
+          "title": "Audi Q3 Prestige Plus 1.4 TFSI Flex S-tronic 2022",
+          "brand": "Audi",
+          "model": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+          "sourceModel": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 18190000,
+          "mileage": 50000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549154548",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-sportback-1-4-tfsi-5p-s-tronic-2018-1549154548",
+          "title": "Audi A1 Sportback 1.4 TFSI 5P S-tronic 2018",
+          "brand": "Audi",
+          "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceModel": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9990000,
+          "mileage": 15500,
+          "city": "Pinhais",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1517073663",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-2-4-30v-tip-multitronic-2000-1517073663",
+          "title": "Audi A4 2.4 30V Tip./multitronic 2000",
+          "brand": "Audi",
+          "model": "A4 2.4 30V Tip./multitronic",
+          "sourceModel": "A4 2.4 30V Tip./multitronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2000,
+          "priceCents": 2500000,
+          "mileage": 103000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 2.4 30V Tip./multitronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549862873",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-attra-16v-tb-fsi-s-tronic-2015-1549862873",
+          "title": "Audi A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic 2015",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+          "sourceModel": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 3800000,
+          "mileage": 146137,
+          "city": "Quatiguá",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549839652",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportback-1-4-tfsi-s-tronic-2015-1549839652",
+          "title": "Audi A3 Sportback 1.4 TFSI S-tronic 2015",
+          "brand": "Audi",
+          "model": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 6990000,
+          "mileage": 95000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sportback 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1523730277",
+          "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-black-s-line-1-4-tfsi-s-tronic-2021-1523730277",
+          "title": "Audi Q3 Black S Line 1.4 TFSI S-tronic 2021",
+          "brand": "Audi",
+          "model": "Q3 Black S Line 1.4 TFSI S-tronic",
+          "sourceModel": "Q3 Black S Line 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 15000000,
+          "mileage": 68000,
+          "city": "Cianorte",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 Black S Line 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1506065590",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1506065590",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 9180000,
+          "mileage": 52000,
+          "city": "Cornélio Procópio",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549790603",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-2-0-16v-tfsi-183-180cv-multitronic-2010-1549790603",
+          "title": "Audi A4 2.0 16V TFSI 183/180cv Multitronic 2010",
+          "brand": "Audi",
+          "model": "A4 2.0 16V TFSI 183/180cv Multitronic",
+          "sourceModel": "A4 2.0 16V TFSI 183/180cv Multitronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2010,
+          "priceCents": 2000000,
+          "mileage": 180000,
+          "city": "São José dos Pinhais",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 2.0 16V TFSI 183/180cv Multitronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1509986545",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-sportback-1-4-tfsi-5p-s-tronic-2014-1509986545",
+          "title": "Audi A1 Sportback 1.4 TFSI 5P S-tronic 2014",
+          "brand": "Audi",
+          "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceModel": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2014,
+          "priceCents": 6690000,
+          "mileage": 111000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1502327076",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1502327076",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8490000,
+          "mileage": 130000,
+          "city": "Londrina",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549782936",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1549782936",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 4500000,
+          "mileage": 133000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549776434",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2016-1549776434",
+          "title": "Audi A3 Sedan 1.4 TFSI Flex Tiptronic 4P 2016",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceModel": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 8000000,
+          "mileage": 141,
+          "city": "Fazenda Rio Grande",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549769554",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-1-8-tip-multitronic-turbo-2015-1549769554",
+          "title": "Audi A4 1.8 Tip./ Multitronic Turbo 2015",
+          "brand": "Audi",
+          "model": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceModel": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 8590000,
+          "mileage": 77000,
+          "city": "Londrina",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 1.8 Tip./ Multitronic Turbo",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549759145",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-prestige-plus-1-4-tfsi-s-tronic-2020-1549759145",
+          "title": "Audi A3 Sedan Prestige Plus 1.4 TFSI S-tronic 2020",
+          "brand": "Audi",
+          "model": "A3 Sedan Prestige Plus 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sedan Prestige Plus 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 12795000,
+          "mileage": 59711,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan Prestige Plus 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549714266",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-avant-prest-plus-2-0-tfsi-s-tronic-2019-1549714266",
+          "title": "Audi A4 Avant Prest. Plus 2.0 TFSI S-tronic 2019",
+          "brand": "Audi",
+          "model": "A4 Avant Prest. Plus 2.0 TFSI S-tronic",
+          "sourceModel": "A4 Avant Prest. Plus 2.0 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 17990000,
+          "mileage": 59566,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 Avant Prest. Plus 2.0 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549709791",
+          "url": "https://pr.olx.com.br/regiao-de-foz-do-iguacu-e-cascavel/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-1-4-tfsi-122cv-s-tronic-3p-2012-1549709791",
+          "title": "Audi A1 1.4 TFSI 122cv S-tronic 3P 2012",
+          "brand": "Audi",
+          "model": "A1 1.4 TFSI 122cv S-tronic 3P",
+          "sourceModel": "A1 1.4 TFSI 122cv S-tronic 3P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 5144000,
+          "mileage": 89000,
+          "city": "Matelândia",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A1 1.4 TFSI 122cv S-tronic 3P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1502104191",
+          "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2018-1502104191",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2018",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9490000,
+          "mileage": 93309,
+          "city": "Maringá",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1089712376",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2018-1089712376",
+          "title": "Audi A3 Sedan 1.4 TFSI Flex Tiptronic 4P 2018",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceModel": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 8990000,
+          "mileage": 147904,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1508161495",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-prestige-plus-2-0-tfsi-190cv-s-tronic-2021-1508161495",
+          "title": "Audi A4 Prestige Plus 2.0 TFSI 190cv S Tronic 2021",
+          "brand": "Audi",
+          "model": "A4 Prestige Plus 2.0 TFSI 190cv S Tronic",
+          "sourceModel": "A4 Prestige Plus 2.0 TFSI 190cv S Tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 15990000,
+          "mileage": 65940,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 Prestige Plus 2.0 TFSI 190cv S Tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549649027",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-audi-avant-lim-ed-2-0-tfsi-s-tronic-2018-1549649027",
+          "title": "Audi A4 Audi Avant Lim. ED. 2.0 TFSI S Tronic 2018",
+          "brand": "Audi",
+          "model": "A4 Audi Avant Lim. ED. 2.0 TFSI S Tronic",
+          "sourceModel": "A4 Audi Avant Lim. ED. 2.0 TFSI S Tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 15790000,
+          "mileage": 80000,
+          "city": "São José dos Pinhais",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 Audi Avant Lim. ED. 2.0 TFSI S Tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1528035457",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-attra-16v-tb-fsi-s-tronic-2015-1528035457",
+          "title": "Audi A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic 2015",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+          "sourceModel": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 7170000,
+          "mileage": 120000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4/ Attra. 16V TB FSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547983886",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-sportback-1-4-tfsi-5p-s-tronic-2015-1547983886",
+          "title": "Audi A1 Sportback 1.4 TFSI 5P S-tronic 2015",
+          "brand": "Audi",
+          "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceModel": "A1 Sportback 1.4 TFSI 5P S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 7990000,
+          "mileage": 72000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A1 Sportback 1.4 TFSI 5P S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544408919",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1544408919",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 7989900,
+          "mileage": 129178,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549571858",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-a3-sed-p-plus-tech-1-4-flex-tfsi-tip-2020-1549571858",
+          "title": "Audi A3 A3 Sed. P. Plus Tech 1.4 Flex TFSI TIP 2020",
+          "brand": "Audi",
+          "model": "A3 A3 Sed. P. Plus Tech 1.4 Flex TFSI TIP",
+          "sourceModel": "A3 A3 Sed. P. Plus Tech 1.4 Flex TFSI TIP",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 9590000,
+          "mileage": 79000,
+          "city": "Pinhais",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 A3 Sed. P. Plus Tech 1.4 Flex TFSI TIP",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541789579",
+          "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-a1-1-4-tfsi-122cv-s-tronic-3p-2012-1541789579",
+          "title": "Audi A1 1.4 TFSI 122cv S-tronic 3P 2012",
+          "brand": "Audi",
+          "model": "A1 1.4 TFSI 122cv S-tronic 3P",
+          "sourceModel": "A1 1.4 TFSI 122cv S-tronic 3P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 6190000,
+          "mileage": 96000,
+          "city": "Maringá",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A1 1.4 TFSI 122cv S-tronic 3P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1432369486",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-1-8-tip-multitronic-turbo-2007-1432369486",
+          "title": "Audi A4 1.8 Tip./ Multitronic Turbo 2007",
+          "brand": "Audi",
+          "model": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceModel": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2007,
+          "priceCents": 4280000,
+          "mileage": 150491,
+          "city": "Londrina",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 1.8 Tip./ Multitronic Turbo",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549559871",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2018-1549559871",
+          "title": "Audi A3 Sedan 1.4 TFSI Flex Tiptronic 4P 2018",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceModel": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9350000,
+          "mileage": 120000,
+          "city": "Londrina",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1479399342",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2019-1479399342",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2019",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 13980000,
+          "mileage": 54000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549482930",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-1-8-tip-multitronic-turbo-2003-1549482930",
+          "title": "Audi A4 1.8 Tip./ Multitronic Turbo 2003",
+          "brand": "Audi",
+          "model": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceModel": "A4 1.8 Tip./ Multitronic Turbo",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2003,
+          "priceCents": 2400000,
+          "mileage": 200000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 1.8 Tip./ Multitronic Turbo",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1362619801",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2021-1362619801",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2021",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 23390000,
+          "mileage": 64000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548713330",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-ambiente-2-0-tfsi-190cv-s-tronic-2018-1548713330",
+          "title": "Audi A4 Ambiente 2.0 TFSI 190cv S Tronic 2018",
+          "brand": "Audi",
+          "model": "A4 Ambiente 2.0 TFSI 190cv S Tronic",
+          "sourceModel": "A4 Ambiente 2.0 TFSI 190cv S Tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 11490000,
+          "mileage": 75000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 Ambiente 2.0 TFSI 190cv S Tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1536995337",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-prestige-1-4-tfsi-s-tronic-2020-1536995337",
+          "title": "Audi A3 Sedan Prestige 1.4 TFSI S-tronic 2020",
+          "brand": "Audi",
+          "model": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 10990000,
+          "mileage": 95233,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548618389",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportb-prestige-plus-1-4-tfsi-s-tron-2020-1548618389",
+          "title": "Audi A3 Sportb. Prestige Plus 1.4 TFSI S-tron 2020",
+          "brand": "Audi",
+          "model": "A3 Sportb. Prestige Plus 1.4 TFSI S-tron",
+          "sourceModel": "A3 Sportb. Prestige Plus 1.4 TFSI S-tron",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 11000000,
+          "mileage": 78000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sportb. Prestige Plus 1.4 TFSI S-tron",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542509057",
+          "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-s-line-2-0-tfsi-s-tronic-2024-1542509057",
+          "title": "Audi A3 Sedan S-line 2.0 TFSI S-tronic 2024",
+          "brand": "Audi",
+          "model": "A3 Sedan S-line 2.0 TFSI S-tronic",
+          "sourceModel": "A3 Sedan S-line 2.0 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2024,
+          "priceCents": 19089000,
+          "mileage": 39016,
+          "city": "Maringá",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan S-line 2.0 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1514138356",
+          "url": "https://pr.olx.com.br/regiao-de-londrina/autos-e-pecas/carros-vans-e-utilitarios/audi-a4-prestige-2-0-tfsi-190cv-s-tronic-2022-1514138356",
+          "title": "Audi A4 Prestige 2.0 TFSI 190cv S-tronic 2022",
+          "brand": "Audi",
+          "model": "A4 Prestige 2.0 TFSI 190cv S-tronic",
+          "sourceModel": "A4 Prestige 2.0 TFSI 190cv S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 14990000,
+          "mileage": 91000,
+          "city": "Londrina",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A4 Prestige 2.0 TFSI 190cv S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1513078389",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-rs4-2-9-avant-v6-tfsi-quattro-tiptronic-2019-1513078389",
+          "title": "Audi RS4 2.9 Avant V6 TFSI Quattro Tiptronic 2019",
+          "brand": "Audi",
+          "model": "RS4 2.9 Avant V6 TFSI Quattro Tiptronic",
+          "sourceModel": "RS4 2.9 Avant V6 TFSI Quattro Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 36977700,
+          "mileage": 63207,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "RS4 2.9 Avant V6 TFSI Quattro Tiptronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1536674291",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-prestige-plus-1-4-tfsi-flex-s-tronic-2020-1536674291",
+          "title": "Audi Q3 Prestige Plus 1.4 TFSI Flex S-tronic 2020",
+          "brand": "Audi",
+          "model": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+          "sourceModel": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2020,
+          "priceCents": 13477700,
+          "mileage": 122484,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 Prestige Plus 1.4 TFSI Flex S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1523511625",
+          "url": "https://pr.olx.com.br/regiao-de-maringa/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2018-1523511625",
+          "title": "Audi A3 Sedan 1.4 TFSI Flex Tiptronic 4P 2018",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceModel": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 8590000,
+          "mileage": 101230,
+          "city": "Maringá",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1498310368",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportback-1-4-tfsi-s-tronic-2018-1498310368",
+          "title": "Audi A3 Sportback 1.4 TFSI S-tronic 2018",
+          "brand": "Audi",
+          "model": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 10500000,
+          "mileage": 87468,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sportback 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1539633308",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportb-s-line-limited-1-4-tfsi-tip-2022-1539633308",
+          "title": "Audi A3 Sportb. S-line Limited 1.4 TFSI TIP 2022",
+          "brand": "Audi",
+          "model": "A3 Sportb. S-line Limited 1.4 TFSI TIP",
+          "sourceModel": "A3 Sportb. S-line Limited 1.4 TFSI TIP",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2022,
+          "priceCents": 17800000,
+          "mileage": 63006,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sportb. S-line Limited 1.4 TFSI TIP",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541336933",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sportback-1-4-tfsi-s-tronic-2019-1541336933",
+          "title": "Audi A3 Sportback 1.4 TFSI S-tronic 2019",
+          "brand": "Audi",
+          "model": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sportback 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 11471100,
+          "mileage": 36206,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sportback 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529589202",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-black-s-line-1-4-tfsi-s-tronic-2021-1529589202",
+          "title": "Audi Q3 Black S Line 1.4 TFSI S-tronic 2021",
+          "brand": "Audi",
+          "model": "Q3 Black S Line 1.4 TFSI S-tronic",
+          "sourceModel": "Q3 Black S Line 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2021,
+          "priceCents": 16300000,
+          "mileage": 61000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 Black S Line 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1545315716",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-1-4-tfsi-flex-tiptronic-4p-2017-1545315716",
+          "title": "Audi A3 Sedan 1.4 TFSI Flex Tiptronic 4P 2017",
+          "brand": "Audi",
+          "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceModel": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8670000,
+          "mileage": 95000,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan 1.4 TFSI Flex Tiptronic 4P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549198539",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1549198539",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8990000,
+          "mileage": 89230,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549169004",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-a3-sedan-prestige-1-4-tfsi-s-tronic-2018-1549169004",
+          "title": "Audi A3 Sedan Prestige 1.4 TFSI S-tronic 2018",
+          "brand": "Audi",
+          "model": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+          "sourceModel": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9190000,
+          "mileage": 99411,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "A3 Sedan Prestige 1.4 TFSI S-tronic",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1477852006",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-rs4-2-7-avant-v6-30v-bi-tb-quattro-380cv-2019-1477852006",
+          "title": "Audi RS4 2.7 Avant V6 30V Bi-TB Quattro 380cv 2019",
+          "brand": "Audi",
+          "model": "RS4 2.7 Avant V6 30V Bi-TB Quattro 380cv",
+          "sourceModel": "RS4 2.7 Avant V6 30V Bi-TB Quattro 380cv",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 38977700,
+          "mileage": 60529,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "RS4 2.7 Avant V6 30V Bi-TB Quattro 380cv",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529391005",
+          "url": "https://pr.olx.com.br/regiao-de-curitiba-e-paranagua/autos-e-pecas/carros-vans-e-utilitarios/audi-q3-1-4-tfsi-tfsi-flex-s-tronic-5p-2017-1529391005",
+          "title": "Audi Q3 1.4 TFSI/TFSI Flex S-tronic 5P 2017",
+          "brand": "Audi",
+          "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceModel": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8890000,
+          "mileage": 114468,
+          "city": "Curitiba",
+          "state": "PR",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:13.595Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Audi",
+            "model": "Q3 1.4 TFSI/TFSI Flex S-tronic 5P",
+            "version": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mercedes-Benz C180 - SP - 2015 a 2020",
+      "criteria": {
+        "name": "Mercedes-Benz C180 - SP - 2015 a 2020",
+        "brand": "MERCEDES-BENZ",
+        "model": "C 180",
+        "catalog": {
+          "provider": "carrouter",
+          "revision": "unconfigured",
+          "brandCode": "portal:webmotors:brand:26ca276cd3d3e181c556e71f",
+          "brandName": "MERCEDES-BENZ",
+          "modelCode": "portal:webmotors:model:ec87495d5b76d68810d089e5",
+          "modelName": "C 180"
+        },
+        "locationMode": "state",
+        "city": "",
+        "cities": [],
+        "state": "SP",
+        "yearMin": 2015,
+        "yearMax": 2020,
+        "priceMax": null,
+        "mileageMax": null,
+        "privateOnly": false,
+        "sources": [
+          "olx"
+        ],
+        "olxUrl": ""
+      },
+      "expected": {
+        "confirmed": 30,
+        "uncertain": 0,
+        "incompatible": 20
+      },
+      "listings": [
+        {
+          "source": "olx",
+          "externalId": "1547597751",
+          "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1547597751",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 7299000,
+          "mileage": 161528,
+          "city": "Hortolândia",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549923215",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2012-1549923215",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2012",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 6200000,
+          "mileage": 172000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548250023",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2012-1548250023",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2012",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 5500000,
+          "mileage": 125000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1543838913",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2015-1543838913",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2015",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 7690000,
+          "mileage": 188000,
+          "city": "Mauá",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549880853",
+          "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2011-1549880853",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2011",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2011,
+          "priceCents": 5500000,
+          "mileage": 100000,
+          "city": "Campinas",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548220418",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2018-1548220418",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9500000,
+          "mileage": 0,
+          "city": "Caieiras",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541358617",
+          "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2019-1541358617",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 11490000,
+          "mileage": 102000,
+          "city": "Campinas",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1540245752",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2019-1540245752",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 13800000,
+          "mileage": 57175,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1533492976",
+          "url": "https://sp.olx.com.br/regiao-de-bauru-e-marilia/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2016-1533492976",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2016",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 9990000,
+          "mileage": 174000,
+          "city": "Bauru",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549851609",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2016-1549851609",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2016",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 11990000,
+          "mileage": 89980,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549851571",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2014-1549851571",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2014",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2014,
+          "priceCents": 7989000,
+          "mileage": 100000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549851577",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2019-1549851577",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 13390000,
+          "mileage": 70200,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1539582199",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1539582199",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 5790000,
+          "mileage": 115,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549850831",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2017-1549850831",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8550000,
+          "mileage": 84000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549839179",
+          "url": "https://sp.olx.com.br/regiao-de-sorocaba/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2011-1549839179",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2011",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2011,
+          "priceCents": 6499900,
+          "mileage": 109000,
+          "city": "Sorocaba",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1491752960",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-coupe-sport-1-6-tb-16v-aut-2018-1491752960",
+          "title": "Mercedes-Benz C-180 CGI Coupe Sport 1.6 TB 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Coupe Sport 1.6 TB 16V Aut.",
+          "sourceModel": "C-180 CGI Coupe Sport 1.6 TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 15989000,
+          "mileage": 32500,
+          "city": "Osasco",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Coupe Sport 1.6 TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549837839",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2014-1549837839",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2014",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2014,
+          "priceCents": 7000000,
+          "mileage": 78350,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546949435",
+          "url": "https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2018-1546949435",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 11000000,
+          "mileage": 120966,
+          "city": "São José dos Campos",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549836250",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2015-1549836250",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2015",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 9050000,
+          "mileage": 103000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549827029",
+          "url": "https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1549827029",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 6900000,
+          "mileage": 125000,
+          "city": "São José dos Campos",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1524613280",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-classic-classic-plus-elegance-2012-1524613280",
+          "title": "Mercedes-Benz C-180 Classic/classic Plus/elegance 2012",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 Classic/classic Plus/elegance",
+          "sourceModel": "C-180 Classic/classic Plus/elegance",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 7299000,
+          "mileage": 105000,
+          "city": "Santo André",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 Classic/classic Plus/elegance",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1527800822",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2015-1527800822",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2015",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 8299900,
+          "mileage": 72500,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544547375",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2018-1544547375",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 9500000,
+          "mileage": 150000,
+          "city": "São Bernardo do Campo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549679435",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2011-1549679435",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2011",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2011,
+          "priceCents": 6500000,
+          "mileage": 148000,
+          "city": "Cotia",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544794533",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2019-1544794533",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 12499000,
+          "mileage": 93000,
+          "city": "Santo André",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1538003317",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2017-1538003317",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 11489000,
+          "mileage": 71233,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547988577",
+          "url": "https://sp.olx.com.br/regiao-de-ribeirao-preto/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2018-1547988577",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 11990000,
+          "mileage": 91000,
+          "city": "Ribeirão Preto",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1528391035",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-1998-1528391035",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 1998",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 1998,
+          "priceCents": 7980000,
+          "mileage": 51392,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542796297",
+          "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2018-1542796297",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 11999000,
+          "mileage": 92000,
+          "city": "Paulínia",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1528416709",
+          "url": "https://sp.olx.com.br/grande-campinas/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-classic-1-8-16v-156cv-aut-2012-1528416709",
+          "title": "Mercedes-Benz C-180 CGI Classic 1.8 16V 156cv Aut. 2012",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 5990000,
+          "mileage": 183000,
+          "city": "Americana",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Classic 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546228371",
+          "url": "https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2017-1546228371",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 7990000,
+          "mileage": 113000,
+          "city": "São José dos Campos",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1508767951",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2016-1508767951",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2016",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 9290000,
+          "mileage": 126000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546691126",
+          "url": "https://sp.olx.com.br/regiao-de-sorocaba/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2014-1546691126",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2014",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2014,
+          "priceCents": 6499900,
+          "mileage": 140000,
+          "city": "Sorocaba",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549594629",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2018-1549594629",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2018",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2018,
+          "priceCents": 11390000,
+          "mileage": 84500,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1528089025",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2013-1528089025",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 6799900,
+          "mileage": 160000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548833874",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2019-1548833874",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 12390000,
+          "mileage": 48000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1506416635",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-estate-avant-1-6-tb-16v-aut-2016-1506416635",
+          "title": "Mercedes-Benz C-180 CGI Estate Avant. 1.6 TB 16V Aut. 2016",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Estate Avant. 1.6 TB 16V Aut.",
+          "sourceModel": "C-180 CGI Estate Avant. 1.6 TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2016,
+          "priceCents": 8900000,
+          "mileage": 125,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Estate Avant. 1.6 TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547734624",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2015-1547734624",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2015",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2015,
+          "priceCents": 10590000,
+          "mileage": 82000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1537622675",
+          "url": "https://sp.olx.com.br/regiao-de-ribeirao-preto/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2017-1537622675",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 10299000,
+          "mileage": 110000,
+          "city": "Ribeirão Preto",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1471637311",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-coupe-1-8-16v-156cv-aut-2012-1471637311",
+          "title": "Mercedes-Benz C-180 CGI Coupe 1.8 16V 156cv Aut. 2012",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Coupe 1.8 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Coupe 1.8 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2012,
+          "priceCents": 5490000,
+          "mileage": 180000,
+          "city": "São Bernardo do Campo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Coupe 1.8 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1524290718",
+          "url": "https://sp.olx.com.br/regiao-de-sorocaba/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2017-1524290718",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 10599000,
+          "mileage": 119000,
+          "city": "Sorocaba",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1545064163",
+          "url": "https://sp.olx.com.br/regiao-de-sorocaba/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-classic-classic-plus-elegance-2001-1545064163",
+          "title": "Mercedes-Benz C-180 Classic/classic Plus/elegance 2001",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 Classic/classic Plus/elegance",
+          "sourceModel": "C-180 Classic/classic Plus/elegance",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2001,
+          "priceCents": 4990000,
+          "mileage": 133300,
+          "city": "Sorocaba",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 Classic/classic Plus/elegance",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549185817",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1549185817",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 5990000,
+          "mileage": 145000,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547620725",
+          "url": "https://sp.olx.com.br/vale-do-paraiba-e-litoral-norte/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-kompressor-classic-1-6-16v-aut-2011-1547620725",
+          "title": "Mercedes-Benz C-180 Kompressor Classic 1.6 16V Aut. 2011",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 Kompressor Classic 1.6 16V Aut.",
+          "sourceModel": "C-180 Kompressor Classic 1.6 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2011,
+          "priceCents": 5700000,
+          "mileage": 77000,
+          "city": "Jacareí",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 Kompressor Classic 1.6 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1545032741",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-1-6-turbo-16v-flex-16v-aut-2017-1545032741",
+          "title": "Mercedes-Benz C-180 1.6 Turbo 16v/flex 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceModel": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 8989000,
+          "mileage": 156143,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 1.6 Turbo 16v/flex 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547633626",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-exc-1-6-1-6-flex-tb-16v-aut-2017-1547633626",
+          "title": "Mercedes-Benz C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceModel": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 9999000,
+          "mileage": 125000,
+          "city": "Mogi das Cruzes",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Exc. 1.6/1.6 Flex TB 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542458080",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-sport-1-6-tb-16v-156cv-aut-2013-1542458080",
+          "title": "Mercedes-Benz C-180 CGI Sport 1.6 TB 16V 156cv Aut. 2013",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceModel": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2013,
+          "priceCents": 6990000,
+          "mileage": 150000,
+          "city": "Guarulhos",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Sport 1.6 TB 16V 156cv Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544498375",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2019-1544498375",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2019",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2019,
+          "priceCents": 12479000,
+          "mileage": 69823,
+          "city": "São Paulo",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1530633922",
+          "url": "https://sp.olx.com.br/sao-paulo-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2017-1530633922",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 10499000,
+          "mileage": 128000,
+          "city": "Mogi das Cruzes",
+          "state": "SP",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1510674839",
+          "url": "https://sp.olx.com.br/regiao-de-sao-jose-do-rio-preto/autos-e-pecas/carros-vans-e-utilitarios/mercedes-benz-c-180-cgi-avant-1-6-1-6-flextb-16v-aut-2017-1510674839",
+          "title": "Mercedes-Benz C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut. 2017",
+          "brand": "Mercedes-Benz",
+          "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceModel": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "modelYear": 2017,
+          "priceCents": 9999900,
+          "mileage": 103000,
+          "city": "São José do Rio Preto",
+          "state": "SP",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T18:25:17.117Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          },
+          "original": {
+            "brand": "Mercedes-Benz",
+            "model": "C-180 CGI Avant. 1.6/1.6 Flextb 16V Aut.",
+            "version": null
+          }
+        }
+      ]
+    }
+  ]
+}

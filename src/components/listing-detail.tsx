@@ -1,9 +1,17 @@
 "use client";
+import { FipeLookup } from "@/components/fipe-lookup";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { type Listing, sourceNames } from "@/lib/discovery";
 import { money, number } from "@/lib/vehicle";
-import { RelativePrice, SaveListing, observedWhen, type ListingOrigin } from "./listing-card";
+import {
+  RelativePrice,
+  SaveListing,
+  observedWhen,
+  type ListingOrigin,
+} from "./listing-card";
+import { PriceHistory, PurchaseSimulator } from "./vehicle-analysis";
+import { technicalFacts } from "@/lib/technical-facts";
 export function ListingDetail({
   source,
   id,
@@ -66,10 +74,17 @@ export function ListingDetail({
   }
   const back = searchId
     ? `/buscar?busca=${encodeURIComponent(searchId)}`
-    : origin === "salvos" ? "/salvos" : origin === "comparar-anuncios" ? "/comparar-anuncios" : "/buscar";
-  const backLabel = !searchId && origin === "salvos"
-    ? "Voltar aos salvos"
-    : !searchId && origin === "comparar-anuncios" ? "Voltar à comparação" : "Voltar aos resultados";
+    : origin === "salvos"
+      ? "/salvos"
+      : origin === "comparar-anuncios"
+        ? "/comparar"
+        : "/buscar";
+  const backLabel =
+    !searchId && origin === "salvos"
+      ? "Voltar aos salvos"
+      : !searchId && origin === "comparar-anuncios"
+        ? "Voltar à comparação"
+        : "Voltar aos resultados";
   if (error)
     return (
       <div role="alert" className="error-box">
@@ -78,6 +93,7 @@ export function ListingDetail({
     );
   if (!row) return <p role="status">Carregando anúncio e semelhantes…</p>;
   const c = row.comparison!;
+  const technical = technicalFacts(row);
   return (
     <div className="focus-workspace listing-detail">
       <Link className="back-link" href={back}>
@@ -113,7 +129,11 @@ export function ListingDetail({
             />
           </div>
         ) : (
-          <div className="detail-photo listing-photo-unavailable" role="img" aria-label="Foto indisponível para este anúncio">
+          <div
+            className="detail-photo listing-photo-unavailable"
+            role="img"
+            aria-label="Foto indisponível para este anúncio"
+          >
             Foto indisponível
           </div>
         )}
@@ -142,6 +162,52 @@ export function ListingDetail({
             )}
           </div>
         </div>
+      </section>
+      <section className="panel">
+        <div className="eyebrow">
+          DADOS DA OFERTA · {sourceNames[row.source]}
+        </div>
+        <h2>Conheça os detalhes</h2>
+        <dl className="listing-technical-grid">
+          {(
+            [
+              ["engine", "Motor"],
+              ["transmission", "Câmbio"],
+              ["fuel", "Combustível"],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key}>
+              <dt>{label}</dt>
+              <dd>
+                {technical[key] || "Não informado"}
+                {technical.origins[key] === "version" && (
+                  <small>Descrito na versão; confira no anúncio</small>
+                )}
+                {technical.conflicts.includes(key) && (
+                  <small>Fonte e versão divergem; conferir</small>
+                )}
+              </dd>
+            </div>
+          ))}
+          <div>
+            <dt>Ano-modelo</dt>
+            <dd>{row.modelYear ?? "Não informado"}</dd>
+          </div>
+          <div>
+            <dt>Fabricação</dt>
+            <dd>Não informada nesta integração</dd>
+          </div>
+          <div>
+            <dt>Vendedor</dt>
+            <dd>
+              {row.sellerType === "private"
+                ? "Particular"
+                : row.sellerType === "professional"
+                  ? "Profissional"
+                  : "Não identificado"}
+            </dd>
+          </div>
+        </dl>
       </section>
       <section className="panel">
         <h2>Como chegamos à comparação</h2>
@@ -238,15 +304,27 @@ export function ListingDetail({
         </button>
         {historyError && <p role="alert">{historyError}</p>}
         {history && (
-          <ul>
-            {history.map((item) => (
-              <li key={item.id}>
-                {observedWhen(item.observedAt)} · {money(item.priceCents)}
-              </li>
-            ))}
-          </ul>
+          <PriceHistory
+            origin="listing"
+            idPrefix={`${source}:${id}`}
+            history={{
+              rows: history,
+              loading: busy,
+              error: historyError,
+              retry: () => void prices(),
+            }}
+          />
         )}
       </section>
+      <FipeLookup priceCents={row.priceCents} modelYear={row.modelYear} />
+      {row.priceCents !== null && row.priceCents > 0 && (
+        <PurchaseSimulator
+          key={`${row.source}:${row.externalId}`}
+          vehicle={{ priceCents: row.priceCents }}
+          suggestedSaleCents={null}
+          contextNote="Este cenário usa apenas os valores que você informar. Não há preço de venda sugerido para esta oferta."
+        />
+      )}
     </div>
   );
 }

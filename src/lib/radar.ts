@@ -1,6 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { db } from "./db";
+import { scheduledWindow } from "./radar-budget";
+import { radarAppUrl } from "./radar-app-url";
 import {
   currentSearchCriteria,
   executeSearch,
@@ -17,6 +19,8 @@ import {
   radarEmailOverview,
 } from "./radar-email";
 import { radarState } from "./radar-state";
+import { readVehicleCatalog } from "./catalog-store";
+import { currentRadarNotice } from "./radar-notices";
 import {
   radarEvent,
   radarEventKey,
@@ -36,19 +40,18 @@ export const radarSchema = z.object({
   runsRemaining: z.number().int().min(0).max(100).nullable().default(null),
 });
 export function radarInfrastructure() {
-  const scheduler =
-    setting("RADAR_SCHEDULER_ENABLED") === "true" &&
-    setting("RADAR_CRON_SECRET").length >= 32;
+  const schedulerEnabled = setting("RADAR_SCHEDULER_ENABLED") === "true";
+  const cronConfigured = setting("RADAR_CRON_SECRET").length >= 32;
+  const window = scheduledWindow();
+  const scheduler = schedulerEnabled && cronConfigured && window.allowed;
   const emailConfig = radarEmailConfiguration();
   const email = emailConfig.configured && emailConfig.enabled;
-  const origin = setting("RADAR_APP_URL");
-  let link = false;
-  try {
-    const u = new URL(origin);
-    link = u.protocol === "https:" && !u.username && !u.password;
-  } catch {}
+  const link = Boolean(radarAppUrl(setting("RADAR_APP_URL")));
   return {
     scheduler,
+    schedulerEnabled,
+    cronConfigured,
+    scheduledUntil: window.expiresAt,
     email,
     link,
     ready: scheduler && link,
@@ -60,10 +63,12 @@ export function radarInfrastructure() {
         : []),
     ],
     missing: [
-      ...(!scheduler
-        ? ["Agendador externo e RADAR_CRON_SECRET (mínimo 32 caracteres)"]
+      ...(window.reason ? [window.reason] : []),
+      ...(!schedulerEnabled
+        ? ["Agendamento automático desativado (RADAR_SCHEDULER_ENABLED=false)"]
         : []),
-      ...(!link ? ["RADAR_APP_URL com a URL HTTPS do aplicativo"] : []),
+      ...(!cronConfigured ? ["RADAR_CRON_SECRET (mínimo 32 caracteres)"] : []),
+      ...(!link ? ["RADAR_APP_URL com HTTPS (ou HTTP local com SQLite)"] : []),
     ],
   };
 }
@@ -76,6 +81,7 @@ export function authorizedTick(request: Request) {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 export async function listRadars() {
+  const catalog = await readVehicleCatalog();
   const infrastructure = radarInfrastructure();
   const heartbeat = await db.searchLock.findUnique({
     where: { id: "radar-heartbeat" },
@@ -128,14 +134,9 @@ export async function listRadars() {
           ...row,
           search: undefined,
           criteria,
-          notices: row.notices.map((notice) => {
-            let listing: Listing | null = null;
-            try {
-              listing = notice.payload
-                ? (JSON.parse(notice.payload) as Listing)
-                : null;
-            } catch {}
-            return { ...notice, payload: undefined, listing };
+          notices: row.notices.flatMap((notice) => {
+            const current = currentRadarNotice(notice, criteria, catalog);
+            return current ? [current] : [];
           }),
           state: radarState({
             enabled: row.enabled,

@@ -1,4 +1,5 @@
 import { db } from "./db";
+import { scheduledCreditBlock } from "./radar-budget";
 import { collectionCriteria } from "./search-criteria";
 import { commercialModelName } from "./commercial-names";
 import { planSourceQuery } from "./source-query";
@@ -105,6 +106,11 @@ export async function reserveCredits(
         _sum: { credits: true },
       }),
     ]);
+    const scheduledBlock =
+      scope === "scheduled"
+        ? scheduledCreditBlock(provider, all._sum.credits ?? 0, credits)
+        : null;
+    if (scheduledBlock) throw new SearchError(scheduledBlock, 429);
     const verified = await validationCreditsToday(
       tx,
       provider as keyof typeof trialLimit,
@@ -180,8 +186,9 @@ export async function integrationStatus() {
     }),
   );
 }
-export async function listSearches() {
+export async function listSearches(id?: string) {
   const rows = await db.savedSearch.findMany({
+    ...(id ? { where: { id } } : {}),
     orderBy: { createdAt: "desc" },
     include: {
       runs: { orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 1 },

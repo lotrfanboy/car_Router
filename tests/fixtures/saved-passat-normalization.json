@@ -1,0 +1,1976 @@
+{
+  "name": "VOLKSWAGEN Passat · SC",
+  "criteria": {
+    "name": "VOLKSWAGEN Passat · SC",
+    "brand": "VOLKSWAGEN",
+    "model": "Passat",
+    "catalog": {
+      "provider": "carrouter",
+      "revision": "unconfigured",
+      "brandCode": "portal:webmotors:brand:aa59343f9ebb354fb5cdff10",
+      "brandName": "VOLKSWAGEN",
+      "modelCode": "portal:webmotors:model:56b78a0528346dcc3b587816",
+      "modelName": "Passat"
+    },
+    "locationMode": "state",
+    "city": "",
+    "cities": [],
+    "state": "SC",
+    "yearMin": 2016,
+    "yearMax": null,
+    "priceMax": null,
+    "mileageMax": null,
+    "privateOnly": false,
+    "sources": ["olx", "webmotors"],
+    "olxUrl": ""
+  },
+  "createdAt": "2026-11-03T19:02:18.732Z",
+  "sources": [
+    {
+      "source": "olx",
+      "received": 44,
+      "total": 44,
+      "partial": false,
+      "status": "ok",
+      "listings": [
+        {
+          "source": "olx",
+          "externalId": "1482601899",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1482601899",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 10979000,
+          "mileage": 159000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549873258",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2019-1549873258",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2019",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2019,
+          "priceCents": 13900000,
+          "mileage": 119559,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1531501141",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1531501141",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 12490000,
+          "mileage": 147000,
+          "city": "Gravatal",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1533667330",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2019-1533667330",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2019",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2019,
+          "priceCents": 12890000,
+          "mileage": 108000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1532549648",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1532549648",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 13499000,
+          "mileage": 75000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549401285",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1549401285",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 13500000,
+          "mileage": 136000,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549345881",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-variant-2-0-fsi-150cv-tiptron-5p-2006-1549345881",
+          "title": "Volkswagen Passat Variant 2.0 FSI 150cv Tiptron.5p 2006",
+          "brand": "Volkswagen",
+          "model": "Passat Variant 2.0 FSI 150cv Tiptron.5p",
+          "sourceModel": "Passat Variant 2.0 FSI 150cv Tiptron.5p",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Variant 2.0 FSI 150cv Tiptron.5p",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2006,
+          "priceCents": 1700000,
+          "mileage": 187000,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1549142731",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-cc-3-6-v6-fsi-300cv-tiptronic-2014-1549142731",
+          "title": "Volkswagen Passat CC 3.6 V6 FSI 300cv Tiptronic 2014",
+          "brand": "Volkswagen",
+          "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceModel": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2014,
+          "priceCents": 13750000,
+          "mileage": 72800,
+          "city": "Blumenau",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548677213",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-tb-2-0-fsi-tsi-211cv-tiptronic-4p-2014-1548677213",
+          "title": "Volkswagen Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P 2014",
+          "brand": "Volkswagen",
+          "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceModel": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2014,
+          "priceCents": 7590000,
+          "mileage": 133368,
+          "city": "Palhoça",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548552196",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1548552196",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 11990000,
+          "mileage": 142282,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548520187",
+          "url": "https://sc.olx.com.br/oeste-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1984-1548520187",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1984",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1984,
+          "priceCents": 2600000,
+          "mileage": 142322,
+          "city": "Palmitos",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1548028672",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1548028672",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14000000,
+          "mileage": 85000,
+          "city": "Laguna",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547960742",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-variant-turbo-2-0-fsi-tiptron-5p-2014-1547960742",
+          "title": "Volkswagen Passat Variant Turbo 2.0 FSI Tiptron. 5P 2014",
+          "brand": "Volkswagen",
+          "model": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+          "sourceModel": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2014,
+          "priceCents": 8450000,
+          "mileage": 166000,
+          "city": "Pomerode",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547788669",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-tb-2-0-fsi-tsi-211cv-tiptronic-4p-2012-1547788669",
+          "title": "Volkswagen Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P 2012",
+          "brand": "Volkswagen",
+          "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceModel": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2012,
+          "priceCents": 7075000,
+          "mileage": 110000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1547212518",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-variant-turbo-2-0-fsi-tiptron-5p-2014-1547212518",
+          "title": "Volkswagen Passat Variant Turbo 2.0 FSI Tiptron. 5P 2014",
+          "brand": "Volkswagen",
+          "model": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+          "sourceModel": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Variant Turbo 2.0 FSI Tiptron. 5P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2014,
+          "priceCents": 7590000,
+          "mileage": 150000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546303666",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1978-1546303666",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1978",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1978,
+          "priceCents": 2990000,
+          "mileage": 100000,
+          "city": "Balneário Camboriú",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1546120746",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-cc-3-6-v6-fsi-300cv-tiptronic-2014-1546120746",
+          "title": "Volkswagen Passat CC 3.6 V6 FSI 300cv Tiptronic 2014",
+          "brand": "Volkswagen",
+          "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceModel": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2014,
+          "priceCents": 13490000,
+          "mileage": 157000,
+          "city": "Aurora",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1474497995",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-turbo-1-8-tiptronic-2004-1474497995",
+          "title": "Volkswagen Passat Turbo 1.8 Tiptronic 2004",
+          "brand": "Volkswagen",
+          "model": "Passat Turbo 1.8 Tiptronic",
+          "sourceModel": "Passat Turbo 1.8 Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Turbo 1.8 Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2004,
+          "priceCents": 2490000,
+          "mileage": 167000,
+          "city": "Gravatal",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1498321599",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1498321599",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 12900000,
+          "mileage": 88000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1545370844",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1987-1545370844",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1987",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1987,
+          "priceCents": 1800000,
+          "mileage": 80000,
+          "city": "Araquari",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544824649",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-tb-2-0-fsi-tsi-211cv-tiptronic-4p-2012-1544824649",
+          "title": "Volkswagen Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P 2012",
+          "brand": "Volkswagen",
+          "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceModel": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2012,
+          "priceCents": 6490000,
+          "mileage": 130200,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1537809414",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-2-0-fsi-tiptronic-2009-1537809414",
+          "title": "Volkswagen Passat 2.0 FSI Tiptronic 2009",
+          "brand": "Volkswagen",
+          "model": "Passat 2.0 FSI Tiptronic",
+          "sourceModel": "Passat 2.0 FSI Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat 2.0 FSI Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2009,
+          "priceCents": 4490000,
+          "mileage": 90000,
+          "city": "Itajaí",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544180550",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-cc-3-6-v6-fsi-300cv-tiptronic-2012-1544180550",
+          "title": "Volkswagen Passat CC 3.6 V6 FSI 300cv Tiptronic 2012",
+          "brand": "Volkswagen",
+          "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceModel": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat CC 3.6 V6 FSI 300cv Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2012,
+          "priceCents": 8900000,
+          "mileage": 12000,
+          "city": "Brusque",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1544147791",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1978-1544147791",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1978",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1978,
+          "priceCents": 5900000,
+          "mileage": 98765,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1543691557",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1987-1543691557",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1987",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1987,
+          "priceCents": 2500000,
+          "mileage": 180000,
+          "city": "Itajaí",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1543147785",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-golf-1-6-mi-1-6-mi-gener-black-silver-2002-1543147785",
+          "title": "Volkswagen Golf 1.6 MI/ 1.6 MI Gener./black & Silver 2002",
+          "brand": "Volkswagen",
+          "model": "Golf 1.6 MI/ 1.6 MI Gener./black & Silver",
+          "sourceModel": "Golf 1.6 MI/ 1.6 MI Gener./black & Silver",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Golf 1.6 MI/ 1.6 MI Gener./black & Silver",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2002,
+          "priceCents": 2600000,
+          "mileage": 170000,
+          "city": "Camboriú",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1543142694",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-l-ls-lse-gl-gls-ts-fla-vill-plus-1986-1543142694",
+          "title": "Volkswagen Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS 1986",
+          "brand": "Volkswagen",
+          "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceModel": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat L/ LS/ LSE/ GL/ GLS/ TS/ FLA/ VILL/ PLUS",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 1986,
+          "priceCents": 2500000,
+          "mileage": 280000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1520526918",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1520526918",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14490000,
+          "mileage": 80000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1520527849",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1520527849",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14490000,
+          "mileage": 80000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1522223785",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1522223785",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 16490000,
+          "mileage": 80986,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1542196939",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-cc-2-0-tsi-211cv-tiptronic-2015-1542196939",
+          "title": "Volkswagen Passat CC 2.0 TSI 211cv Tiptronic 2015",
+          "brand": "Volkswagen",
+          "model": "Passat CC 2.0 TSI 211cv Tiptronic",
+          "sourceModel": "Passat CC 2.0 TSI 211cv Tiptronic",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat CC 2.0 TSI 211cv Tiptronic",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2015,
+          "priceCents": 8980000,
+          "mileage": 97000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1533935836",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1533935836",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14490000,
+          "mileage": 80984,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541795722",
+          "url": "https://sc.olx.com.br/oeste-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1541795722",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 13490000,
+          "mileage": 105000,
+          "city": "Caçador",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1520290664",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1520290664",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 12890000,
+          "mileage": 96900,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1541643378",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-nivus-highline-1-0-200-tsi-flex-aut-2022-1541643378",
+          "title": "Volkswagen Nivus Highline 1.0 200 TSI Flex AUT 2022",
+          "brand": "Volkswagen",
+          "model": "Nivus Highline 1.0 200 TSI Flex AUT",
+          "sourceModel": "Nivus Highline 1.0 200 TSI Flex AUT",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Nivus Highline 1.0 200 TSI Flex AUT",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2022,
+          "priceCents": 7500000,
+          "mileage": 63000,
+          "city": "Tubarão",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1540005841",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1540005841",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14489000,
+          "mileage": 81900,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1539432265",
+          "url": "https://sc.olx.com.br/oeste-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-tb-2-0-fsi-tsi-211cv-tiptronic-4p-2013-1539432265",
+          "title": "Volkswagen Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P 2013",
+          "brand": "Volkswagen",
+          "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceModel": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat TB 2.0 Fsi/tsi 211cv Tiptronic 4P",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2013,
+          "priceCents": 7590000,
+          "mileage": 141000,
+          "city": "Lages",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": [
+            "Marca não classificada",
+            "Modelo não classificado",
+            "Ano fora do intervalo ou desconhecido"
+          ],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1529920988",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1529920988",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 12190000,
+          "mileage": 96000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1519502868",
+          "url": "https://sc.olx.com.br/florianopolis-e-regiao/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2017-1519502868",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2017",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2017,
+          "priceCents": 12490000,
+          "mileage": 93600,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1536992932",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1536992932",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14490000,
+          "mileage": 81000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1536108248",
+          "url": "https://sc.olx.com.br/oeste-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1536108248",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 13800000,
+          "mileage": 92100,
+          "city": "Chapecó",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1526366342",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2019-1526366342",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2019",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2019,
+          "priceCents": 14190000,
+          "mileage": 119559,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1534811679",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1534811679",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14490000,
+          "mileage": 80000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "olx",
+          "externalId": "1533958879",
+          "url": "https://sc.olx.com.br/norte-de-santa-catarina/autos-e-pecas/carros-vans-e-utilitarios/volkswagen-passat-highline-2-0-tsi-220cv-tip-2018-1533958879",
+          "title": "Volkswagen Passat Highline 2.0 TSI 220cv Tip. 2018",
+          "brand": "Volkswagen",
+          "model": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceModel": "Passat Highline 2.0 TSI 220cv Tip.",
+          "sourceIdentity": {
+            "brandId": null,
+            "modelId": null,
+            "versionId": null
+          },
+          "original": {
+            "brand": "Volkswagen",
+            "model": "Passat Highline 2.0 TSI 220cv Tip.",
+            "version": null
+          },
+          "version": null,
+          "versionOrigin": "unknown",
+          "modelYear": 2018,
+          "priceCents": 14450000,
+          "mileage": 80000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:18.770Z",
+          "reasons": ["Marca não classificada", "Modelo não classificado"],
+          "catalogResolution": {
+            "model": "unresolved",
+            "version": "unresolved"
+          }
+        }
+      ]
+    },
+    {
+      "source": "webmotors",
+      "received": 12,
+      "total": 12,
+      "partial": false,
+      "status": "ok",
+      "listings": [
+        {
+          "source": "webmotors",
+          "externalId": "62691847",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018/62691847",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 12990000,
+          "mileage": 75000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "80668861",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2017-2018/80668861",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 13190000,
+          "mileage": 84500,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "private",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "80820750",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018/80820750",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 13990000,
+          "mileage": 92000,
+          "city": "Chapecó",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "80860653",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018/80860653",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 13490000,
+          "mileage": 105000,
+          "city": "Caçador",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "81695137",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2016-2017/81695137",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2017,
+          "priceCents": 11990000,
+          "mileage": 142282,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "81698768",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018-2019/81698768",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2019,
+          "priceCents": 14200000,
+          "mileage": 119559,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "81186194",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-tsi-cc-16v-turbo-gasolina-4p-automatizado/4-portas/2016-2017/81186194",
+          "title": "VOLKSWAGEN PASSAT 2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "345622"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO"
+          },
+          "version": "2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO",
+          "versionOrigin": "explicit",
+          "modelYear": 2017,
+          "priceCents": 12490000,
+          "mileage": 120000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "81693585",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2017-2018/81693585",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 13390000,
+          "mileage": 100000,
+          "city": "Tubarão",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "79581251",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-tsi-cc-16v-turbo-gasolina-4p-automatizado/4-portas/2017/79581251",
+          "title": "VOLKSWAGEN PASSAT 2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "345622"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO"
+          },
+          "version": "2.0 TSI CC 16V TURBO GASOLINA 4P AUTOMATIZADO",
+          "versionOrigin": "explicit",
+          "modelYear": 2017,
+          "priceCents": 13499000,
+          "mileage": 75000,
+          "city": "São José",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "66409981",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2016-2017/66409981",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2017,
+          "priceCents": 10979000,
+          "mileage": 159000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "81071963",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018-2019/81071963",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2019,
+          "priceCents": 12890000,
+          "mileage": 108000,
+          "city": "Florianópolis",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        },
+        {
+          "source": "webmotors",
+          "externalId": "78684553",
+          "url": "https://www.webmotors.com.br/comprar/volkswagen/passat/20-16v-tsi-bluemotion-gasolina-highline-4p-dsg/4-portas/2018/78684553",
+          "title": "VOLKSWAGEN PASSAT 2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "brand": "VOLKSWAGEN",
+          "model": "Passat",
+          "sourceModel": "PASSAT",
+          "sourceIdentity": {
+            "brandId": "5",
+            "modelId": "743",
+            "versionId": "346492"
+          },
+          "original": {
+            "brand": "VOLKSWAGEN",
+            "model": "PASSAT",
+            "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG"
+          },
+          "version": "2.0 16V TSI BLUEMOTION GASOLINA HIGHLINE 4P DSG",
+          "versionOrigin": "explicit",
+          "modelYear": 2018,
+          "priceCents": 13100000,
+          "mileage": 88000,
+          "city": "Joinville",
+          "state": "SC",
+          "sellerType": "professional",
+          "observedAt": "2026-11-03T19:02:23.686Z",
+          "reasons": [],
+          "catalogResolution": {
+            "model": "confirmed",
+            "version": "unresolved"
+          }
+        }
+      ]
+    }
+  ]
+}

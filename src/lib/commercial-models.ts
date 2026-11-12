@@ -1,5 +1,6 @@
 import reviewed from "../data/commercial-models.json";
 import observations from "../data/source-model-observations.json";
+import olxObservations from "../data/olx-model-observations.json";
 import {
   catalogSchema,
   resolveCatalogVehicle,
@@ -29,7 +30,10 @@ function applySourceModelObservations(catalog: VehicleCatalog) {
       model,
     ]),
   );
-  for (const row of observations.observations) {
+  for (const row of [
+    ...observations.observations,
+    ...olxObservations.observations,
+  ]) {
     const brand = brands.get(modelLabelKey(commercialBrandName(row.brand)));
     if (!brand) continue;
     const model = models.get(
@@ -81,7 +85,11 @@ function applySourceModelObservations(catalog: VehicleCatalog) {
       id: evidenceId,
       source: row.source as "olx" | "webmotors",
       level: "model",
-      status: "confirmed",
+      status:
+        "reviewStatus" in row && row.reviewStatus === "pending"
+          ? "pending"
+          : "confirmed",
+      ...("labelOnly" in row && row.labelOnly ? { labelOnly: true } : {}),
       sourceBrand: row.brand,
       sourceBrandId: row.source_identity.brandId,
       sourceModelId: row.source_identity.modelId,

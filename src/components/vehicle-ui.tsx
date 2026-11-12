@@ -1,4 +1,5 @@
 "use client";
+import { vehicleImageOrigin } from "@/lib/vehicle-image-origin";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -39,7 +40,7 @@ export function VehicleImage({ vehicle }: { vehicle: Vehicle }) {
       )}
       {vehicle.imageUrl && !failed && (
         <span className="photo-origin">
-          Imagem informada · {new URL(vehicle.imageUrl).hostname}
+          {vehicleImageOrigin(vehicle.imageUrl)}
         </span>
       )}
     </div>
@@ -82,13 +83,22 @@ export function Opportunity({
     </span>
   );
 }
-export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
+export function VehicleCard({
+  vehicle: v,
+  showCompare = true,
+  origin,
+}: {
+  vehicle: Vehicle;
+  showCompare?: boolean;
+  origin?: "salvos" | "comparar";
+}) {
+  const detailHref = `/veiculos/${v.id}${origin ? `?origem=${origin}` : ""}`;
   const { vehicles, favorite, selected, toggleCompare } = useWorkspace();
   const analysis = analyzeVehicle(v, vehicles);
   return (
     <article className="vehicle-card">
       <div className="image-wrap">
-        <Link href={"/veiculos/" + v.id}>
+        <Link href={detailHref}>
           <VehicleImage vehicle={v} />
         </Link>
         <span className="source-tag">
@@ -108,7 +118,7 @@ export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
       </div>
       <div className="card-body">
         <div className="card-eyebrow">{v.brand}</div>
-        <Link className="card-title" href={"/veiculos/" + v.id}>
+        <Link className="card-title" href={detailHref}>
           {v.model}
           <ArrowUpRight size={18} />
         </Link>
@@ -140,18 +150,20 @@ export function VehicleCard({ vehicle: v }: { vehicle: Vehicle }) {
             <MapPin size={13} />
             {location(v)}
           </span>
-          <button
-            aria-pressed={selected.includes(v.id)}
-            className={
-              selected.includes(v.id)
-                ? "compare-toggle selected"
-                : "compare-toggle"
-            }
-            onClick={() => toggleCompare(v.id)}
-          >
-            <Columns3 size={14} />
-            {selected.includes(v.id) ? "Selecionado" : "Comparar"}
-          </button>
+          {showCompare && (
+            <button
+              aria-pressed={selected.includes(v.id)}
+              className={
+                selected.includes(v.id)
+                  ? "compare-toggle selected"
+                  : "compare-toggle"
+              }
+              onClick={() => toggleCompare(v.id)}
+            >
+              <Columns3 size={14} />
+              {selected.includes(v.id) ? "Selecionado" : "Comparar"}
+            </button>
+          )}
           {v.originalUrl && (
             <a
               href={v.originalUrl}

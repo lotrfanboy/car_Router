@@ -1,26 +1,26 @@
-/* Neutral, compact workspace. Blue is reserved for focus and information. */
+/* CarRouter graphite and burgundy theme shared by the complete app. */
 :root {
-  --positive: #353a42;
-  --accent: #245bcc;
+  --positive: #7dd9a6;
+  --accent: #ffb3b4;
   --shadow: 0 8px 28px #11111109;
-  --surface-raised: #eeeeef;
-  --soft: #f0f1f3;
+  --surface-raised: #282a2e;
+  --soft: #1e2024;
 }
 body {
   font-size: 14px;
 }
 .button.primary {
-  background: #22252a;
-  border-color: #22252a;
+  background: #8b1e2d;
+  border-color: #8b1e2d;
   color: #fff;
   box-shadow: none;
 }
 .button.primary:hover {
-  background: #383d45;
-  border-color: #383d45;
+  background: #a32435;
+  border-color: #a32435;
 }
 :focus-visible {
-  outline: 2px solid #245bcc;
+  outline: 2px solid #ffb3b4;
   outline-offset: 3px;
 }
 label,
@@ -41,16 +41,16 @@ label select,
 label textarea,
 .discovery-layout input:not([type="checkbox"]),
 .discovery-layout select {
-  background: #fff;
+  background: #1a1c20;
   color: var(--ink);
-  border-color: #c9cdd2;
+  border-color: #4b454b;
 }
 input::placeholder,
 textarea::placeholder {
-  color: #727880;
+  color: #aaa9b3;
 }
 input[type="checkbox"] {
-  accent-color: #282c32;
+  accent-color: #ffb3b4;
 }
 .form-section,
 .form-section > h2,
@@ -68,7 +68,7 @@ input[type="checkbox"] {
   color: #d2d5d9;
 }
 .sidebar .nav-link.active {
-  color: #fff;
+  color: #1a1c20;
 }
 .secondary-nav {
   margin-top: 30px;
@@ -102,7 +102,7 @@ input[type="checkbox"] {
   letter-spacing: -0.02em;
 }
 .focus-workspace .eyebrow {
-  color: #646b74;
+  color: #7dd9a6;
   letter-spacing: 0.13em;
   font-size: 10px;
   margin-bottom: 10px;
@@ -121,7 +121,7 @@ input[type="checkbox"] {
 }
 .source-strip a {
   margin-left: auto;
-  color: #245bcc;
+  color: #ffb3b4;
   text-decoration: underline;
 }
 .focus-workspace .discovery-layout {
@@ -140,7 +140,7 @@ input[type="checkbox"] {
 }
 .focus-workspace label {
   font-size: 14px;
-  color: #333943;
+  color: #c5bdc7;
 }
 .search-combobox {
   position: relative;
@@ -153,12 +153,12 @@ input[type="checkbox"] {
 .search-combobox-input {
   display: flex;
   align-items: center;
-  border: 1px solid #c9cdd2;
+  border: 1px solid #4b454b;
   border-radius: 5px;
-  background: #fff;
+  background: #1a1c20;
 }
 .search-combobox-input:focus-within {
-  outline: 2px solid #245bcc;
+  outline: 2px solid #ffb3b4;
   outline-offset: 1px;
 }
 .search-combobox-input input {
@@ -181,8 +181,8 @@ input[type="checkbox"] {
   top: calc(100% + 4px);
   max-height: min(280px, 50vh);
   overflow-y: auto;
-  background: #fff;
-  border: 1px solid #bfc4ca;
+  background: #1a1c20;
+  border: 1px solid #4b454b;
   border-radius: 6px;
   box-shadow: var(--shadow);
 }
@@ -197,13 +197,13 @@ input[type="checkbox"] {
   padding: 9px 10px;
   border: 0;
   border-radius: 4px;
-  background: #fff;
-  color: #22252a;
+  background: #1a1c20;
+  color: #e2e2e8;
   cursor: pointer;
 }
 .search-combobox-popup li[aria-selected="true"] button,
 .search-combobox-popup li button:hover {
-  background: #e9edf5;
+  background: #333539;
 }
 .search-combobox-popup p {
   margin: 0;
@@ -217,7 +217,7 @@ input[type="checkbox"] {
 .focus-workspace label small {
   font-size: 10px;
   font-weight: 400;
-  color: #686e76;
+  color: #aaa9b3;
 }
 .focus-workspace .discovery-help {
   margin: 0;
@@ -292,7 +292,7 @@ input[type="checkbox"] {
   gap: 14px;
 }
 .advanced-filters summary {
-  color: #333943;
+  color: #c5bdc7;
   font-weight: 650;
 }
 summary {
@@ -332,7 +332,7 @@ summary {
   font-size: 12px;
   border: 1px solid var(--line);
   border-radius: 5px;
-  background: #fff;
+  background: #1a1c20;
   padding: 12px;
 }
 .source-results p,
@@ -343,7 +343,7 @@ summary {
 .listing-card {
   display: grid;
   gap: 0;
-  background: #fff;
+  background: #1a1c20;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -451,7 +451,7 @@ summary {
   margin-top: 12px;
   border-left: 1px solid #a6adb6;
   border-bottom: 1px solid #a6adb6;
-  background: linear-gradient(#eef0f3 1px, transparent 1px) 0 0 / 100% 25%;
+  background: linear-gradient(#282a2e 1px, transparent 1px) 0 0 / 100% 25%;
 }
 .saved-scatter-point {
   position: absolute;
@@ -459,8 +459,8 @@ summary {
   height: 14px;
   transform: translate(-50%, 50%);
   border-radius: 50%;
-  background: #245bcc;
-  box-shadow: 0 0 0 2px #fff;
+  background: #ffb3b4;
+  box-shadow: 0 0 0 2px #1a1c20;
 }
 .listing-photo img {
   width: 100%;
@@ -507,13 +507,13 @@ summary {
   letter-spacing: -0.045em;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
-  color: #17191c;
+  color: #eef0f3;
 }
 .relative-price {
   padding: 5px 8px;
   border-radius: 4px;
-  background: #eeeeef;
-  color: #22252a;
+  background: #282a2e;
+  color: #e2e2e8;
   font-size: 12px;
   font-weight: 600;
 }
@@ -545,12 +545,12 @@ summary {
   min-height: 36px;
 }
 .listing-actions .primary {
-  border-color: #22252a;
+  border-color: #e2e2e8;
 }
 .listing-observed {
   display: block;
   font-size: 10px;
-  color: #686e76;
+  color: #aaa9b3;
 }
 .save-listing {
   display: inline-grid;
@@ -608,7 +608,7 @@ summary {
   margin-top: 5px;
 }
 .listing-detail td a {
-  color: #245bcc;
+  color: #ffb3b4;
 }
 .comparison-limitations {
   border-left: 2px solid #ba8b35;
@@ -661,7 +661,7 @@ summary {
 .focus-workspace .empty-state {
   border: 1px dashed #cfd3d8;
   min-height: 220px;
-  background: #fff;
+  background: #1a1c20;
   box-shadow: none;
   padding: 32px;
 }
@@ -792,4 +792,416 @@ summary {
 }
 .focus-workspace .discovery-results p {
   overflow-wrap: anywhere;
+}
+
+/* Root tokens also cover loading, toast and pages outside a panel. */
+:root {
+  color-scheme: dark;
+  --bg: #111317;
+  --surface: #1a1c20;
+  --surface-raised: #282a2e;
+  --ink: #e2e2e8;
+  --text: #e2e2e8;
+  --muted: #aaa9b3;
+  --line: #333539;
+  --border: #333539;
+  --accent: #ffb3b4;
+  --positive: #7dd9a6;
+  --negative: #ffadb7;
+  --warning: #fdba45;
+  --soft: #1e2024;
+  --shadow: 0 8px 28px #0003;
+}
+.carrouter-app {
+  min-height: 100vh;
+  background: var(--bg);
+}
+.carrouter-app .focus-workspace label {
+  color: #c5bdc7;
+}
+.carrouter-app .page-heading .eyebrow {
+  color: #7dd9a6;
+}
+.carrouter-app input:not([type="checkbox"]):not([type="radio"]),
+.carrouter-app select,
+.carrouter-app textarea {
+  background: #1a1c20;
+  color: #e2e2e8;
+  border-color: #4b454b;
+  min-height: 44px;
+}
+.carrouter-app input::placeholder,
+.carrouter-app textarea::placeholder {
+  color: #aaa9b3;
+  opacity: 1;
+}
+.carrouter-app .search-combobox-input {
+  background: #1a1c20;
+  border-color: #4b454b;
+}
+.carrouter-app .search-combobox-popup {
+  background: #1e2024;
+  border-color: #65525b;
+}
+.carrouter-app .search-combobox-popup li button {
+  background: #1e2024;
+  color: #e2e2e8;
+  min-height: 44px;
+}
+.carrouter-app .search-combobox-popup li[aria-selected="true"] button,
+.carrouter-app .search-combobox-popup li button:hover {
+  background: #3a2830;
+}
+.carrouter-app .listing-card,
+.carrouter-app .vehicle-card,
+.carrouter-app .listing-body,
+.carrouter-app .filter-panel,
+.carrouter-app .stat-card,
+.carrouter-app .table-scroll,
+.carrouter-app .comparison-pending,
+.carrouter-app .pending-setup,
+.carrouter-app .empty-state {
+  background: #1a1c20;
+  color: #e2e2e8;
+  border-color: #333539;
+}
+.carrouter-app .discovery-good {
+  color: #7dd9a6;
+}
+.carrouter-app .discovery-warning,
+.carrouter-app .discovery-reasons {
+  color: #fdba45;
+}
+.carrouter-app .discovery-info {
+  color: #ffb3b4;
+}
+.carrouter-app .discovery-blocked,
+.carrouter-app .discovery-stale-note {
+  background: #30232c;
+  border-color: #65525b;
+  color: #e2e2e8;
+}
+.carrouter-app .results-controls select,
+.carrouter-app .results-controls label {
+  color: #c5bdc7;
+}
+.carrouter-app .source-results details,
+.carrouter-app .source-results summary {
+  background: #1e2024;
+  color: #e2e2e8;
+  border-color: #333539;
+}
+.carrouter-app .source-strip a,
+.carrouter-app .listing-actions .text-link {
+  color: #ffb3b4;
+}
+.carrouter-app th {
+  background: #111317;
+  color: #aaa9b3;
+}
+.carrouter-app td {
+  border-color: #333539;
+}
+.carrouter-app tbody tr:hover {
+  background: #282a2e;
+}
+.carrouter-app .filter-chip,
+.carrouter-app .city-chips button {
+  background: #282a2e;
+  color: #e2e2e8;
+  border-color: #4b454b;
+  min-height: 32px;
+}
+
+/* Standalone clear controls remain usable on touch screens. */
+.carrouter-app .search-combobox-input > button,
+.carrouter-app .compare-bar > button {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .carrouter-app .discovery-check,
+  .carrouter-app .filter-checks label,
+  .carrouter-app .saved-compare-toggle {
+    min-height: 44px;
+    align-items: center;
+  }
+  .carrouter-app .city-chips button {
+    min-height: 44px;
+  }
+  .carrouter-app summary {
+    min-height: 44px;
+    align-content: center;
+  }
+}
+
+/* Shared dark surfaces: text and its background are paired for every state. */
+.carrouter-app .listing-price {
+  color: #eef0f3;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.carrouter-app .comparison-limitations,
+.carrouter-app .pending-setup {
+  background: #302719;
+  color: #f4d9a5;
+  border-color: #94764a;
+}
+.carrouter-app .comparison-limitations h3,
+.carrouter-app .comparison-limitations li,
+.carrouter-app .pending-setup p {
+  color: #f4d9a5;
+}
+.carrouter-app .listing-photo-unavailable {
+  background: #121419;
+  color: #b5b7c0;
+}
+.carrouter-app .listing-metrics > p,
+.carrouter-app .listing-specs {
+  color: #b5b7c0;
+}
+.carrouter-app .relative-price {
+  background: #24352c;
+  color: #9ce0b8;
+}
+.carrouter-app .comparison-pending {
+  background: #24262c;
+  color: #c8c9d0;
+}
+.carrouter-app .listing-body h2 {
+  font-family: var(--font-radar-body), sans-serif;
+  letter-spacing: -0.02em;
+}
+.carrouter-app .error-box,
+.carrouter-app .error-box p,
+.carrouter-app .error-box small {
+  background: #3b2028;
+  color: #ffd3d7;
+}
+.carrouter-app .legacy-data-access {
+  margin-bottom: 24px;
+}
+.carrouter-app .legacy-data-access summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+}
+.carrouter-app .legacy-data-access p {
+  color: #b5b7c0;
+  margin: 12px 0 20px;
+}
+
+.listing-technical-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+  margin: 24px 0;
+}
+.listing-technical-grid dt {
+  color: #b5b7c0;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.listing-technical-grid dd {
+  margin: 0;
+  color: #eef0f3;
+  font-size: 15px;
+}
+.listing-technical-grid small {
+  display: block;
+  color: #b5b7c0;
+  font-size: 12px;
+  margin-top: 7px;
+  line-height: 1.7;
+}
+.listing-technical-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+.listing-technical-chips span {
+  padding: 5px 8px;
+  border: 1px solid #53565f;
+  border-radius: 5px;
+  color: #d8dae1;
+  background: #24262c;
+  font-size: 12px;
+}
+@media (max-width: 700px) {
+  .listing-technical-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+.carrouter-app .editorial-hero .hero-copy h2 {
+  font-size: clamp(29px, 3vw, 46px);
+  line-height: 1.18;
+  letter-spacing: -0.045em;
+  font-weight: 650;
+  color: #eef0f3;
+}
+.carrouter-app .editorial-hero .hero-copy em {
+  color: #80cfff;
+}
+
+#conteudo .section-number {
+  color: #9aa2ad;
+}
+
+.manual-option-field {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+.manual-option-field small {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.manual-photo-editor {
+  display: grid;
+  gap: 16px;
+}
+.manual-photo-modes {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.manual-photo-modes [aria-pressed="true"] {
+  border-color: #ffb3b4;
+  background: #3b2028;
+  color: #ffd3d7;
+}
+.manual-photo-preview {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+.manual-photo-preview img {
+  max-width: min(100%, 440px);
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.financial-tools {
+  margin-top: 28px;
+}
+.financial-tools-switch {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.financial-tools-switch [aria-pressed="true"] {
+  background: #3b2028;
+  border-color: #ffb3b4;
+  color: #ffd3d7;
+}
+.financing-composition {
+  display: flex;
+  height: 14px;
+  overflow: hidden;
+  border-radius: 7px;
+  margin-top: 24px;
+  background: #383b42;
+}
+.financing-composition span {
+  min-width: 0;
+  height: 100%;
+}
+
+.radar-control {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.radar-control p {
+  color: #f5cf7d;
+  max-width: 700px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.fipe-lookup {
+  padding: 28px;
+  margin: 28px 0;
+}
+.fipe-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  flex-wrap: wrap;
+}
+.fipe-lookup p {
+  color: #b5b7c0;
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 14px 0;
+}
+.fipe-selectors {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+}
+.fipe-selectors label {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  font-size: 13px;
+}
+.fipe-selectors select {
+  width: 100%;
+  min-width: 0;
+}
+.fipe-result {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid #383b42;
+}
+.fipe-price {
+  display: block;
+  color: #eef0f3;
+  font-size: 32px;
+  margin: 12px 0;
+}
+@media (max-width: 800px) {
+  .fipe-selectors {
+    grid-template-columns: 1fr;
+  }
+  .fipe-lookup {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 901px) {
+  .focus-workspace .discovery-layout > .panel:first-child {
+    position: sticky;
+    top: 16px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+  }
+}
+.km-range {
+  display: grid;
+  gap: 14px;
+}
+@media (max-width: 900px) {
+  .focus-workspace .discovery-layout > .panel:first-child {
+    max-height: none;
+    overflow: visible;
+    position: static;
+  }
 }

@@ -633,7 +633,7 @@ it("establishes the discount baseline and sends a summary only for a new qualify
   await radar.tickRadars();
   expect(deliveries).toHaveLength(1);
   expect(JSON.stringify(deliveries[0])).toContain("nova(s) oportunidade(s)");
-  expect(JSON.stringify(deliveries[0])).toContain("/radares#radar-");
+  expect(JSON.stringify(deliveries[0])).toContain(`/radares/${row.id}`);
   expect(await db.radarEmailDelivery.findFirst()).toMatchObject({
     status: "accepted",
     providerId: "test-message",
@@ -761,4 +761,31 @@ it("shares a recent manual execution with the Radar without another provider cal
   expect(deliveries).toHaveLength(0);
   expect((await db.radarNotice.findFirst())?.kind).toBe("baseline");
   expect((await db.radarRun.findFirst())?.status).toBe("ok");
+});
+
+it("enforces optional scheduled credit caps and expiry before writing another reservation", async () => {
+  vi.stubEnv("RADAR_SCHEDULED_GECKO_TOTAL_CREDIT_CAP", "1");
+  vi.stubEnv("RADAR_SCHEDULED_REEF_TOTAL_CREDIT_CAP", "0");
+  vi.stubEnv(
+    "RADAR_SCHEDULED_UNTIL",
+    new Date(Date.now() + 60000).toISOString(),
+  );
+  try {
+    await store.reserveCredits("gecko", 1, "scheduled");
+    await expect(
+      store.reserveCredits("gecko", 1, "scheduled"),
+    ).rejects.toMatchObject({ status: 429 });
+    await expect(
+      store.reserveCredits("reef", 1, "scheduled"),
+    ).rejects.toMatchObject({ status: 429 });
+    expect(await db.providerSpend.count()).toBe(1);
+    vi.stubEnv("RADAR_SCHEDULED_UNTIL", "2000-01-01T00:00:00.000Z");
+    await expect(
+      store.reserveCredits("gecko", 1, "scheduled"),
+    ).rejects.toMatchObject({ status: 429 });
+    expect(await db.providerSpend.count()).toBe(1);
+    expect(radar.radarInfrastructure().scheduler).toBe(false);
+  } finally {
+    vi.unstubAllEnvs();
+  }
 });
